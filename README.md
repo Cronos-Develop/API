@@ -6,30 +6,31 @@
         - [Recomendações de Estudo](#recomendações-de-estudo)
     - [Documentação](#documentação)
     - [Deploy](#deploy)
-- [Instruções de Execução em Máquina Local]()
-    - [Introdução]()
-        - [O que é o NGINX]()
-    - [Pré-requisitos]()
-        - [Docker]()
-    - [Como rodar]()
-        - [Rodando o projeto pela primeira vez]()
-        - [Rodando o projeto pela segunda vez em diante]()
-        - [Parando a execução do container]()
-        - [Excluindo o container]()
-    - [Observações dos desenvolvedores]()
-        - [Onde o projeto está rodando?]()
-    - [Referências]()
-        - [Ambiente Docker]()
-        - [NGINX]()
-    - [Recomendações de Estudo]()
-        - [Playlist de Laravel]()
-        - [Playlist de Docker]()
+- [Instruções de Execução em Máquina Local](#instruções-de-execução-em-máquina-local)
+    - [Introdução](#introdução)
+        - [O que é o NGINX](#o-que-é-o-nginx)
+    - [Pré-requisitos](#pré-requisitos)
+        - [Docker](#docker)
+    - [Como rodar](#como-rodar)
+        - [Rodando o projeto pela primeira vez](#rodando-o-projeto-pela-primeira-vez)
+        - [Rodando o projeto pela segunda vez em diante](#rodando-o-projeto-pela-segunda-vez-em-diante)
+        - [Parando a execução do container](#parando-a-execução-do-container)
+        - [Excluindo o container](#excluindo-o-container)
+    - [Observações dos desenvolvedores](#observações-dos-desenvolvedores)
+        - [Onde o projeto está rodando?](#onde-o-projeto-está-rodando)
+    - [Referências](#referências-1)
+        - [Ambiente Docker](#ambiente-docker)
+        - [NGINX](#nginx)
+    - [Recomendações de Estudo](#recomendações-de-estudo-1)
+        - [Playlist de Laravel](#playlist-de-laravel)
+        - [Playlist de Docker](#playlist-de-docker)
+- [Créditos](#créditos)
 # API:
 ## Apresentação:
 Esta é a API do aplicativo Cronos-Develop, ela será desenvolvida pelos seguintes membros do grupo:
-- [Luis Felipe Krause de Castro]()
+- [Luis Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
 - [João Victor Ribeiro Santos]()
-- [Luiz Filipe de Souza Alves]()
+- [Luiz Filipe de Souza Alves](https://github.com/LuFi-1227)
 
 ## Como Funciona:
 ### Referências:
@@ -68,10 +69,10 @@ Aqui está tudo que você precisa possuir na sua máquina para rodar este ambien
 ```
     docker-compose up -d --build
 ```
-- Neste caso, o docker criará as imagens e os containeres e iniciará o container, neste ponto, você já pode rodar o projeto e quando <strong>não for usar mais, visite</strong>[Parando a execução do container]()
+- Neste caso, o docker criará as imagens e os containeres e iniciará o container, neste ponto, você já pode rodar o projeto e quando <strong>não for usar mais, visite</strong>[Parando a execução do container](#parando-a-execução-do-container)
 
 ### Rodando o projeto pela segunda vez em diante:
-- Se você está aqui, você já visitou [Rodando o projeto pela primeira vez](), neste caso, você já possui a imagem e o container da aplicação, com isto, você já pode digitar o comando:
+- Se você está aqui, você já visitou [Rodando o projeto pela primeira vez](#rodando-o-projeto-pela-primeira-vez), neste caso, você já possui a imagem e o container da aplicação, com isto, você já pode digitar o comando:
 ```
     docker-compose up -d
 ```
@@ -122,5 +123,15 @@ Aqui você encontrará todo o embasamento teórico utilizado ao fazer as instru�
     - [O que é NGINX e como funciona](https://www.hostinger.com.br/tutoriais/o-que-e-nginx)
 
 ## Recomendações de Estudo:
+Aqui estamos deixando recomendações de Playlists no YouTube para que se possa estudar este projeto.
+
 ### Playlist de Laravel:
+- Esta playlist é muito importante no desenvolvimento deste repositório.
+- [Laravel](https://www.youtube.com/playlist?list=PLyugqHiq-SKdFqLIM3HgCAnG8_7wUqHMm)
+
 ### Playlist de Docker:
+- Esta playlist é muito importante no desenvolvimento deste repositório.
+- [Docker](https://www.youtube.com/watch?v=4Z-raAFlHf4&list=PLR8JXremim5BWiO-MCaAffQYwFZrD11-j&index=1)
+
+# Créditos:
+- Todos os créditos dos materiais aqui utilizados e referenciados são destinados aos criadores dos conteúdos.
