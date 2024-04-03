@@ -10,6 +10,8 @@
     - [Introdução](#introdução)
         - [O que é o NGINX](#o-que-é-o-nginx)
     - [Pré-requisitos](#pré-requisitos)
+        - [Git](#git)
+        - [Composer](#composer)
         - [Docker](#docker)
     - [Como rodar](#como-rodar)
         - [Rodando o projeto pela primeira vez](#rodando-o-projeto-pela-primeira-vez)
@@ -48,6 +50,16 @@ Você já ouviu falar em APACHE? Pois bem, tanto o NGINX como o APACHE possuem a
 ## Pré-requisitos:
 Aqui está tudo que você precisa possuir na sua máquina para rodar este ambiente no seu navegador.
 
+### Git:
+- O Git e o GitBash são ferramentas do Git linkadas com GitHub que são necessárias para o gerenciamento das versões do projeto. Essas ferramentas foram criadas justamente para facilitar o versionamento e o upload dos projetos para serem salvos ou para análise de código que pode ser feita com o objetivo de correção ou revisão pelos próprios programadores.
+- Para dar o git clone do repositório, você precisará ter o [gitbash](https://git-scm.com/downloads) instalado na sua máquina.
+- Link para instalar o Git:
+- [link](https://git-scm.com/downloads)
+
+### Composer:
+- O composer é um gerenciador de dependências e arquivos que é necessário para rodar o projeto localmente, pois ele instala tudo que você precisará na sua máquina com um simples comando.
+- [Instalação do Composer](https://getcomposer.org/download/)
+  
 ### Docker:
 - O docker é uma aplicação que funciona como uma máquina virtual para que se rode o mesmo ambiente de desenvolvimento em máquinas diferentes. Nele, você pode baixar ou criar algo como partições chamadas de Imagens, que possuem todos os arquivos necessários para um ambiente de desenvolvimento e containeres, que são meios de executar um conjunto não vazio de imagens como processos no seu sistema operacional. Ou seja, no final, o docker é uma forma de ter vários ambientes virtuais no seu sistema operacional para executar projetos diferentes, por exemplo, com o docker você pode ter todas as versões do PHP na sua máquina e escolher qual você gostaria de ter no momento para um projeto específico e depois se você quiser executar seu projeto em outra versão, basta pausar uma instância e iniciar outra. Portanto é uma ferramenta muito importante de se conhecer se você for desenvolvedor.
 - Para instalar o docker, basta você visitar o site oficial e seguir a documentação da página para instalação no seu ambiente:
@@ -65,7 +77,11 @@ Aqui está tudo que você precisa possuir na sua máquina para rodar este ambien
 ```
    cd API
 ```
-- Dentro da pasta API, você iniciará o app do docker se estiver no windows (se estiver no Linux não precisa iniciar o app) e digitará no terminal o seguinte comando:
+- Antes de iniciar o docker e dentro da pasta API, você precisará da instalação de dependências pelo Composer, nesse caso, digite o seguinte comando no seu terminal (Com o Composer instalado):
+```
+    composer update
+```
+- Fique tranquilo que o processo demora um pouco mais de 10 minutos para terminar. Ainda dentro da pasta API, você iniciará o app do docker se estiver no windows (se estiver no Linux não precisa iniciar o app) e digitará no terminal o seguinte comando:
 ```
     docker-compose up -d --build
 ```
