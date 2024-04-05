@@ -29,9 +29,11 @@
 - [Créditos](#créditos)
 # API:
 ## Apresentação:
-Esta é a API do aplicativo Cronos-Develop, ela será desenvolvida pelos seguintes membros do grupo:
+Esta é a API do aplicativo Cronos-Develop.
+
+## Desenvolvedores:
 - [Luis Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
-- [João Victor Ribeiro Santos]()
+- [João Victor Ribeiro Santos](https://github.com/Carecovisk)
 - [Luiz Filipe de Souza Alves](https://github.com/LuFi-1227)
 
 ## Como Funciona:
