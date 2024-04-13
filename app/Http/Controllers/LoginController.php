@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -16,18 +16,14 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
 
-        //echo $request;
-
-        /*$user = User::where('email', $request['email'])
-                    ->where('password', $request['password'])
-                    ->first();*/
-
         $user = DB::table('users')->where('email', $request['email'])->get()->first();
+        $hashedPassword = $user->password;
 
-        if (!$user){
-            return response()->json(['error' => 'Usuário não encontrado'], 404);
+        if ($user && Hash::check($request['password'], $hashedPassword)){
+            return response()->json(['id' => $user->id]);
+            
         }
-        return response()->json(['id' => $user->id]);
+        return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
 
     public function show(Request $request){
