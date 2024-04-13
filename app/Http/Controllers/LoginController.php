@@ -22,13 +22,12 @@ class LoginController extends Controller
                     ->where('password', $request['password'])
                     ->first();*/
 
-        $user = DB::table('users')->where('email', $request['email'])->get();
+        $user = DB::table('users')->where('email', $request['email'])->get()->first();
 
         if (!$user){
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
-        echo $user[0]->id;
-        //return response()->json(['id' => $user->id]);
+        return response()->json(['id' => $user->id]);
     }
 
     public function show(Request $request){

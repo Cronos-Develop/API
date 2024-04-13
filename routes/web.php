@@ -9,6 +9,6 @@ Route::get('/api', function () {
     return view('login');
 });
 
-Route::post('/login', [LoginController::class, 'index'])->name('login.index');
+Route::post('/api/login', [LoginController::class, 'index'])->name('login.index');
 
 
