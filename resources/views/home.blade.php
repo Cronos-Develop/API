@@ -6,8 +6,12 @@
     <title>Home</title>
 </head>
 <body>
-    <form action="{{route('login.index')}}" method="post">
+    <form action="{{route('login.index')}}" method="get">
         <button type="submit">Fazer Login</button>
+    </form>
+
+    <form action="{{route('register.index')}}" method="get">
+        <button type="submit">Fazer Cadastro</button>
     </form>
 </body>
 </html>

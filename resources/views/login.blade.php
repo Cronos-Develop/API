@@ -55,10 +55,10 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="{{route('login.index')}}" method="get">
+        <form action="{{route('login.show')}}" method="post">
             @csrf
             <input type="text" name="email" placeholder="email..." value="test@example.com" required>
-            <input type="password" name="password" placeholder="password..." value="1234" required>
+            <input type="password" name="password" placeholder="password..." required>
             <input type="submit" value="Login">
         </form>
     </div>

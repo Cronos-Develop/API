@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Cadastro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,10 +55,15 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="{{route('users.store'}}" method="post">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="submit" value="Login">
+        <form action="{{ route('register.store') }}" method="post">
+            @csrf
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">E-mail:</label>
+            <input id="email" name="email" required>
+            <label for="senha">Senha:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Cadastrar</button>
         </form>
     </div>
 </body>
