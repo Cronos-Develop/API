@@ -26,10 +26,6 @@ class LoginController extends Controller
         return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
 
-    public function show(Request $request){
-
-    }
-
     public function store(Request $request){
         $validatedData = $request->validate([
             'email' => 'required|email|unique:users',

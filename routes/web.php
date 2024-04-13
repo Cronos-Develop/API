@@ -10,5 +10,5 @@ Route::get('/api', function () {
 });
 
 Route::post('/api/login', [LoginController::class, 'index'])->name('login.index');
-
+Route::get('/api/login', [LoginController::class, 'index'])->name('login.index');
 

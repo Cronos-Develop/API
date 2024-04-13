@@ -6,6 +6,8 @@
     <title>Home</title>
 </head>
 <body>
-    <a href="{{route('login.index')}}">Fazer Login</a>
+    <form action="{{route('login.index')}}" method="post">
+        <button type="submit">Fazer Login</button>
+    </form>
 </body>
 </html>
