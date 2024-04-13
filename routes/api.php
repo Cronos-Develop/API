@@ -15,8 +15,17 @@ use App\Http\Controllers\UserController;
 |
 */
 
+
 Route::group([], function() {
+    // Define um grupo de rotas para o recurso 'users'
+
+    // Define uma rota GET para listar todos os usuários
     Route::get('/users', [UserController::class, 'index']);
+
+    // Define uma rota GET para exibir um usuário específico
     Route::get('/users/{user}', [UserController::class, 'show']);
+
+    // Define uma rota POST para criar um novo usuário
     Route::post('/users', [UserController::class, 'store']);
 });
+

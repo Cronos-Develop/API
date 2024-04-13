@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function index(Request $request){
+        // Retorna todos os registros da tabela 'users' do banco de dados usando o facade DB do Laravel
         return DB::table('users')->get();
     }
 
@@ -45,20 +46,25 @@ class UserController extends Controller
     }
 
     public function store(Request $request){
+        // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
+        // Verifica se a validação falhou
         if ($validator->fails()) {
+            // Retorna uma resposta JSON com os erros de validação e o código de status 422 (Unprocessable Entity)
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        // Se a validação passar, extrai os dados da solicitação
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $request->input('password');
 
+        // Retorna uma resposta JSON com uma mensagem de sucesso e os dados validados, juntamente com o código de status 200 (OK)
         return response()->json(['message' => 'Data validated successfully', 'name' => $name, 'email' => $email], 200);
     }
 
