@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -9,8 +10,29 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function index(){
-        return view('login');
+    public function index(Request $request){
+        $validatedData = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        //echo $request;
+
+        /*$user = User::where('email', $request['email'])
+                    ->where('password', $request['password'])
+                    ->first();*/
+
+        $user = DB::table('users')->where('email', $request['email'])->get();
+
+        if (!$user){
+            return response()->json(['error' => 'Usuário não encontrado'], 404);
+        }
+        echo $user[0]->id;
+        //return response()->json(['id' => $user->id]);
+    }
+
+    public function show(Request $request){
+
     }
 
     public function store(Request $request){
@@ -19,16 +41,14 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $validatedData['email'])
-                    ->where('password', $validatedData['password'])
-                    ->first();
+        $user = User::where('email', $request->email)->first();
+        var_dump($user);
 
-        /*$credentials = $request->only('email', 'password');
-        $authenticated = Auth::attempt($credentials);*/
+        if ($user && password_verify($request->password, $user->password)){
+            echo "Salv";
+            return response()->json(['id' => $user->id]);
+        }
 
-        /*if (!$authenticated){
-            return redirect()->route('login.index')->withErrors(['error' => 'email or password invalid']);
-        }*/
-        return response()->json(['id' => $user->id]);
+        return redirect()->route('login.index')->withErrors(['error' => 'email or password invalid']);
     }
 }
