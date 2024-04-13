@@ -2,48 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function show(Request $request){
-        //echo $request;
+    public function index(Request $request){
+        return DB::table('users')->get();
+    }
 
-        $validatedData = $request->validate([
-            'email' => 'required',
-            'senha' => 'required',
-        ]);
+    public function show(string $userData){
+        // Supondo que os dados (email e senha) venham no formato email:senha
+        $userDataArray = explode(':', $userData);
 
-        $user = User::where('email', $validatedData['email'])
-                    ->where('senha', $validatedData['senha'])
-                    ->first();
+        // Obtém o e-mail e a senha da solicitação
+        $userEmail = $userDataArray[0];
+        $password = $userDataArray[1];
 
-        if ($user) {
-            // Se o usuário for encontrado, retorne os detalhes do usuário
-            return response()->json(['user_id' => $user->id]);
-        } else {
-            // Caso contrário, retorne uma mensagem de erro
+        // Busca o usuário no banco de dados pelo e-mail fornecido
+        $user = DB::table('users')->where('email', $userEmail)->get()->first();
+        if (!$user){
+            // Se o usuário não for encontrado, retorna um erro 404
             return response()->json(['error' => 'Usuário não encontrado'], 404);
+        }
+
+        // Obtém a senha criptografada do usuário do banco de dados
+        $hashedPassword = $user->password;
+
+        // Verifica se a senha fornecida corresponde à senha criptografada
+        $correctPassword = Hash::check($password, $hashedPassword);
+
+        // Se o usuário for encontrado e a senha estiver correta, retorna o ID do usuário
+        if ($user && $correctPassword){
+            return response()->json(['id' => $user->id]);
+        }
+        else {
+            // Se a senha estiver incorreta, retorna um erro 401
+            return response()->json(['error' => 'Senha incorreta'], 401);
         }
     }
 
     public function store(Request $request)
     {
-        // Valide os dados de cadastro do usuário
-        $validatedData = $request->validate([
-            'login' => 'required|unique:users',
-            'senha' => 'required',
-            // Adicione outras regras de validação conforme necessário
-        ]);
-
-        // Crie um novo usuário
-        $user = User::create([
-            'login' => $validatedData['login'],
-            'senha' => $validatedData['senha'],
-            // Adicione outros campos conforme necessário
-        ]);
-
-        // Retorne os detalhes do usuário recém-criado
-        return response()->json($user, 201);
+        
     }
 }
