@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -43,8 +44,22 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        
+    public function store(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        return response()->json(['message' => 'Data validated successfully', 'name' => $name, 'email' => $email], 200);
     }
+
 }
