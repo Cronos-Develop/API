@@ -11,16 +11,18 @@ class UserController extends Controller
 {
     public function index(Request $request){
         // Retorna todos os registros da tabela 'users' do banco de dados usando o facade DB do Laravel
-        return DB::table('users')->get();
+        // return DB::table('users')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function show(string $userData){
+    public function show(string $userData, string $userHash){
         // Supondo que os dados (email e senha) venham no formato email:senha
         $userDataArray = explode(':', $userData);
 
         // Obtém o e-mail e a senha da solicitação
         $userEmail = $userDataArray[0];
         $password = $userDataArray[1];
+
+        // Fazer verificação, a partir do hash, se o usuário logado tem permissão para acessar esse conteúdo
 
         // Busca o usuário no banco de dados pelo e-mail fornecido
         $user = DB::table('users')->where('email', $userEmail)->get()->first();
@@ -45,7 +47,7 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $request){
+    public function store(Request $request, string $userHash){
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
