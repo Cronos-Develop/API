@@ -9,12 +9,17 @@ class CPFValidator
         // Remove todos os caracteres que não sejam números
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 
+        // Verifica se o CPF tem 11 dígitos
+        if (strlen($cpf) != 11) {
+            return false;
+        }
+
         // Verifica se todos os dígitos são iguais
         if (preg_match('/(\d)\1{10}/', $cpf)) {
             return false;
         }
 
-        // Validação do CPF de acordo com o padrão brasileiro
+        // Validação do CPF
         for ($i = 9; $i < 11; $i++) {
             for ($j = 0, $soma = 0; $j < $i; $j++) {
                 $soma += $cpf[$j] * (($i + 1) - $j);
@@ -29,6 +34,6 @@ class CPFValidator
                 return false;
             }
         }
-        return true;
+        return $cpf;
     }
 }
