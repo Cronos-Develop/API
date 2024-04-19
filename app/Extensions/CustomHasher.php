@@ -5,6 +5,17 @@ namespace App\Extensions;
 class CustomHasher
 {
     public static function hashId($key){
+        /**
+         * Id: O id do usuário será um hash gerado a partir de seu CPF.
+         * Primeiro, o CPF é dividido em 3 partes;
+         * Depois, o primeiro dígito das 3 partes recebe uma letra (maiúscula ou minúscula, aleatoriamente);
+         * O segundo dígito das 3 partes recebe um número convertido da tabela ASCII;
+         * Por fim, o terceiro dígito recebe o valor de algum caracter especial da lista definida na classe CustomHasher;
+         *
+         * @param string $key A chave que será utilizada para gerar o hash
+         * @return string $hash Retorna o hash gerado pela função
+         **/
+
         $caracteresEspeciais = array('.', ',', '/', '\\', '*', '&', '%', '$', '#', '@', '!');
 
         // Dividir o CPF em partes

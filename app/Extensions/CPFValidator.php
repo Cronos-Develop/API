@@ -4,8 +4,20 @@ namespace App\Extensions;
 
 class CPFValidator
 {
-    public static function validarCPF($cpf)
-    {
+    
+    public static function validarCPF($cpf){
+        /**
+         *
+         * A função validarCPF() verifica se um CPF é válido. 
+         * Verifica se o número de caracteres está correto;
+         * Verifia se os caracteres não são números iguais;
+         * Verifica se a lógica por trás dos números é aceita; 
+         *
+         * @param string $cpf Recebe-se o CPF que queremos validar
+         * @return string Retorna o próprio CPF caso seja válido
+         * @return boolean Retorna false caso o CPF seja inválido
+         **/
+
         // Remove todos os caracteres que não sejam números
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 

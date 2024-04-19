@@ -50,10 +50,6 @@ class UserController extends Controller
     }
 
     public function store(Request $request, string $userHash){
-        /*$password = $request->input('password');
-        $hashedPassword = CustomHasher::hashId($password);
-        print($hashedPassword);*/
-
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -70,8 +66,8 @@ class UserController extends Controller
 
         // O CPF é validado na classe CPFValidator
         $cpf = CPFValidator::validarCPF($request->input('cpf'));
-        if (!$cpf){
-            return response()->json(['errors' => 'O CPF informado não é valido'], 422);
+        if (!$cpf){  //Caso o $cpf seja inválido, $cpf=false, então a mensagem abaixo é retornada
+            return response()->json(['errors' => 'O CPF informado não é valido'], 422);  
         }
 
         // Caso o CPF seja válido, seu valor já foi atribuído à variável $cpf, então criamos o Id a partir do CPF
@@ -83,7 +79,7 @@ class UserController extends Controller
         $password = Hash::make($request->input('password'));  //A senha é armazenada com criptografia
 
         // Retorna uma resposta JSON com uma mensagem de sucesso e os dados validados, juntamente com o código de status 200 (OK)
-        return response()->json(['message' => 'Data validated successfully', 'Id' => $userId,'name' => $name, 'cpf' => $cpf,'email' => $email, 'password' => $password], 200);
+        return response()->json(['message' => 'Data validated successfully', 'userHash_URL' => $userHash,'Id' => $userId,'name' => $name, 'cpf' => $cpf,'email' => $email, 'password' => $password], 200);
     }
 
 }
