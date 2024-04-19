@@ -40,6 +40,52 @@ Esta é a API do aplicativo Cronos-Develop.
 ### Referências:
 ### Recomendações de Estudo:
 ## Documentação:
+
+### Recebendo dados via requisição GET
+Para receber dados via requisição GET, use a rota `/api/users/{email:password}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
+
+#### Exemplo Requisição GET:
+
+```
+GET /api/users/johndoe@example.com:password123
+```
+
+#### Resposta Esperada:
+
+```
+{
+  "id": 1
+}
+```
+
+A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
+
+### Enviando dados via requisição POST
+
+Para enviar dados via requisição POST, utilize a rota `/api/users`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
+
+#### Exemplo de corpo da solicitação POST:
+
+```
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "password": "password123"
+}
+```
+
+#### Resposta esperada:
+
+```
+{
+  "message": "Data validated successfully",
+  "name": "John Doe",
+  "email": "johndoe@example.com"
+}
+```
+
+A resposta será um objeto JSON contendo uma mensagem de sucesso junto com os dados enviados. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+
 ## Deploy:
 
 # Instruções de Execução em Máquina Local:
@@ -153,91 +199,3 @@ Aqui estamos deixando recomendações de Playlists no YouTube para que se possa 
 
 # Créditos:
 - Todos os créditos dos materiais aqui utilizados e referenciados são destinados aos criadores dos conteúdos.
-
-
-
-# Documentação da API de Usuários
-
-Esta é a documentação da API de Usuários, que permite realizar operações como receber dados via requisição GET e enviar dados via requisição POST.
-
-## Recebendo dados via requisição GET
-
-Para receber dados via requisição GET, use a rota `/api/users`, caso queira receber dados de todos os usuários cadastrados.
-
-### Exemplo Requisição GET:
-
-```
-GET /api/users
-```
-
-### Resposta Esperada:
-
-```
-  {
-    "id": 1,
-    "name": "Test User",
-    "email": "test@example.com",
-    "email_verified_at": "2024-04-12 23:37:46",
-    "password": "$2y$12$oGT66EktOvMsZIFhYv6bAOUiPEY/jYLCfSljHl1Dxd96H3/qKz67O",
-    "remember_token": "ZUdhvMSK8j",
-    "created_at": "2024-04-12 23:37:46",
-    "updated_at": "2024-04-12 23:37:46"
-  },
-  {
-    "id": 2,
-    "name": "Marcos Henderson",
-    "email": "marco@gmail.com",
-    "email_verified_at": "2024-04-13 17:43:17",
-    "password": "$2y$12$.7f3/4Imc3imC1S9rjMzpuXPek5a2vhH87BOyRRbRfq9mniEcJLZ.",
-    "remember_token": "8wFx1tvyqJ",
-    "created_at": "2024-04-13 17:43:18",
-    "updated_at": "2024-04-13 17:43:18"
-  }
-```
-
-A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
-
-
-Para receber dados via requisição GET, use a rota `/api/users/{email:password}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
-
-### Exemplo Requisição GET:
-
-```
-GET /api/users/johndoe@example.com:password123
-```
-
-### Resposta Esperada:
-
-```
-{
-  "id": 1
-}
-```
-
-A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
-
-## Enviando dados via requisição POST
-
-Para enviar dados via requisição POST, utilize a rota `/api/users`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
-
-### Exemplo de corpo da solicitação POST:
-
-```
-{
-  "name": "John Doe",
-  "email": "johndoe@example.com",
-  "password": "password123"
-}
-```
-
-### Resposta esperada:
-
-```
-{
-  "message": "Data validated successfully",
-  "name": "John Doe",
-  "email": "johndoe@example.com"
-}
-```
-
-A resposta será um objeto JSON contendo uma mensagem de sucesso junto com os dados enviados. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
