@@ -42,7 +42,8 @@ Esta é a API do aplicativo Cronos-Develop.
 ## Documentação:
 
 ### Recebendo dados via requisição GET
-Para receber dados via requisição GET, use a rota `/api/users/{email:password}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
+Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
+O `hash` recebido após o email e senha enviados pela URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
 
 #### Exemplo Requisição GET:
 
@@ -62,15 +63,18 @@ A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuá
 
 ### Enviando dados via requisição POST
 
-Para enviar dados via requisição POST, utilize a rota `/api/users`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
+Para enviar dados via requisição POST, utilize a rota `/api/users/{hash}`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
+O `hash` recebido após `/users` é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação.
 
 #### Exemplo de corpo da solicitação POST:
 
 ```
+http://127.0.0.1:8000/api/users/H50$du*e2
 {
-  "name": "John Doe",
-  "email": "johndoe@example.com",
-  "password": "password123"
+    "name": "João Caramelo Bittencourt Sucessada",
+    "cpf": "139.159.846-63",
+	"email": "joao.bittencourt@protonmail.com.br",
+	"password": "password123"
 }
 ```
 
@@ -78,13 +82,19 @@ Para enviar dados via requisição POST, utilize a rota `/api/users`. Envie os d
 
 ```
 {
-  "message": "Data validated successfully",
-  "name": "John Doe",
-  "email": "johndoe@example.com"
+	"message": "Data validated successfully",
+	"userHash_URL": "H50$du*e2",
+	"Id": "B51@B53@i52%G51.",
+	"name": "João Caramelo Bittencourt Sucessada",
+	"cpf": "13915984663",
+	"email": "joao.bittencourt@protonmail.com.br",
+	"password": "$2y$12$KB7jqkiC3FsKDFmva9zSEOciJhcUxYm8NssypyRSc6oL0dq9fTGZa"
 }
 ```
 
 A resposta será um objeto JSON contendo uma mensagem de sucesso junto com os dados enviados. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+
+### 
 
 ## Deploy:
 
