@@ -20,7 +20,7 @@ Route::group([], function() {
     // Define um grupo de rotas para o recurso 'users'
 
     // Define uma rota GET para listar todos os usuários
-    Route::get('/', [UserController::class, 'index']); 
+    Route::get('/users/{hash}', [UserController::class, 'index']); 
 
     // Define uma rota GET para exibir um usuário específico
     Route::get('/users/{user}/{hash}', [UserController::class, 'show']);

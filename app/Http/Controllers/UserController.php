@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Extensions\CPFValidator;
+use App\Extensions\CustomHasher;
 
 class UserController extends Controller
 {
@@ -48,9 +50,14 @@ class UserController extends Controller
     }
 
     public function store(Request $request, string $userHash){
+        /*$password = $request->input('password');
+        $hashedPassword = CustomHasher::hashId($password);
+        print($hashedPassword);*/
+
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'cpf' => 'required|min:11|max:11',
             'email' => 'required|email',
             'password' => 'required'
         ]);
@@ -61,13 +68,19 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        // O CPF é validado na classe CPFValidator
+        if (!CPFValidator::validarCPF($request->input('cpf'))){
+            return response()->json(['errors' => 'O CPF informado não é valido'], 422);
+        }
+
         // Se a validação passar, extrai os dados da solicitação
         $name = $request->input('name');
-        $email = $request->input('email');
-        $password = $request->input('password');
+        $cpf = $request->input('cpf');
+        $email = $request->input('email');  
+        $password = Hash::make($request->input('password'));  //A senha é armazenada com criptografia
 
         // Retorna uma resposta JSON com uma mensagem de sucesso e os dados validados, juntamente com o código de status 200 (OK)
-        return response()->json(['message' => 'Data validated successfully', 'name' => $name, 'email' => $email], 200);
+        return response()->json(['message' => 'Data validated successfully', 'name' => $name, 'cpf' => $cpf,'email' => $email, 'password' => $password], 200);
     }
 
 }
