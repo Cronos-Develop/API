@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Extensions;
+
+class CPFValidator
+{
+    
+    public static function validarCPF($cpf){
+        /**
+         *
+         * A função validarCPF() verifica se um CPF é válido. 
+         * Verifica se o número de caracteres está correto;
+         * Verifia se os caracteres não são números iguais;
+         * Verifica se a lógica por trás dos números é aceita; 
+         *
+         * @param string $cpf Recebe-se o CPF que queremos validar
+         * @return string Retorna o próprio CPF caso seja válido
+         * @return boolean Retorna false caso o CPF seja inválido
+         **/
+
+        // Remove todos os caracteres que não sejam números
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+
+        // Verifica se o CPF tem 11 dígitos
+        if (strlen($cpf) != 11) {
+            return false;
+        }
+
+        // Verifica se todos os dígitos são iguais
+        if (preg_match('/(\d)\1{10}/', $cpf)) {
+            return false;
+        }
+
+        // Validação do CPF
+        for ($i = 9; $i < 11; $i++) {
+            for ($j = 0, $soma = 0; $j < $i; $j++) {
+                $soma += $cpf[$j] * (($i + 1) - $j);
+            }
+            $resto = $soma % 11;
+            if ($resto < 2) {
+                $digito = 0;
+            } else {
+                $digito = 11 - $resto;
+            }
+            if ($digito != $cpf[$i]) {
+                return false;
+            }
+        }
+        return $cpf;
+    }
+}
