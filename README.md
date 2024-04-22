@@ -40,6 +40,61 @@ Esta é a API do aplicativo Cronos-Develop.
 ### Referências:
 ### Recomendações de Estudo:
 ## Documentação:
+
+### Recebendo dados via requisição GET
+Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
+O `hash` recebido após o email e senha enviados pela URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
+
+#### Exemplo Requisição GET:
+
+```
+GET /api/users/johndoe@example.com:password123/G5*h2%L9@
+```
+
+#### Resposta Esperada:
+
+```
+{
+  "id": 1
+}
+```
+
+A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
+
+### Enviando dados via requisição POST
+
+Para enviar dados via requisição POST, utilize a rota `/api/users/{hash}`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
+O `hash` recebido após `/users` é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação.
+
+#### Exemplo de corpo da solicitação POST:
+
+```
+http://127.0.0.1:8000/api/users/H50$du*e2
+
+{
+    "name": "João Caramelo Bittencourt Sucessada",
+    "cpf": "139.159.846-63",
+	"email": "joao.bittencourt@protonmail.com.br",
+	"password": "password123"
+}
+```
+
+#### Resposta esperada:
+
+```
+{
+	"message": "Data validated successfully",
+	"userHash_URL": "H50$du*e2",
+	"Id": "B51@B53@i52%G51.",
+	"name": "João Caramelo Bittencourt Sucessada",
+	"cpf": "13915984663",
+	"email": "joao.bittencourt@protonmail.com.br",
+	"password": "$2y$12$KB7jqkiC3FsKDFmva9zSEOciJhcUxYm8NssypyRSc6oL0dq9fTGZa"
+}
+```
+
+A resposta será um objeto JSON contendo uma mensagem de sucesso junto com os dados enviados. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+
 ### Como criar banco de dados e popular:
 
 Uma vez que a conexão com o banco de dados estiver configurada, o primeiro comando a ser utilizado é:
