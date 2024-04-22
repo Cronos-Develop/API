@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Empresa;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,13 @@ class EmpresaFactory extends Factory
      */
     public function definition(): array
     {
+        $usr_id = Usuario::all()->random()->id;
         return [
-            //
+            'usuario_id' => $usr_id,
+            'usuario_parceiro_id' => Usuario::all()->except($usr_id)->random()->id,
+            'nome_da_empresa' => $this->faker->company(),
+            'nicho' => $this->faker->jobTitle(),
+            'resumo' => $this->faker->realText($maxNbChars = 200, $indexSize = 2)
         ];
     }
 }
