@@ -48,7 +48,7 @@ O `hash` recebido após o email e senha enviados pela URL é a identificação d
 #### Exemplo Requisição GET:
 
 ```
-GET /api/users/johndoe@example.com:password123
+GET /api/users/johndoe@example.com:password123/G5*h2%L9@
 ```
 
 #### Resposta Esperada:
@@ -70,6 +70,7 @@ O `hash` recebido após `/users` é a identificação do usuário que está loga
 
 ```
 http://127.0.0.1:8000/api/users/H50$du*e2
+
 {
     "name": "João Caramelo Bittencourt Sucessada",
     "cpf": "139.159.846-63",
