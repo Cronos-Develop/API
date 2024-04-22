@@ -40,6 +40,26 @@ Esta é a API do aplicativo Cronos-Develop.
 ### Referências:
 ### Recomendações de Estudo:
 ## Documentação:
+### Como criar banco de dados e popular:
+
+Uma vez que a conexão com o banco de dados estiver configurada, o primeiro comando a ser utilizado é:
+
+```
+php artisan migrate
+```
+Isso irá checar se as tabelas no banco de dados estão criadas, e se não estiverem, são automaticamente feitas de acordo com as migrates.
+As migrates podem ser vistas em database/migrations/.
+
+Depois disso, basta utilizar o seguinte comando:
+
+```
+php artisan db:seed
+```
+Isso ira popular o banco de dados de acordo com as factories em database/factories.
+
+Nota:
+Utilize `php artisan migrate --seed` para fazer os dois comandos ao mesmo tempo
+
 ## Deploy:
 
 # Instruções de Execução em Máquina Local:
