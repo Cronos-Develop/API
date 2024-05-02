@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Models\Usuario;
 use App\Extensions\CPFValidator;
 use App\Extensions\CustomHasher;
 
@@ -53,9 +54,15 @@ class UserController extends Controller
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'cpf' => 'required',
+            'cpf_cnpj' => 'required',
+            'senha' => 'required',
             'email' => 'required|email',
-            'password' => 'required'
+            'telefone' => 'required',
+            'endereco' => 'required',
+            'cep' => 'required',
+            'nascimento' => 'required',
+            'empresario' => 'required|numeric|between:0,1',
+            'nome_da_empresa' => 'nullable'
         ]);
 
         // Verifica se a validação falhou
@@ -65,21 +72,47 @@ class UserController extends Controller
         }
 
         // O CPF é validado na classe CPFValidator
-        $cpf = CPFValidator::validarCPF($request->input('cpf'));
+        $cpf = CPFValidator::validarCpfOuCnpj($request->input('cpf_cnpj'));
         if (!$cpf){  //Caso o $cpf seja inválido, $cpf=false, então a mensagem abaixo é retornada
-            return response()->json(['errors' => 'O CPF informado não é valido'], 422);  
+            return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);  
         }
 
-        // Caso o CPF seja válido, seu valor já foi atribuído à variável $cpf, então criamos o Id a partir do CPF
+        // Caso o CPF seja válido, seu valor é atribuído à variável $cpf, então criamos o Id a partir do CPF
+        $cpf = $request->input('cpf_cnpj');
         $userId = CustomHasher::hashId($cpf);
 
-        // Se a validação passar, extrai os dados da solicitação
-        $name = $request->input('name');
-        $email = $request->input('email');  
-        $password = Hash::make($request->input('password'));  //A senha é armazenada com criptografia
+        $created = Usuario::create([
+            'id' => $userId,
+            'name' => $request->input('name'),
+            'cpf_cnpj' => $request->input('cpf_cnpj'),
+            'senha' => Hash::make($request->input('senha')),
+            'email' => $request->input('email'),
+            'telefone' => $request->input('telefone'),
+            'endereco' => $request->input('endereco'),
+            'cep' => $request->input('cep'),
+            'nascimento' => $request->input('nascimento'),
+            'empresario' => $request->input('empresario'),
+            'nome_da_empresa' => $request->input('nome_da_empresa')
+        ]);
+        if ($created){
+            return response()->json(['success' => 'Usuário registrado com sucesso'], 200);
+        }
+        return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
+    }
 
-        // Retorna uma resposta JSON com uma mensagem de sucesso e os dados validados, juntamente com o código de status 200 (OK)
-        return response()->json(['message' => 'Data validated successfully', 'userHash_URL' => $userHash,'Id' => $userId,'name' => $name, 'cpf' => $cpf,'email' => $email, 'password' => $password], 200);
+    public function update(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'cpf_cnpj' => 'required',
+            'senha' => 'required',
+            'email' => 'required|email',
+            'telefone' => 'required',
+            'endereco' => 'required',
+            'cep' => 'required',
+            'nascimento' => 'required',
+            'empresario' => 'required|numeric|between:0,1',
+            'nome_da_empresa' => 'nullable'
+        ]);
     }
 
 }

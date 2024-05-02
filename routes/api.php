@@ -27,5 +27,7 @@ Route::group([], function() {
 
     // Define uma rota POST para criar um novo usuário
     Route::post('/users/{hash}', [UserController::class, 'store']);
+
+    Route::put('/users/{user}', [UserController::class, 'update']);
 });
 
