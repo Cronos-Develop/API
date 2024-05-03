@@ -12,7 +12,15 @@ use App\Extensions\CustomHasher;
 
 class UserController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request, string $userHash){
+        /**
+         * Armazena uma nova empresa com base nos dados fornecidos.
+         *
+         * @param  \Illuminate\Http\Request  $request  A requisição HTTP contendo o protocolo GET para receber dados de todos os usuários.
+         * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
+         * @return \Illuminate\Support\FacadesDB  Uma resposta DB Facades com todos os registros de empresas do banco de dados.
+        */
+
         // Retorna todos os registros da tabela 'users' do banco de dados usando o facade DB do Laravel
         // return DB::table('users')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
@@ -24,7 +32,7 @@ class UserController extends Controller
          * @param string $userData Uma string contendo o e-mail e a senha no formato email:senha.
          * @param string $userHash Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse Uma resposta JSON contendo o ID do usuário se a autenticação for bem-sucedida, ou um erro se o usuário não for encontrado ou a senha estiver incorreta.
-         */
+        */
 
         // Supondo que os dados (email e senha) venham no formato email:senha
         $userDataArray = explode(':', $userData);
@@ -65,7 +73,7 @@ class UserController extends Controller
          * @param \Illuminate\Http\Request $request A requisição HTTP contendo os dados do usuário a serem armazenados.
          * @param string $userHash Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao registrar o usuário.
-         */
+        */
 
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
@@ -129,7 +137,7 @@ class UserController extends Controller
          * @param string $userId O ID do usuário a ser atualizado.
          * @param string $userHash Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao atualizar os dados do usuário.
-         */
+        */
 
         // Valida os dados recebidos na requisição usando o Validator do Laravel.
         $validator = Validator::make($request->all(), [
@@ -184,7 +192,7 @@ class UserController extends Controller
          * @param string $userId O ID do usuário a ser excluído.
          * @param string $userHash Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao excluir o usuário.
-         */
+        */
 
         // Exclui o usuário com o ID fornecido da tabela 'usuarios'.
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();

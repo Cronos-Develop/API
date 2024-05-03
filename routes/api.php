@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmpresaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,5 +34,24 @@ Route::group([], function() {
 
     // Rota DELETE para excluir um usuário específico.
     Route::delete('/users/{user}/{hash}', [UserController::class, 'destroy']);
+});
+
+Route::group([], function() {
+    // Define um grupo de rotas para o recurso 'users'
+
+    // Define uma rota GET para listar todas as empresas
+    Route::get('/empresas/{hash}', [EmpresaController::class, 'index']); 
+
+    // Define uma rota GET para exibir uma empresa específica
+    Route::get('/empresas/{empresa}/{hash}', [EmpresaController::class, 'show']);
+
+    // Define uma rota POST para criar uma nova empresa
+    Route::post('/empresas/{hash}', [EmpresaController::class, 'store']);
+
+    // Rota PUT para atualizar uma empresa específica
+    Route::put('/empresas/{empresa}/{hash}', [EmpresaController::class, 'update']);
+
+    // Rota DELETE para excluir uma empresa específica
+    Route::delete('/empresas/{empresa}/{hash}', [EmpresaController::class, 'destroy']);
 });
 
