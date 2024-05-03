@@ -123,7 +123,7 @@ class UserController extends Controller
         // Verifica se o usuário foi criado com sucesso.
         if ($created){
             // Se sim, retorna uma resposta JSON indicando sucesso (código 200).
-            return response()->json(['success' => 'Usuário registrado com sucesso'], 200);
+            return response()->json(['success' => 'Usuário registrado com sucesso'], 201);
         }
         // Caso contrário, retorna uma resposta JSON indicando um erro (código 422).
         return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 

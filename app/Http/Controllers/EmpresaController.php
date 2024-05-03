@@ -81,7 +81,7 @@ class EmpresaController extends Controller
 
         // Verifica se a empresa foi criada com sucesso e retorna uma resposta JSON adequada
         if ($created){
-            return response()->json(['success' => 'Empresa registrada com sucesso'], 200);
+            return response()->json(['success' => 'Empresa registrada com sucesso'], 201);
         }
         return response()->json(['errors' => 'Houve algum erro ao registrar empresa'], 422);  
     }

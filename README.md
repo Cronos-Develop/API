@@ -42,10 +42,11 @@ Esta é a API do aplicativo Cronos-Develop.
 ## Documentação:
 
 ### Recebendo dados via requisição GET
-Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}`, caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
-O `hash` recebido após o email e senha enviados pela URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
+Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
+Para receber dados via requisição GET, use a rota `/api/users/{empresa_id}/{hash}` (no caso de manipulação de empresas), caso queira uma empresa específica. Substitua `{empresa_id}` com os dados da empresa que deseja encontrar. Em caso verdadeiro, a resposta será o nome da empresa.
+O `hash` recebido no final da URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
 
-#### Exemplo Requisição GET:
+#### Exemplo Requisição GET para Usuários:
 
 ```
 GET /api/users/johndoe@example.com:password123/G5*h2%L9@
@@ -58,24 +59,45 @@ GET /api/users/johndoe@example.com:password123/G5*h2%L9@
   "id": 1
 }
 ```
-
 A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
+
+#### Exemplo Requisição GET para Empresas:
+
+```
+GET /api/empresas/7/G5*h2%L9@
+```
+
+#### Resposta Esperada:
+
+```
+{
+	"success": "Kling PLC"
+}
+```
+
+A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empresa não for encontrada, a API retornará um erro 404 em formato JSON.
 
 ### Enviando dados via requisição POST
 
 Para enviar dados via requisição POST, utilize a rota `/api/users/{hash}`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
 O `hash` recebido após `/users` é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação.
 
-#### Exemplo de corpo da solicitação POST:
+#### Exemplo de corpo da solicitação POST para Usuários:
 
 ```
 http://127.0.0.1:8000/api/users/H50$du*e2
 
 {
-    "name": "João Caramelo Bittencourt Sucessada",
-    "cpf": "139.159.846-63",
-	"email": "joao.bittencourt@protonmail.com.br",
-	"password": "password123"
+	"name": "João Caramelo Bittencourt Sucessada",
+	"cpf_cnpj": "348.844.070-24",
+	"senha": "password123",
+	"email": "joao.bittencourt@protonmail.com",
+    "telefone": "(63) 8147-0033",
+	"endereco": "204 sul, alameda 12, lote 20",
+	"cep": "77063-426",
+	"nascimento": "2004-03-07",
+	"empresario": 0,
+	"nome_da_empresa": null
 }
 ```
 
@@ -83,17 +105,34 @@ http://127.0.0.1:8000/api/users/H50$du*e2
 
 ```
 {
-	"message": "Data validated successfully",
-	"userHash_URL": "H50$du*e2",
-	"Id": "B51@B53@i52%G51.",
-	"name": "João Caramelo Bittencourt Sucessada",
-	"cpf": "13915984663",
-	"email": "joao.bittencourt@protonmail.com.br",
-	"password": "$2y$12$KB7jqkiC3FsKDFmva9zSEOciJhcUxYm8NssypyRSc6oL0dq9fTGZa"
+	"success": "Usuário registrado com sucesso"
+}
+```
+A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+
+#### Exemplo de corpo da solicitação POST para Empresas:
+
+```
+http://127.0.0.1:8000/api/empresas/H50$du*e2
+
+{
+	"usuario_id": "a49,a54=a46%f50.b53.",
+	"usuario_parceiro_id": "E51*A50=J46,f52.d51.",
+	"nome_da_empresa": "Tortas&Tortas",
+	"nicho": "Alimentação e Doceria",
+  "resumo": "Restaurante especializado em doces"
 }
 ```
 
-A resposta será um objeto JSON contendo uma mensagem de sucesso junto com os dados enviados. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+#### Resposta esperada:
+
+```
+{
+	"success": "Empresa registrada com sucesso"
+}
+```
+
+A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
 
 ### Como criar banco de dados e popular:
 
