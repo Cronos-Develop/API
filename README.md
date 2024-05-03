@@ -43,7 +43,9 @@ Esta é a API do aplicativo Cronos-Develop.
 
 ### Recebendo dados via requisição GET
 Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
-Para receber dados via requisição GET, use a rota `/api/users/{empresa_id}/{hash}` (no caso de manipulação de empresas), caso queira uma empresa específica. Substitua `{empresa_id}` com os dados da empresa que deseja encontrar. Em caso verdadeiro, a resposta será o nome da empresa.
+
+Para receber dados via requisição GET, use a rota `/api/empresas/{empresa_id}/{hash}` (no caso de manipulação de empresas), caso queira uma empresa específica. Substitua `{empresa_id}` com o id da empresa que deseja encontrar. Em caso verdadeiro, a resposta será o nome da empresa.
+
 O `hash` recebido no final da URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
 
 #### Exemplo Requisição GET para Usuários:
@@ -79,8 +81,11 @@ A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empr
 
 ### Enviando dados via requisição POST
 
-Para enviar dados via requisição POST, utilize a rota `/api/users/{hash}`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos name, email e password.
-O `hash` recebido após `/users` é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação.
+Para enviar dados via requisição POST, no caso dos usuários, utilize a rota `/api/users/{hash}`. Envie os dados do usuário no corpo da requisição no formato JSON, com os campos mostrados abaixo.
+
+Para enviar dados via requisição POST, no caso das empresas, utilize a rota `/api/empresas/{hash}`. Envie os dados da empresa no corpo da requisição no formato JSON, com os campos mostrados abaixo.
+
+O `hash` recebido no fim da URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação.
 
 #### Exemplo de corpo da solicitação POST para Usuários:
 
@@ -120,7 +125,7 @@ http://127.0.0.1:8000/api/empresas/H50$du*e2
 	"usuario_parceiro_id": "E51*A50=J46,f52.d51.",
 	"nome_da_empresa": "Tortas&Tortas",
 	"nicho": "Alimentação e Doceria",
-  "resumo": "Restaurante especializado em doces"
+    "resumo": "Restaurante especializado em doces"
 }
 ```
 
