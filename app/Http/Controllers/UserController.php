@@ -28,14 +28,14 @@ class UserController extends Controller
         // Fazer verificação, a partir do hash, se o usuário logado tem permissão para acessar esse conteúdo
 
         // Busca o usuário no banco de dados pelo e-mail fornecido
-        $user = DB::table('users')->where('email', $userEmail)->get()->first();
+        $user = DB::table('usuarios')->where('email', $userEmail)->get()->first();
         if (!$user){
             // Se o usuário não for encontrado, retorna um erro 404
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
         // Obtém a senha criptografada do usuário do banco de dados
-        $hashedPassword = $user->password;
+        $hashedPassword = $user->senha;
 
         // Verifica se a senha fornecida corresponde à senha criptografada
         $correctPassword = Hash::check($password, $hashedPassword);
@@ -100,7 +100,7 @@ class UserController extends Controller
         return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
     }
 
-    public function update(Request $request){
+    public function update(Request $request, string $userId,string $userHash){
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'cpf_cnpj' => 'required',
@@ -113,6 +113,40 @@ class UserController extends Controller
             'empresario' => 'required|numeric|between:0,1',
             'nome_da_empresa' => 'nullable'
         ]);
+
+        if ($validator->fails()){
+            // Retorna uma resposta JSON com os erros de validação e o código de status 422 (Unprocessable Entity)
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $validated = $validator->validated();
+
+        $updated = Usuario::find($userId)->update([
+            'name' => $validated['name'],
+            'cpf_cnpj' => $validated['cpf_cnpj'],
+            'senha' => Hash::make($validated['senha']),
+            'email' => $validated['email'],
+            'telefone' => $validated['telefone'],
+            'endereco' => $validated['endereco'],
+            'cep' => $validated['cep'],
+            'nascimento' => $validated['nascimento'],
+            'empresario' => $validated['empresario'],
+            'nome_da_empresa' => $validated['nome_da_empresa']
+        ]);
+
+        if ($updated){
+            return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
+        }
+        return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+    }
+
+    public function destroy(string $userId, string $userHash){
+        $deleted = DB::table('usuarios')->where('id', $userId)->delete();
+
+        if ($deleted){
+            return response()->json(['success' => 'Usuário deletado com sucesso'], 200);
+        }
+        return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
     }
 
 }

@@ -16,7 +16,7 @@ class CustomHasher
          * @return string $hash Retorna o hash gerado pela função
          **/
 
-        $caracteresEspeciais = array('.', ',', '*', '&', '%', '$', '#', '@', '!');
+        $caracteresEspeciais = array('.', ',', '*', '&', '%', '$', '@', '!', '=', '+');
 
         // Dividir o CPF em partes
         $partes = str_split($key, 3);

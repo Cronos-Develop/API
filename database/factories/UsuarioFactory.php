@@ -22,9 +22,8 @@ class UsuarioFactory extends Factory
         $faker = fake('pt_BR');
         $empresario = $faker->boolean();
         $cpf_cnpj = $empresario ? $faker->cnpj() : $faker->cpf();
-        
+
         return [
-            'cpf_cnpj' => $cpf_cnpj,
             'id' => CustomHasher::hashId($cpf_cnpj),
             'name' => $faker->name(),
             'email' => $faker->unique()->safeEmail(),
@@ -33,6 +32,7 @@ class UsuarioFactory extends Factory
             'endereco' => $faker->address(),
             'cep' => $faker->numerify('######-###'),
             'nascimento' => $faker->date(),
+            'cpf_cnpj' => $cpf_cnpj,
             'empresario' => $empresario,
             'nome_da_empresa' => $empresario ? $faker->company() : NULL
         ];
