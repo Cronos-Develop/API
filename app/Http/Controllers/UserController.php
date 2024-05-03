@@ -18,6 +18,14 @@ class UserController extends Controller
     }
 
     public function show(string $userData, string $userHash){
+        /**
+         * Mostra o ID do usuário com base nos dados fornecidos.
+         *
+         * @param string $userData Uma string contendo o e-mail e a senha no formato email:senha.
+         * @param string $userHash Um hash usado para verificar as permissões do usuário.
+         * @return \Illuminate\Http\JsonResponse Uma resposta JSON contendo o ID do usuário se a autenticação for bem-sucedida, ou um erro se o usuário não for encontrado ou a senha estiver incorreta.
+         */
+
         // Supondo que os dados (email e senha) venham no formato email:senha
         $userDataArray = explode(':', $userData);
 
@@ -51,6 +59,14 @@ class UserController extends Controller
     }
 
     public function store(Request $request, string $userHash){
+        /**
+         * Armazena um novo usuário com base nos dados fornecidos.
+         *
+         * @param \Illuminate\Http\Request $request A requisição HTTP contendo os dados do usuário a serem armazenados.
+         * @param string $userHash Um hash usado para verificar as permissões do usuário.
+         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao registrar o usuário.
+         */
+
         // Valida os dados da solicitação usando o Validator do Laravel
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -81,11 +97,12 @@ class UserController extends Controller
         $cpf = $request->input('cpf_cnpj');
         $userId = CustomHasher::hashId($cpf);
 
+        // Cria um novo registro de usuário usando o método estático 'create' do modelo Usuario.
         $created = Usuario::create([
             'id' => $userId,
             'name' => $request->input('name'),
             'cpf_cnpj' => $request->input('cpf_cnpj'),
-            'senha' => Hash::make($request->input('senha')),
+            'senha' => Hash::make($request->input('senha')),  // Define a senha criptografada do usuário
             'email' => $request->input('email'),
             'telefone' => $request->input('telefone'),
             'endereco' => $request->input('endereco'),
@@ -94,13 +111,27 @@ class UserController extends Controller
             'empresario' => $request->input('empresario'),
             'nome_da_empresa' => $request->input('nome_da_empresa')
         ]);
+
+        // Verifica se o usuário foi criado com sucesso.
         if ($created){
+            // Se sim, retorna uma resposta JSON indicando sucesso (código 200).
             return response()->json(['success' => 'Usuário registrado com sucesso'], 200);
         }
+        // Caso contrário, retorna uma resposta JSON indicando um erro (código 422).
         return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
     }
 
     public function update(Request $request, string $userId,string $userHash){
+        /**
+         * Atualiza os dados de um usuário existente com base nos dados fornecidos.
+         *
+         * @param \Illuminate\Http\Request $request A requisição HTTP contendo os dados do usuário a serem atualizados.
+         * @param string $userId O ID do usuário a ser atualizado.
+         * @param string $userHash Um hash usado para verificar as permissões do usuário.
+         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao atualizar os dados do usuário.
+         */
+
+        // Valida os dados recebidos na requisição usando o Validator do Laravel.
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'cpf_cnpj' => 'required',
@@ -114,13 +145,16 @@ class UserController extends Controller
             'nome_da_empresa' => 'nullable'
         ]);
 
+        // Verifica se houve falha na validação.
         if ($validator->fails()){
             // Retorna uma resposta JSON com os erros de validação e o código de status 422 (Unprocessable Entity)
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        // Recupera apenas os dados validados pela validação.
         $validated = $validator->validated();
 
+        // Busca e atualiza os dados do usuário com o ID fornecido.
         $updated = Usuario::find($userId)->update([
             'name' => $validated['name'],
             'cpf_cnpj' => $validated['cpf_cnpj'],
@@ -134,18 +168,33 @@ class UserController extends Controller
             'nome_da_empresa' => $validated['nome_da_empresa']
         ]);
 
+        // Verifica se a atualização foi bem-sucedida.
         if ($updated){
+            // Retorna uma resposta JSON indicando sucesso (código 200).
             return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
         }
+        // Retorna uma resposta JSON indicando um erro (código 400) caso a atualização falhe.
         return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
     }
 
     public function destroy(string $userId, string $userHash){
+        /**
+         * Exclui um usuário existente com base no ID fornecido.
+         *
+         * @param string $userId O ID do usuário a ser excluído.
+         * @param string $userHash Um hash usado para verificar as permissões do usuário.
+         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao excluir o usuário.
+         */
+
+        // Exclui o usuário com o ID fornecido da tabela 'usuarios'.
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();
 
+        // Verifica se o usuário foi excluído com sucesso.
         if ($deleted){
+            // Retorna uma resposta JSON indicando sucesso (código 200).
             return response()->json(['success' => 'Usuário deletado com sucesso'], 200);
         }
+        // Retorna uma resposta JSON indicando um erro (código 400) caso a exclusão falhe.
         return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
     }
 

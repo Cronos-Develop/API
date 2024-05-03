@@ -28,8 +28,10 @@ Route::group([], function() {
     // Define uma rota POST para criar um novo usuário
     Route::post('/users/{hash}', [UserController::class, 'store']);
 
+    // Rota PUT para atualizar um usuário específico.
     Route::put('/users/{user}/{hash}', [UserController::class, 'update']);
 
+    // Rota DELETE para excluir um usuário específico.
     Route::delete('/users/{user}/{hash}', [UserController::class, 'destroy']);
 });
 
