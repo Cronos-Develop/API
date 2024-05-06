@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Extensions\CustomHasher;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -20,7 +21,10 @@ class UsuarioFactory extends Factory
     {
         $faker = fake('pt_BR');
         $empresario = $faker->boolean();
+        $cpf_cnpj = $empresario ? $faker->cnpj() : $faker->cpf();
+
         return [
+            'id' => CustomHasher::hashId($cpf_cnpj),
             'name' => $faker->name(),
             'email' => $faker->unique()->safeEmail(),
             'telefone' => $faker->phoneNumber(),
@@ -28,8 +32,8 @@ class UsuarioFactory extends Factory
             'endereco' => $faker->address(),
             'cep' => $faker->numerify('######-###'),
             'nascimento' => $faker->date(),
+            'cpf_cnpj' => $cpf_cnpj,
             'empresario' => $empresario,
-            'cpf_cnpj' => $empresario ? $faker->cnpj() : $faker->cpf(),
             'nome_da_empresa' => $empresario ? $faker->company() : NULL
         ];
     }

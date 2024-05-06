@@ -10,6 +10,23 @@ class Usuario extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'id',
+        'name',
+        'cpf_cnpj',
+        'senha',
+        'email',
+        'telefone',
+        'endereco',
+        'cep',
+        'nascimento',
+        'empresario',
+        'nome_da_empresa'
+    ];
+
     public function empresas() : HasMany {
         return $this->hasMany(Empresa::class);
     }

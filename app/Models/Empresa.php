@@ -10,6 +10,14 @@ class Empresa extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'usuario_id',
+        'usuario_parceiro_id',
+        'nome_da_empresa',
+        'nicho',
+        'resumo'
+    ];
+
     public function usuarios() : BelongsTo {
         return $this->belongsTo(Usuario::class);
     }
