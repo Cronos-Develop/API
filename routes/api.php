@@ -20,7 +20,7 @@ use App\Http\Controllers\EmpresaController;
 Route::group([], function() {
     // Define um grupo de rotas para o recurso 'users'
 
-    // Define uma rota GET para listar todos os usuários
+    // Define uma rota GET para retornar dados do usuário a partir do id (hash)
     Route::get('/users/{hash}', [UsuarioController::class, 'index']); 
 
     // Define uma rota GET para exibir um usuário específico

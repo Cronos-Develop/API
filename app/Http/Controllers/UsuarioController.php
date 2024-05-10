@@ -22,7 +22,7 @@ class UsuarioController extends Controller
         */
 
         // Retorna todos os registros da tabela 'users' do banco de dados usando o facade DB do Laravel
-        // return DB::table('users')->get();  // Caso a função venha a ser usada novamente, basta descomentar
+        return DB::table('usuarios')->where('id', $userHash)->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
     public function show(string $userData, string $userHash){
