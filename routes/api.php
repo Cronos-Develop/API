@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\EmpresaController;
 
 /*
@@ -21,19 +21,19 @@ Route::group([], function() {
     // Define um grupo de rotas para o recurso 'users'
 
     // Define uma rota GET para listar todos os usuários
-    Route::get('/users/{hash}', [UserController::class, 'index']); 
+    Route::get('/users/{hash}', [UsuarioController::class, 'index']); 
 
     // Define uma rota GET para exibir um usuário específico
-    Route::get('/users/{user}/{hash}', [UserController::class, 'show']);
+    Route::get('/users/{user}/{hash}', [UsuarioController::class, 'show']);
 
     // Define uma rota POST para criar um novo usuário
-    Route::post('/users/{hash}', [UserController::class, 'store']);
+    Route::post('/users/{hash}', [UsuarioController::class, 'store']);
 
     // Rota PUT para atualizar um usuário específico.
-    Route::put('/users/{user}/{hash}', [UserController::class, 'update']);
+    Route::put('/users/{user}/{hash}', [UsuarioController::class, 'update']);
 
     // Rota DELETE para excluir um usuário específico.
-    Route::delete('/users/{user}/{hash}', [UserController::class, 'destroy']);
+    Route::delete('/users/{user}/{hash}', [UsuarioController::class, 'destroy']);
 });
 
 Route::group([], function() {
