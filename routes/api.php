@@ -26,6 +26,9 @@ Route::group([], function() {
     // Define uma rota GET para exibir um usuário específico
     Route::get('/users/{user}/{hash}', [UsuarioController::class, 'show']);
 
+    // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
+    Route::get('/recuperar/{cpf}', [UsuarioController::class, 'recover']);
+
     // Define uma rota POST para criar um novo usuário
     Route::post('/users/{hash}', [UsuarioController::class, 'store']);
 

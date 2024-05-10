@@ -38,13 +38,13 @@ class UsuarioController extends Controller
         $userDataArray = explode(':', $userData);
 
         // Obtém o e-mail e a senha da solicitação
-        $userEmail = $userDataArray[0];
+        $userCpf = $userDataArray[0];
         $password = $userDataArray[1];
 
         // Fazer verificação, a partir do hash, se o usuário logado tem permissão para acessar esse conteúdo
 
         // Busca o usuário no banco de dados pelo e-mail fornecido
-        $user = DB::table('usuarios')->where('email', $userEmail)->get()->first();
+        $user = DB::table('usuarios')->where('cpf_cnpj', $userCpf)->get()->first();
         if (!$user){
             // Se o usuário não for encontrado, retorna um erro 404
             return response()->json(['error' => 'Usuário não encontrado'], 404);
@@ -204,5 +204,16 @@ class UsuarioController extends Controller
         }
         // Retorna uma resposta JSON indicando um erro (código 400) caso a exclusão falhe.
         return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
+    }
+
+    public function recover(Request $request, string $cpfCnpj){
+        $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
+
+        $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->get('email');
+
+        if ($userEmail){
+            return response()->json($userEmail);
+        }
+        return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
     }
 }
