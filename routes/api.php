@@ -18,7 +18,7 @@ use App\Http\Controllers\EmpresaController;
 
 
 Route::group([], function() {
-    // Define um grupo de rotas para o recurso 'users'
+    // Define um grupo de rotas para o recurso 'Usuario'
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
     Route::get('/users/{hash}', [UsuarioController::class, 'index']); 
@@ -40,7 +40,7 @@ Route::group([], function() {
 });
 
 Route::group([], function() {
-    // Define um grupo de rotas para o recurso 'users'
+    // Define um grupo de rotas para o recurso 'Empresa'
 
     // Define uma rota GET para listar todas as empresas
     Route::get('/empresas/{hash}', [EmpresaController::class, 'index']); 

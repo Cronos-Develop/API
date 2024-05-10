@@ -185,7 +185,7 @@ class UsuarioController extends Controller
         return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
     }
 
-    public function destroy(string $userId, string $userHash){
+    public function destroy(string $identificacaoUsuario, string $userHash){
         /**
          * Exclui um usuário existente com base no ID fornecido.
          *
@@ -193,6 +193,18 @@ class UsuarioController extends Controller
          * @param string $userHash Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao excluir o usuário.
         */
+
+        $userId = DB::table('usuarios')->where('id', $identificacaoUsuario)->orWhere('cpf_cnpj', CPFValidator::formatarCpfOuCnpj($identificacaoUsuario))->pluck('id');
+
+        $possuiEmpresa = DB::table('empresas')->where('usuario_id', $userId)->exists();
+        if ($possuiEmpresa){
+            $deletedEmpresa = DB::table('empresas')->where('usuario_id', $userId)->delete();
+        }
+
+        $parceiroDeEmpresa = DB::table('empresas')->where('usuario_parceiro_id', $userId)->exists();
+        if ($parceiroDeEmpresa){
+            $removerParceiria = DB::table('empresas')->where('usuario_parceiro_id', $userId)->update(['usuario_parceiro_id' => NULL]);
+        }
 
         // Exclui o usuário com o ID fornecido da tabela 'usuarios'.
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();
