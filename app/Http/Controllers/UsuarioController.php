@@ -12,70 +12,75 @@ use App\Extensions\CustomHasher;
 
 class UsuarioController extends Controller
 {
-    public function index(Request $request, string $userHash){
-        /**
-         * Armazena uma nova empresa com base nos dados fornecidos.
-         *
-         * @param  \Illuminate\Http\Request  $request  A requisição HTTP contendo o protocolo GET para receber dados de todos os usuários.
-         * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
-         * @return \Illuminate\Support\FacadesDB  Uma resposta DB Facades com todos os registros de empresas do banco de dados.
-        */
+    /**
+     * Obtém informações de um usuário com base em seu ID.
+     *
+     * Esta função recebe um ID de usuário e retorna informações sobre o usuário
+     * da tabela 'usuarios' do banco de dados. O ID do usuário é fornecido como
+     * parte da URI da requisição e é usado como um parâmetro de consulta na
+     * busca na tabela de usuários. O resultado é retornado como um conjunto de
+     * dados JSON.
+     *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP recebida.
+     * @param  string  $userHash  O ID do usuário como uma string codificada.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com informações do usuário.
+     */
+    public function index(Request $request, string $userHash)
+    {
+        // Realiza uma consulta na tabela 'usuarios' para obter informações do usuário com base no ID fornecido
+        $userInfo = DB::table('usuarios')->where('id', $userHash)->get();
 
-        // Retorna todos os registros da tabela 'users' do banco de dados usando o facade DB do Laravel
-        return DB::table('usuarios')->where('id', $userHash)->get();  // Caso a função venha a ser usada novamente, basta descomentar
+        // Retorna os dados do usuário como uma resposta JSON
+        return response()->json($userInfo);
     }
 
-    public function show(string $userData, string $userHash){
-        /**
-         * Mostra o ID do usuário com base nos dados fornecidos.
-         *
-         * @param string $userData Uma string contendo o e-mail e a senha no formato email:senha.
-         * @param string $userHash Um hash usado para verificar as permissões do usuário.
-         * @return \Illuminate\Http\JsonResponse Uma resposta JSON contendo o ID do usuário se a autenticação for bem-sucedida, ou um erro se o usuário não for encontrado ou a senha estiver incorreta.
-        */
-
-        // Supondo que os dados (email e senha) venham no formato email:senha
+    /**
+     * Retorna o ID do usuário se as credenciais estiverem corretas.
+     *
+     * @param  string  $userData  Os dados do usuário no formato "cpf_cnpj:senha".
+     * @param  string  $userHash  O hash usado para verificar as permissões do usuário.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com o ID do usuário ou uma mensagem de erro.
+     */
+    public function show(string $userData, string $userHash)
+    {
+        // Divide os dados do usuário em CPF/CNPJ e senha
         $userDataArray = explode(':', $userData);
-
-        // Obtém o e-mail e a senha da solicitação
         $userCpf = $userDataArray[0];
         $password = $userDataArray[1];
 
-        // Fazer verificação, a partir do hash, se o usuário logado tem permissão para acessar esse conteúdo
-
-        // Busca o usuário no banco de dados pelo e-mail fornecido
+        // Busca o usuário no banco de dados pelo CPF/CNPJ fornecido
         $user = DB::table('usuarios')->where('cpf_cnpj', $userCpf)->get()->first();
+
+        // Verifica se o usuário foi encontrado
         if (!$user){
-            // Se o usuário não for encontrado, retorna um erro 404
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
-        // Obtém a senha criptografada do usuário do banco de dados
+        // Obtém a senha criptografada do usuário
         $hashedPassword = $user->senha;
 
-        // Verifica se a senha fornecida corresponde à senha criptografada
+        // Verifica se a senha fornecida é correta
         $correctPassword = Hash::check($password, $hashedPassword);
 
-        // Se o usuário for encontrado e a senha estiver correta, retorna o ID do usuário
+        // Verifica se o usuário e a senha estão corretos e retorna o ID do usuário
         if ($user && $correctPassword){
             return response()->json(['id' => $user->id]);
         }
         else {
-            // Se a senha estiver incorreta, retorna um erro 401
             return response()->json(['error' => 'Senha incorreta'], 401);
         }
     }
 
-    public function store(Request $request, string $userHash){
-        /**
-         * Armazena um novo usuário com base nos dados fornecidos.
-         *
-         * @param \Illuminate\Http\Request $request A requisição HTTP contendo os dados do usuário a serem armazenados.
-         * @param string $userHash Um hash usado para verificar as permissões do usuário.
-         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao registrar o usuário.
-        */
-
-        // Valida os dados da solicitação usando o Validator do Laravel
+    /**
+     * Registra um novo usuário.
+     *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP contendo os dados do usuário a ser registrado.
+     * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha ao registrar o usuário.
+     */
+    public function store(Request $request, string $userHash)
+    {
+        // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'cpf_cnpj' => 'required',
@@ -89,28 +94,28 @@ class UsuarioController extends Controller
             'nome_da_empresa' => 'nullable'
         ]);
 
-        // Verifica se a validação falhou
+        // Verifica se a validação falhou e retorna os erros
         if ($validator->fails()) {
-            // Retorna uma resposta JSON com os erros de validação e o código de status 422 (Unprocessable Entity)
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // O CPF é validado na classe CPFValidator
+        // Valida e formata o CPF/CNPJ
         $cpf = CPFValidator::validarCpfOuCnpj($request->input('cpf_cnpj'));
-        if (!$cpf){  //Caso o $cpf seja inválido, $cpf=false, então a mensagem abaixo é retornada
+        if (!$cpf) {  
+            // Se o CPF ou CNPJ for inválido, retorna uma mensagem de erro
             return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);  
         }
 
-        // Caso o CPF seja válido, seu valor é atribuído à variável $cpf, então criamos o Id a partir do CPF
+        // Gera um ID único para o usuário com base no CPF/CNPJ
         $cpf = $request->input('cpf_cnpj');
         $userId = CustomHasher::hashId($cpf);
 
-        // Cria um novo registro de usuário usando o método estático 'create' do modelo Usuario.
+        // Cria um novo usuário no banco de dados
         $created = Usuario::create([
             'id' => $userId,
             'name' => $request->input('name'),
             'cpf_cnpj' => $request->input('cpf_cnpj'),
-            'senha' => Hash::make($request->input('senha')),  // Define a senha criptografada do usuário
+            'senha' => Hash::make($request->input('senha')),  
             'email' => $request->input('email'),
             'telefone' => $request->input('telefone'),
             'endereco' => $request->input('endereco'),
@@ -120,112 +125,113 @@ class UsuarioController extends Controller
             'nome_da_empresa' => $request->input('nome_da_empresa')
         ]);
 
-        // Verifica se o usuário foi criado com sucesso.
-        if ($created){
-            // Se sim, retorna uma resposta JSON indicando sucesso (código 200).
+        // Retorna uma resposta JSON indicando sucesso ou falha ao registrar o usuário
+        if ($created) {
             return response()->json(['success' => 'Usuário registrado com sucesso'], 201);
         }
-        // Caso contrário, retorna uma resposta JSON indicando um erro (código 422).
         return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
     }
 
-    public function update(Request $request, string $userId,string $userHash){
-        /**
-         * Atualiza os dados de um usuário existente com base nos dados fornecidos.
-         *
-         * @param \Illuminate\Http\Request $request A requisição HTTP contendo os dados do usuário a serem atualizados.
-         * @param string $userId O ID do usuário a ser atualizado.
-         * @param string $userHash Um hash usado para verificar as permissões do usuário.
-         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao atualizar os dados do usuário.
-        */
+    /**
+     * Atualiza os dados de um usuário com base no ID fornecido.
+     *
+     * Esta função recebe uma requisição contendo um JSON com os dados a serem
+     * atualizados para um usuário específico. Os dados são atualizados na
+     * tabela 'usuarios' do banco de dados.
+     *
+     * @param  \Illuminate\Http\Request  $request   A requisição HTTP contendo o JSON com os dados a serem atualizados.
+     * @param  string                      $userId    O ID do usuário a ser atualizado.
+     * @param  string                      $userHash  Um hash usado para verificar as permissões do usuário.
+     * @return \Illuminate\Http\JsonResponse          Uma resposta JSON indicando sucesso ou falha na atualização dos dados.
+     */
+    public function update(Request $request, string $userId, string $userHash)
+    {
+        // Obtém o JSON da requisição
+        $json = $request->getContent();
 
-        // Valida os dados recebidos na requisição usando o Validator do Laravel.
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'cpf_cnpj' => 'required',
-            'senha' => 'required',
-            'email' => 'required|email',
-            'telefone' => 'required',
-            'endereco' => 'required',
-            'cep' => 'required',
-            'nascimento' => 'required',
-            'empresario' => 'required|numeric|between:0,1',
-            'nome_da_empresa' => 'nullable'
-        ]);
+        // Decodifica o JSON em um array associativo
+        $dados = json_decode($json, true);
 
-        // Verifica se houve falha na validação.
-        if ($validator->fails()){
-            // Retorna uma resposta JSON com os erros de validação e o código de status 422 (Unprocessable Entity)
-            return response()->json(['errors' => $validator->errors()], 422);
+        // Verifica se o JSON foi decodificado com sucesso
+        if ($dados === null) {
+            // Se houver algum erro na decodificação do JSON
+            return response()->json(['errors' => 'Erro ao decodificar o JSON'], 400);
         }
 
-        // Recupera apenas os dados validados pela validação.
-        $validated = $validator->validated();
+        // Itera sobre as chaves e valores do array associativo
+        foreach ($dados as $chave => $valor) {
+            // Atualiza os dados do usuário na tabela 'usuarios'
+            $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
 
-        // Busca e atualiza os dados do usuário com o ID fornecido.
-        $updated = Usuario::find($userId)->update([
-            'name' => $validated['name'],
-            'cpf_cnpj' => $validated['cpf_cnpj'],
-            'senha' => Hash::make($validated['senha']),
-            'email' => $validated['email'],
-            'telefone' => $validated['telefone'],
-            'endereco' => $validated['endereco'],
-            'cep' => $validated['cep'],
-            'nascimento' => $validated['nascimento'],
-            'empresario' => $validated['empresario'],
-            'nome_da_empresa' => $validated['nome_da_empresa']
-        ]);
-
-        // Verifica se a atualização foi bem-sucedida.
-        if ($updated){
-            // Retorna uma resposta JSON indicando sucesso (código 200).
-            return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
+            // Verifica se a atualização foi bem-sucedida
+            if (!$updated){
+                return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+            }
         }
-        // Retorna uma resposta JSON indicando um erro (código 400) caso a atualização falhe.
-        return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+
+        // Retorna uma resposta JSON indicando sucesso na atualização dos dados
+        return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
     }
 
-    public function destroy(string $identificacaoUsuario, string $userHash){
-        /**
-         * Exclui um usuário existente com base no ID fornecido.
-         *
-         * @param string $userId O ID do usuário a ser excluído.
-         * @param string $userHash Um hash usado para verificar as permissões do usuário.
-         * @return \Illuminate\Http\JsonResponse Uma resposta JSON indicando sucesso ou falha ao excluir o usuário.
-        */
+    /**
+     * Exclui um usuário e suas associações de empresas.
+     *
+     * @param  string  $identificacaoUsuario  O ID do usuário ou seu CPF/CNPJ.
+     * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando o resultado da operação.
+     */
+    public function destroy(string $identificacaoUsuario, string $userHash)
+    {
+        // Obtém o ID do usuário com base no ID ou CPF/CNPJ fornecido
+        $userId = DB::table('usuarios')
+            ->where('id', $identificacaoUsuario)
+            ->orWhere('cpf_cnpj', CPFValidator::formatarCpfOuCnpj($identificacaoUsuario))
+            ->pluck('id');
 
-        $userId = DB::table('usuarios')->where('id', $identificacaoUsuario)->orWhere('cpf_cnpj', CPFValidator::formatarCpfOuCnpj($identificacaoUsuario))->pluck('id');
-
+        // Verifica se o usuário possui empresas associadas e exclui essas empresas
         $possuiEmpresa = DB::table('empresas')->where('usuario_id', $userId)->exists();
         if ($possuiEmpresa){
             $deletedEmpresa = DB::table('empresas')->where('usuario_id', $userId)->delete();
         }
 
+        // Verifica se o usuário é parceiro de alguma empresa e remove essa associação
         $parceiroDeEmpresa = DB::table('empresas')->where('usuario_parceiro_id', $userId)->exists();
         if ($parceiroDeEmpresa){
             $removerParceiria = DB::table('empresas')->where('usuario_parceiro_id', $userId)->update(['usuario_parceiro_id' => NULL]);
         }
 
-        // Exclui o usuário com o ID fornecido da tabela 'usuarios'.
+        // Exclui o usuário da tabela 'usuarios'
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();
 
-        // Verifica se o usuário foi excluído com sucesso.
+        // Retorna uma resposta JSON indicando o resultado da operação
         if ($deleted){
-            // Retorna uma resposta JSON indicando sucesso (código 200).
             return response()->json(['success' => 'Usuário deletado com sucesso'], 200);
         }
-        // Retorna uma resposta JSON indicando um erro (código 400) caso a exclusão falhe.
         return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
     }
 
-    public function recover(Request $request, string $cpfCnpj){
+    /**
+     * Recupera o email do usuário com base no CPF ou CNPJ fornecido.
+     *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
+     * @param  string  $cpfCnpj  O CPF ou CNPJ do usuário a ser recuperado.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON contendo o email do usuário ou uma mensagem de erro.
+     */
+    public function recover(Request $request, string $cpfCnpj)
+    {
+        // Formata o CPF ou CNPJ
         $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
 
+        // Busca o email do usuário com base no CPF ou CNPJ
         $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->get('email');
 
-        if ($userEmail){
+        // Verifica se o email foi encontrado
+        if ($userEmail->isNotEmpty()) {
+            // Se o email foi encontrado, retorna o email em formato JSON
             return response()->json($userEmail);
         }
+
+        // Se o email não foi encontrado, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
     }
 }
