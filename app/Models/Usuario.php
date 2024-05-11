@@ -30,8 +30,4 @@ class Usuario extends Model
     public function empresas() : HasMany {
         return $this->hasMany(Empresa::class);
     }
-
-    public function FunctionName() : Returntype {
-        
-    }
 }

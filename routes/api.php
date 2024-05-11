@@ -43,7 +43,10 @@ Route::group([], function() {
     // Define um grupo de rotas para o recurso 'Empresa'
 
     // Define uma rota GET para listar todas as empresas
-    Route::get('/empresas/{hash}', [EmpresaController::class, 'index']); 
+    Route::get('/empresas/{hash}', [EmpresaController::class, 'index']);
+    
+    // Define uma rota GET para listar todas as empresas de um usuario
+    Route::get('/empresas/user/{hash}', [EmpresaController::class, 'userCompanies']);
 
     // Define uma rota GET para exibir uma empresa específica
     Route::get('/empresas/{empresa}/{hash}', [EmpresaController::class, 'show']);
