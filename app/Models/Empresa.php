@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Empresa extends Model
 {
@@ -12,7 +13,6 @@ class Empresa extends Model
 
     protected $fillable = [
         'usuario_id',
-        'usuario_parceiro_id',
         'nome_da_empresa',
         'nicho',
         'resumo'
@@ -20,5 +20,9 @@ class Empresa extends Model
 
     public function usuarios() : BelongsTo {
         return $this->belongsTo(Usuario::class);
+    }
+
+    function usuariosParceiros() : BelongsToMany {
+        return $this->belongsToMany(Usuario::class);
     }
 }

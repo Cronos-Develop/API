@@ -21,7 +21,7 @@ class EmpresaFactory extends Factory
         $usr_id = Usuario::all()->random()->id;
         return [
             'usuario_id' => $usr_id,
-            'usuario_parceiro_id' => Usuario::all()->except($usr_id)->random()->id,
+            // 'usuario_parceiro_id' => Usuario::all()->except($usr_id)->random()->id,
             'nome_da_empresa' => $this->faker->company(),
             'nicho' => $this->faker->jobTitle(),
             'resumo' => $this->faker->realText($maxNbChars = 200, $indexSize = 2)

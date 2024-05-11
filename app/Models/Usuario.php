@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Usuario extends Model
@@ -29,5 +30,9 @@ class Usuario extends Model
 
     public function empresas() : HasMany {
         return $this->hasMany(Empresa::class);
+    }
+
+    public function empresasParceiras() : BelongsToMany {
+        return $this->belongsToMany(Empresa::class);
     }
 }

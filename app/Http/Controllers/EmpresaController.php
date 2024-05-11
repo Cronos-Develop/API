@@ -19,19 +19,21 @@ class EmpresaController extends Controller
          */
 
         // Retorna todos os registros da tabela 'empresas' do banco de dados usando o facade DB do Laravel
-        //return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
+        return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function userCompanies(string $userHash)
+
+
+    public function userCompanies(string $hash)
     {
         /**
-         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $userHash do banco.
+         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash do banco.
          *
          * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
          * @return void
          */
 
-        return DB::table('empresas')->where('usuario_id', $userHash)->get();
+        return DB::table('empresas')->where('usuario_id', $hash)->get();
     }
 
     public function show(string $empresaId, string $userHash)
