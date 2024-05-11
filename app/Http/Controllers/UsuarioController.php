@@ -160,8 +160,18 @@ class UsuarioController extends Controller
 
         // Itera sobre as chaves e valores do array associativo
         foreach ($dados as $chave => $valor) {
-            // Atualiza os dados do usuário na tabela 'usuarios'
-            $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
+            // Se o valor a ser alterado for a senha, uma operação de criptografia deve ser feita
+            if ($chave == "senha"){
+                $novaSenha = Hash::make($valor);  // A nova senha é criptografada
+                // Atualiza os dados do usuário na tabela 'usuarios'
+                $updated = DB::table('usuarios')->where('id', $userId)->update(["senha" => $novaSenha]);
+                $valor = "";
+                $novaSenha = "";
+            }
+            else{
+                // Atualiza os dados do usuário na tabela 'usuarios'
+                $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
+            }
 
             // Verifica se a atualização foi bem-sucedida
             if (!$updated){
