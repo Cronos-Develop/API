@@ -17,53 +17,56 @@ use App\Http\Controllers\EmpresaController;
 */
 
 
-Route::group([], function() {
+Route::controller(UsuarioController::class)->prefix('users/')->group( function () {
     // Define um grupo de rotas para o recurso 'Usuario'
+    // Todas as rotas aqui tem o prefixo 'users/' adicionado antes de serem processadas
+    // As rotas autocamticamente chamam metodos na UsuarioController
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
-    Route::get('/users/{hash}', [UsuarioController::class, 'index']); 
+    Route::get('/{hash}', 'index');
 
     // Define uma rota GET para exibir um usuário específico
-    Route::get('/users/{user}/{hash}', [UsuarioController::class, 'show']);
+    Route::get('/{user}/{hash}', 'show');
 
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
-    Route::get('/recuperar/{cpf}', [UsuarioController::class, 'recover']);
+    Route::get('/recuperar/{cpf}', 'recover');
 
     // Define uma rota POST para criar um novo usuário
-    Route::post('/users/{hash}', [UsuarioController::class, 'store']);
+    Route::post('/{hash}', 'store');
 
     // Rota PUT para atualizar um usuário específico.
-    Route::put('/users/{user}/{hash}', [UsuarioController::class, 'update']);
+    Route::put('/{user}/{hash}', 'update');
 
     // Rota DELETE para excluir um usuário específico.
-    Route::delete('/users/{user}/{hash}', [UsuarioController::class, 'destroy']);
+    Route::delete('/{user}/{hash}', 'destroy');
 });
 
-Route::group([], function() {
+Route::controller(EmpresaController::class)->prefix('empresas/')->group(function () {
     // Define um grupo de rotas para o recurso 'Empresa'
+    // Todas as rotas aqui tem o prefixo 'empresas/' adicionado antes de serem processadas
+    // As rotas autocamticamente chamam metodos na EmpresaController
 
     // Define uma rota GET para listar todas as empresas
-    Route::get('/empresas/{hash}', [EmpresaController::class, 'index']);
-    
+    Route::get('{hash}', 'index');
+
     // Define uma rota GET para listar todas as empresas de um usuario
-    Route::get('/empresas/user/{hash}', [EmpresaController::class, 'userCompanies']);
+    Route::get('user/{hash}', 'userCompanies');
 
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
-    Route::get('/empresas/{empresa}/tarefas/{hash}', [EmpresaController::class, 'companieTasks']);
+    Route::get('{empresa}/tarefas/{hash}', 'companieTasks');
 
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
-    Route::get('/empresas/partner/{hash}', [EmpresaController::class, 'partnerCompanies']);
+    Route::get('partner/{hash}', 'partnerCompanies');
 
     // Define uma rota GET para exibir uma empresa específica
-    Route::get('/empresas/{empresa}/{hash}', [EmpresaController::class, 'show']);
+    Route::get('{empresa}/{hash}', 'show');
 
     // Define uma rota POST para criar uma nova empresa
-    Route::post('/empresas/{hash}', [EmpresaController::class, 'store']);
+    Route::post('{hash}', 'store');
 
     // Rota PUT para atualizar uma empresa específica
-    Route::put('/empresas/{empresa}/{hash}', [EmpresaController::class, 'update']);
+    Route::put('{empresa}/{hash}', 'update');
 
     // Rota DELETE para excluir uma empresa específica
-    Route::delete('/empresas/{empresa}/{hash}', [EmpresaController::class, 'destroy']);
+    Route::delete('{empresa}/{hash}', 'destroy');
 });
-
