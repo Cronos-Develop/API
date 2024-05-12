@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('t5w2hs', function (Blueprint $table) {
+        Schema::create('subtarefas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empresa_id')->references('id')->on('empresas');
-            $table->foreignId('pergunta_id')->references('id')->on('perguntas');
-            $table->string('resposta');
-            $table->string('tarefa');
+            $table->string('usuario_id');
+            $table->foreign('usuario_id')->references('id')->on('usuarios');
+            $table->foreignId('id_5w2h')->references('id')->on('5w2hs');
+            $table->string('subtarefa');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('t5w2hs');
+        Schema::dropIfExists('subtarefas');
     }
 };

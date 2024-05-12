@@ -35,4 +35,8 @@ class Usuario extends Model
     public function empresasParceiras() : BelongsToMany {
         return $this->belongsToMany(Empresa::class)->withTimestamps();
     }
+
+    function subtarefas() : HasMany {
+        return $this->hasMany(Subtarefa::class);
+    }
 }
