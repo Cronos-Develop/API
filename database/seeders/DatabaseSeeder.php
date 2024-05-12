@@ -15,7 +15,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         //User::factory(10)->create();
-        Usuario::factory(10)->create();
-        Empresa::factory(10)->create();
+        $usuarios = Usuario::factory(10)->create();
+        $empresas = Empresa::factory(10)->create();
+
+        // popula a tabela de junção 'empresa_usuario'
+        $usuarios->each(function (Usuario $usr) use ($empresas) {
+            $usr->empresasParceiras()->syncWithoutDetaching($empresas->random()->id);
+        });
+
+        $empresas->each(function (Empresa $emp) use ($usuarios) {
+            $emp->usuariosParceiros()->syncWithoutDetaching($usuarios->random()->id);
+        });
     }
 }

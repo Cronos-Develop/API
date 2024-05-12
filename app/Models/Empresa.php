@@ -23,6 +23,6 @@ class Empresa extends Model
     }
 
     function usuariosParceiros() : BelongsToMany {
-        return $this->belongsToMany(Usuario::class);
+        return $this->belongsToMany(Usuario::class)->withTimestamps();
     }
 }
