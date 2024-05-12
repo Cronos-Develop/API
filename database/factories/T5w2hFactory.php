@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pergunta>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\T5w2h>
  */
-class PerguntaFactory extends Factory
+class T5w2hFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,9 +16,8 @@ class PerguntaFactory extends Factory
      */
     public function definition(): array
     {
-
         return [
-            'pergunta' => 'pergunta'
+            //
         ];
     }
 }
