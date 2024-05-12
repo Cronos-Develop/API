@@ -11,10 +11,10 @@ class Subtarefa extends Model
     use HasFactory;
 
     function usuario() : BelongsTo {
-        return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(Usuario::class)->withDefault();
     }
 
     function t5w2h() : BelongsTo {
-        return $this->belongsTo(T5w2h::class);
+        return $this->belongsTo(T5w2h::class, '5w2h_id')->withDefault();
     }
 }

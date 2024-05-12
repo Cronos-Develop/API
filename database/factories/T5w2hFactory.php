@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Empresa;
+use App\Models\Pergunta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class T5w2hFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'empresa_id' => Empresa::all()->random()->id,
+            'pergunta_id' => Pergunta::all()->random()->id,
+            'resposta' => fake()->sentence(),
+            'tarefa' => fake()->sentence()
         ];
     }
 }

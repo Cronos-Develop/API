@@ -31,7 +31,7 @@ class EmpresaController extends Controller
          * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash do banco.
          *
          * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
-         * @return void
+         * @return \Illuminate\Support\Collection
          */
 
         return DB::table('empresas')->where('usuario_id', $hash)->get();

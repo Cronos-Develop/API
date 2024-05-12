@@ -13,18 +13,18 @@ class T5w2h extends Model
     use HasFactory;
 
     function pergunta() : BelongsTo {
-        return $this->belongsTo(Pergunta::class);
+        return $this->belongsTo(Pergunta::class)->withDefault();
     }
 
     function empresa() : BelongsTo {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(Empresa::class)->withDefault();
     }
 
     function subtarefas() : HasMany {
-        return $this->hasMany(Subtarefa::class);
+        return $this->hasMany(Subtarefa::class, '5w2h_id');
     }
 
     function gut() : HasOne {
-        return $this->hasOne(T5w2h::class);
+        return $this->hasOne(T5w2h::class, '5w2h_id');
     }
 }

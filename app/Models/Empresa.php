@@ -19,7 +19,7 @@ class Empresa extends Model
     ];
 
     public function usuario() : BelongsTo {
-        return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(Usuario::class)->withDefault();
     }
 
     function usuariosParceiros() : BelongsToMany {

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\T5w2h;
+use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class SubtarefaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'usuario_id' => Usuario::all()->random()->id,
+            '5w2h_id' => T5w2h::all()->random()->id,
+            'subtarefa' => fake()->sentence()
         ];
     }
 }

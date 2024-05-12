@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('guts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('5w2h_id')->references('id')->on('5w2hs');
+            $table->foreignId('5w2h_id')->references('id')->on('t5w2hs');
             $table->integer('gravidade');
             $table->integer('urgencia');
             $table->integer('tendencia');

@@ -28,15 +28,19 @@ class Usuario extends Model
         'nome_da_empresa'
     ];
 
-    public function empresas() : HasMany {
+    public function empresas(): HasMany
+    {
+        // Empresas pertencentes ao usuario.
         return $this->hasMany(Empresa::class);
     }
 
-    public function empresasParceiras() : BelongsToMany {
+    public function empresasParceiras(): BelongsToMany
+    {
         return $this->belongsToMany(Empresa::class)->withTimestamps();
     }
 
-    function subtarefas() : HasMany {
+    function subtarefas(): HasMany
+    {
         return $this->hasMany(Subtarefa::class);
     }
 }
