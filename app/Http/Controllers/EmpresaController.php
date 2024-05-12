@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
+use App\Models\T5w2h;
 use App\Models\Usuario;
 
 class EmpresaController extends Controller
@@ -37,7 +38,8 @@ class EmpresaController extends Controller
         return DB::table('empresas')->where('usuario_id', $hash)->get();
     }
 
-    function partnerCompanies(Usuario $hash) { //Laravel automaticamente converte a chave primaria recebida no objeto Usuario correspondente.
+    function partnerCompanies(Usuario $hash)
+    { //Laravel automaticamente converte a chave primaria recebida no objeto Usuario correspondente.
         /**
          * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
          * Devolve um erro 404 ao cliente se o usuario não for encontrado.
@@ -46,6 +48,16 @@ class EmpresaController extends Controller
          */
         $empresasId = $hash->empresasParceiras()->allRelatedIds();
         return Empresa::all()->whereIn('id', $empresasId);
+    }
+
+    function companieTasks(Empresa $empresa, string $hash)
+    {
+
+        //retornar tarefas e subtarefas da empresa recebida como parametro.
+
+        return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
+            ->whereBelongsTo($empresa)
+            ->get(['id', 'empresa_id', 'tarefa']);
     }
 
     public function show(string $empresaId, string $userHash)

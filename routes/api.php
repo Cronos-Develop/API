@@ -48,6 +48,9 @@ Route::group([], function() {
     // Define uma rota GET para listar todas as empresas de um usuario
     Route::get('/empresas/user/{hash}', [EmpresaController::class, 'userCompanies']);
 
+    // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
+    Route::get('/empresas/{empresa}/tarefas/{hash}', [EmpresaController::class, 'companieTasks']);
+
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
     Route::get('/empresas/partner/{hash}', [EmpresaController::class, 'partnerCompanies']);
 
