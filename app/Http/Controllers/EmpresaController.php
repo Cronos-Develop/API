@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
+use App\Models\Usuario;
 
 class EmpresaController extends Controller
 {
@@ -34,6 +35,17 @@ class EmpresaController extends Controller
          */
 
         return DB::table('empresas')->where('usuario_id', $hash)->get();
+    }
+
+    function partnerCompanies(Usuario $hash) { //Laravel automaticamente converte a chave primaria recebida no objeto Usuario correspondente.
+        /**
+         * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
+         * Devolve um erro 404 ao cliente se o usuario não for encontrado.
+         * 
+         * @param  \App\Models\Usuario  $hash parceiro das empresas.
+         */
+        $empresasId = $hash->empresasParceiras()->allRelatedIds();
+        return Empresa::all()->whereIn('id', $empresasId);
     }
 
     public function show(string $empresaId, string $userHash)
