@@ -22,7 +22,6 @@ class EmpresaFactory extends Factory
         $fake = fake('pt_br');
         return [
             'usuario_id' => $usr_id,
-            // 'usuario_parceiro_id' => Usuario::all()->except($usr_id)->random()->id,
             'nome_da_empresa' => $fake->company(),
             'nicho' => $fake->jobTitle(),
             'resumo' => $fake->realText($maxNbChars = 200, $indexSize = 2)
