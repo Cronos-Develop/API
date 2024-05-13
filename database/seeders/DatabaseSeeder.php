@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         });
 
         //Define as perguntas na tabela 'perguntas'
-        $perguntas = Pergunta::factory()->count(7)->sequence(
+        Pergunta::factory()->count(7)->sequence(
             ['pergunta' => 'O quê'],
             ['pergunta' => 'Por que'],
             ['pergunta' => 'Quem'],
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             ['pergunta' => 'Onde']
         )->create();
 
-        // T5w2h::factory(15);
+        // Cria 7 registros na tabela 5w2h para cada empressa representando as 7 perguntas
         $empresas->each(function (Empresa $emp) {
             $emp->t5w2hs()->saveMany(
                 T5w2h::factory(7)->sequence(
