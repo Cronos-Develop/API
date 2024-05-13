@@ -26,16 +26,13 @@ class EmpresaController extends Controller
 
 
 
-    public function userCompanies(string $hash)
+    public function userCompanies(Usuario $hash) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
     {
         /**
-         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash do banco.
-         *
-         * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
-         * @return \Illuminate\Support\Collection
+         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash.
          */
 
-        return DB::table('empresas')->where('usuario_id', $hash)->get();
+        return $hash->empresas;
     }
 
     function partnerCompanies(Usuario $hash)
@@ -46,8 +43,7 @@ class EmpresaController extends Controller
          * 
          * @param  \App\Models\Usuario  $hash parceiro das empresas.
          */
-        $empresasId = $hash->empresasParceiras()->allRelatedIds();
-        return Empresa::all()->whereIn('id', $empresasId);
+        return $hash->empresasParceiras;
     }
 
     function companieTasks(Empresa $empresa, string $hash)

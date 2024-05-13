@@ -139,6 +139,181 @@ http://127.0.0.1:8000/api/empresas/H50$du*e2
 
 A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
 
+### Retornando lista de empresas a partir da id do usuário
+Para receber a lista de empresas a partir do id do usuario faça uma requisição GET na rota `api/empresas/user/{hash}`, onde `{hash}` é o id do usuario. Um erro 404 é retornado se o usuario não for encontrado ou um corpo vazio se o usuario não tiver empresas.
+
+Exemplo:
+
+```
+GET /api/empresas/user/h57.a55.d46.J51.f49.
+
+
+[
+  {
+    "id": 3,
+    "usuario_id": "h57.a55.d46.J51.f49.",
+    "nome_da_empresa": "Vasques e Correia",
+    "nicho": "fugit",
+    "resumo": "Está entendido: no primeiro ou no segundo mez do anno que vem, irás para o outro, até que exclamei: --Prompto! --Estará bom? --Veja no espelho. Em vez de ir ao espelho, que pensaes que fez Capitú?.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z"
+  },
+  {
+    "id": 4,
+    "usuario_id": "h57.a55.d46.J51.f49.",
+    "nome_da_empresa": "Domingues Comercial Ltda.",
+    "nicho": "perspiciatis",
+    "resumo": "São assim de cigana obliqua e dissimulada. Pois, apesar delles, poderia passar, se não fosse a vaidade sobrevivente; mas o momento da saida. Peguei da minha amiga; pensei nisso, cheguei a tental-o.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z"
+  }
+]
+```
+
+### Retornando lista de empresas a partir do id do usuário parceiro
+Para retornar todas as empresas que tem parceiria com um usuario, faça um requisição GET na rota `api/empresas/partner/{hash}`, onde `hash` é o id do usuario parceiro. Retorna um erro 404 se o usuario não for encontrado.
+
+Exemplo:
+
+```
+GET api/empresas/partner/{hash}
+
+[
+  {
+    "id": 1,
+    "usuario_id": "G53.A51=A53@e47.A48,A54+",
+    "nome_da_empresa": "Vieira-da Silva",
+    "nicho": "qui",
+    "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z",
+    "pivot": {...}
+  },
+  {
+    "id": 2,
+    "usuario_id": "d55.A53%H46*e53.d52.",
+    "nome_da_empresa": "Solano Comercial Ltda.",
+    "nicho": "eum",
+    "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z",
+    "pivot": {...}
+  }
+]
+```
+
+### Retornando lista de tarefas e subtarefas a partir do id da empresa
+Para fazer essa listagem, faça uma requisição GET na rota `api/empresas/{empresa}/tarefas/{hash}`, onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario. Um erro 404 será retornado se a empresa ou usuario não forem encontrados.
+
+Exemplo:
+
+```
+GET /api/empresas/1/tarefas/h57.a55.d46.J51.f49.
+
+[
+  {
+    "id": 1,
+    "empresa_id": 1,
+    "tarefa": "Omnis autem laudantium quis maxime repudiandae tempore consequatur.",
+    "subtarefas": []
+  },
+  {
+    "id": 2,
+    "empresa_id": 1,
+    "tarefa": "Dignissimos quia nam ut et fuga voluptas enim.",
+    "subtarefas": []
+  },
+  {
+    "id": 3,
+    "empresa_id": 1,
+    "tarefa": "Nihil aliquid nisi alias quia quod quo.",
+    "subtarefas": []
+  },
+  {
+    "id": 4,
+    "empresa_id": 1,
+    "tarefa": "Illo sed minus placeat consequatur sequi sunt dolorum.",
+    "subtarefas": []
+  },
+  {
+    "id": 5,
+    "empresa_id": 1,
+    "tarefa": "Qui recusandae amet laborum impedit consequatur.",
+    "subtarefas": []
+  },
+  {
+    "id": 6,
+    "empresa_id": 1,
+    "tarefa": "Nemo aut et cupiditate commodi alias.",
+    "subtarefas": []
+  },
+  {
+    "id": 7,
+    "empresa_id": 1,
+    "tarefa": "Veritatis dicta animi numquam quia reiciendis beatae.",
+    "subtarefas": [
+      {
+        "id": 2,
+        "5w2h_id": 7,
+        "subtarefa": "Veniam fugiat ipsam nihil fugiat."
+      }
+    ]
+  }
+]
+```
+
+Nem toda tarefa tem subtarefas.
+
+### Registrando tabela GUT
+Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{empresa}/{hash}`, onde os parametros são id da empresa e do usuario respectivamente.
+
+O corpo da requisição deve conter um array de até 7 dicionarios onde `pergunta_id` representa o id da pergunta que gerou a tarefa que está sendo analisada, e `gut` um vetor que representa os valores para gravidade, urgencia e tendencia.
+Exemplo de corpo:
+
+```
+POST
+
+[
+  {
+    "pergunta_id": 1,
+    "gut" : [4, 5, 1]
+  },
+  {
+    "pergunta_id": 2,
+    "gut" : [1, 2, 3]
+  },
+    {
+    "pergunta_id": 3,
+    "gut" : [3, 3, 3]
+  },
+    {
+    "pergunta_id": 4,
+    "gut" : [2, 2, 2]
+  },
+    {
+    "pergunta_id": 5,
+    "gut" : [4, 3, 1]
+  },
+    {
+    "pergunta_id": 6,
+    "gut" : [1, 1, 1]
+  },
+    {
+    "pergunta_id": 7,
+    "gut" : [1, 1, 2]
+  }
+]
+```
+
+Resultado esperado:
+
+```
+HTTP/1.1 200 OK
+
+{
+  "sucesso": "Gut cadastrado com sucesso"
+}
+```
 ### Como criar banco de dados e popular:
 
 Uma vez que a conexão com o banco de dados estiver configurada, o primeiro comando a ser utilizado é:
