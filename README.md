@@ -388,6 +388,10 @@ Nem toda tarefa tem subtarefas.
 Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{empresa}/{hash}`, onde os parametros são id da empresa e do usuario respectivamente.
 
 O corpo da requisição deve conter um array de até 7 dicionarios onde `pergunta_id` representa o id da pergunta que gerou a tarefa que está sendo analisada, e `gut` um vetor que representa os valores para gravidade, urgencia e tendencia.
+
+
+
+
 Exemplo de corpo:
 
 ```
@@ -425,6 +429,20 @@ POST
 ]
 ```
 
+Pergunta que cada id representa:
+
+```
+[
+  1 => 'O quê',
+  2 => 'Por que',
+  3 => 'Quem',
+  4 => 'Quanto',
+  5 => 'Como',
+  6 => 'Quando',
+  7 => 'Onde'
+]
+```
+
 Resultado esperado:
 
 ```
@@ -434,6 +452,8 @@ HTTP/1.1 200 OK
   "sucesso": "Gut cadastrado com sucesso"
 }
 ```
+
+
 ### Como criar banco de dados e popular:
 
 Uma vez que a conexão com o banco de dados estiver configurada, o primeiro comando a ser utilizado é:
