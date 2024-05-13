@@ -13,6 +13,7 @@ class Empresa extends Model
     use HasFactory;
 
     protected $fillable = [
+        'usuario_id',
         'nome_da_empresa',
         'nicho',
         'resumo'
