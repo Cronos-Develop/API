@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Usuario extends Model
@@ -27,11 +28,19 @@ class Usuario extends Model
         'nome_da_empresa'
     ];
 
-    public function empresas() : HasMany {
+    public function empresas(): HasMany
+    {
+        // Empresas pertencentes ao usuario.
         return $this->hasMany(Empresa::class);
     }
 
-    public function FunctionName() : Returntype {
-        
+    public function empresasParceiras(): BelongsToMany
+    {
+        return $this->belongsToMany(Empresa::class)->withTimestamps();
+    }
+
+    function subtarefas(): HasMany
+    {
+        return $this->hasMany(Subtarefa::class);
     }
 }
