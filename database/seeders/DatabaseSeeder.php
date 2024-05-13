@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         });
 
         //Define as perguntas na tabela 'perguntas'
-        Pergunta::factory()->count(7)->sequence(
+        $perguntas = Pergunta::factory()->count(7)->sequence(
             ['pergunta' => 'O quê'],
             ['pergunta' => 'Por que'],
             ['pergunta' => 'Quem'],
@@ -42,7 +42,16 @@ class DatabaseSeeder extends Seeder
             ['pergunta' => 'Onde']
         )->create();
 
-        T5w2h::factory(15)->create();
+        // T5w2h::factory(15);
+        $empresas->each(function (Empresa $emp) {
+            $emp->t5w2hs()->saveMany(
+                T5w2h::factory(7)->sequence(
+                    fn (Sequence $sequence) => ['pergunta_id' => $sequence->index + 1]
+                )->create()
+            );
+        });
+
+
         Subtarefa::factory(5)->create();
         Gut::factory(5)->create();
     }

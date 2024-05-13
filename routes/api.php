@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\GutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,31 +20,31 @@ use App\Http\Controllers\EmpresaController;
 
 Route::controller(UsuarioController::class)->prefix('users/')->group( function () {
     // Define um grupo de rotas para o recurso 'Usuario'
-    // Todas as rotas aqui tem o prefixo 'users/' adicionado antes de serem processadas
+    // Todas as rotas aqui tem o prefixo 'users/' adicionado a URI antes de serem processadas
     // As rotas autocamticamente chamam metodos na UsuarioController
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
-    Route::get('/{hash}', 'index');
+    Route::get('{hash}', 'index');
 
     // Define uma rota GET para exibir um usuário específico
-    Route::get('/{user}/{hash}', 'show');
+    Route::get('{user}/{hash}', 'show');
 
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
-    Route::get('/recuperar/{cpf}', 'recover');
+    Route::get('recuperar/{cpf}', 'recover');
 
     // Define uma rota POST para criar um novo usuário
-    Route::post('/{hash}', 'store');
+    Route::post('{hash}', 'store');
 
     // Rota PUT para atualizar um usuário específico.
-    Route::put('/{user}/{hash}', 'update');
+    Route::put('{user}/{hash}', 'update');
 
     // Rota DELETE para excluir um usuário específico.
-    Route::delete('/{user}/{hash}', 'destroy');
+    Route::delete('{user}/{hash}', 'destroy');
 });
 
 Route::controller(EmpresaController::class)->prefix('empresas/')->group(function () {
     // Define um grupo de rotas para o recurso 'Empresa'
-    // Todas as rotas aqui tem o prefixo 'empresas/' adicionado antes de serem processadas
+    // Todas as rotas aqui tem o prefixo 'empresas/' adicionado a URI antes de serem processadas
     // As rotas autocamticamente chamam metodos na EmpresaController
 
     // Define uma rota GET para listar todas as empresas
@@ -69,4 +70,14 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
 
     // Rota DELETE para excluir uma empresa específica
     Route::delete('{empresa}/{hash}', 'destroy');
+});
+
+Route::controller(GutController::class)->prefix('gut/')->group(function () {
+    // Define um grupo de rotas para o recurso 'Gut'
+    // Todas as rotas aqui tem o prefixo 'gut/' adicionado a URI antes de serem processadas
+    // As rotas autocamticamente chamam métodos na GutController
+
+    // Define uma rota POST para criar um novo gut
+    Route::post('{empresa}/{hash}', 'store');
+
 });
