@@ -42,34 +42,22 @@ Esta é a API do aplicativo Cronos-Develop.
 ## Documentação:
 
 ### Recebendo dados via requisição GET
-Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
 
+#### Empresas
 Para receber dados via requisição GET, use a rota `/api/empresas/{empresa_id}/{hash}` (no caso de manipulação de empresas), caso queira uma empresa específica. Substitua `{empresa_id}` com o id da empresa que deseja encontrar. Em caso verdadeiro, a resposta será o nome da empresa.
 
 O `hash` recebido no final da URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
 
-#### Exemplo Requisição GET para Usuários:
 
-```
-GET /api/users/johndoe@example.com:password123/G5*h2%L9@
-```
-
-#### Resposta Esperada:
-
-```
-{
-  "id": 1
-}
-```
 A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
 
-#### Exemplo Requisição GET para Empresas:
+##### Exemplo Requisição GET:
 
 ```
 GET /api/empresas/7/G5*h2%L9@
 ```
 
-#### Resposta Esperada:
+##### Resposta Esperada:
 
 ```
 {
@@ -78,6 +66,138 @@ GET /api/empresas/7/G5*h2%L9@
 ```
 
 A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empresa não for encontrada, a API retornará um erro 404 em formato JSON.
+
+#### Usuários
+Para receber dados via requisição GET, use a rota `/api/users/{hash}`, sendo `{hash}` o id do usuário, definido no momento de criação como um hash. Caso essa requisição seja enviada com o hash de um usuário existente, todos os seus dados serão retornados em formato JSON.
+
+##### Exemplo Requisição GET:
+
+```
+GET /api/users/e53@a51$C46.g48.I53.
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"id": "e53@a51$C46.g48.I53.",
+		"name": "Noa de Oliveira Cervantes Neto",
+		"email": "salas.isabella@example.org",
+		"telefone": "(64) 95142-9754",
+		"senha": "$2y$12$CIwlHerbeHE86KlgGCLN6OWmVU3aA0tOVNzEu.03ZZI1p1r498Igi",
+		"endereco": "65897-238, Largo Ítalo Rodrigues, 17\nDiogo do Norte - RO",
+		"cep": "453024-307",
+		"nascimento": "2020-08-17",
+		"empresario": 0,
+		"cpf_cnpj": "456.352.060-85",
+		"nome_da_empresa": null,
+		"created_at": "2024-05-10 16:21:34",
+		"updated_at": "2024-05-10 16:21:34"
+	}
+]
+```
+
+Para receber dados via requisição GET, use a rota `/api/users/{cpf:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{cpf:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `cpf:password`. Em caso verdadeiro, a resposta será o id do usuário.
+
+##### Exemplo Requisição GET:
+
+```
+GET /api/users/456.352.060-85:password/userHash
+```
+
+##### Resposta Esperada:
+
+```
+{
+	"id": "e53@a51$C46.g48.I53."
+}
+```
+
+Para recuperação de senha, via requisição GET, use a rota `/api/recuperar/{cpf_cnpj}`, sendo `{cpf_cnpj}` o CPF/CNPJ do usuário, para que o email possa ser encontrado no banco de dados a partir da consulta do CPF/CNPJ. Caso esteja registrado, o e-mail do usuário é retornado.
+Vale lembrar que, caso seja utilizado o CNPJ, que por padrão possui `/` (por exemplo: 41.041.903`/`0001-06), é necessário inserí-lo na URL sem a barra (os outros sinais de pontuação podem ser deixados ou tirados, pois será tratado dentro das funções). Quanto aos outros elementos, não há problema em deixá-los.
+
+##### Exemplo Requisição GET com CPF:
+
+```
+GET /api/recuperar/111.223.537-07
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"email": "vasques.sueli@example.org"
+	}
+]
+```
+##### Exemplo Requisição GET com CNPJ:
+
+```
+GET /api/recuperar/41041903000106
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"email": "rodolfo88@example.com"
+	}
+]
+```
+
+### Deletando dados via requisição DELETE
+Para deletar um usuário, use a rota `/api/users/{user}/{hash}`, sendo `{user}` o CPF, CNPJ (valendo a mesma regra citada acima sobre `/`) ou id do usuário.
+
+##### Exemplo Requisição DELETE:
+
+```
+DELETE /api/users/A50*J55%G56*a57@/<hash>
+```
+
+##### Resposta Esperada:
+
+```
+{
+	"success": "Usuário deletado com sucesso"
+}
+```
+
+### Atualizando dados via requisição PUT
+
+Para atualizar os registros de um usuário, use a rota `/users/{user}/{hash}`, sendo `{user}` o id do usuário que terá seus registros atualizados. Os dados a serem atualizados deverão ser enviados em formato JSON, sendo permitido enviar somente os dados que serão alterados.
+
+##### Exemplos Requisição PUT:
+
+```
+PUT /api/users/A50*J55%G56*a57@/<hash>
+
+JSON:
+{
+	"email": "joaocarlos@uft.com",
+  "telefone": "(11) 2121-1131"
+}
+```
+```
+PUT /api/users/h53!a56&G46*B51.F56./<hash>
+
+JSON:
+{
+	"name": "Cláudio Arraio Júnior",
+      "endereco": "504 sul, alameda 22, lote 44. Palmas-TO",
+	"cep": "124596-715"
+}
+```
+
+#### Resposta esperada:
+
+```
+{
+	"success": "Dados atualizados com sucesso"
+}
+```
 
 ### Enviando dados via requisição POST
 
@@ -90,7 +210,7 @@ O `hash` recebido no fim da URL é a identificação do usuário que está logad
 #### Exemplo de corpo da solicitação POST para Usuários:
 
 ```
-http://127.0.0.1:8000/api/users/H50$du*e2
+POST /api/users/H50$du*e2
 
 {
 	"name": "João Caramelo Bittencourt Sucessada",
@@ -118,7 +238,7 @@ A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erro
 #### Exemplo de corpo da solicitação POST para Empresas:
 
 ```
-http://127.0.0.1:8000/api/empresas/H50$du*e2
+POST /api/empresas/H50$du*e2
 
 {
 	"usuario_id": "a49,a54=a46%f50.b53.",
