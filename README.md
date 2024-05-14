@@ -241,7 +241,7 @@ A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erro
 POST /api/empresas/H5738I4953A5337c4774a4840A4886
 
 {
-	"usuario_id": "a49,a54=a46%f50.b53.",
+	"usuario_id": "H5738I4953A5337c4774a4840A4886",
 	"nome_da_empresa": "Tortas&Tortas",
 	"nicho": "Alimentação e Doceria",
     "resumo": "Restaurante especializado em doces"
