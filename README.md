@@ -242,7 +242,6 @@ POST /api/empresas/H50$du*e2
 
 {
 	"usuario_id": "a49,a54=a46%f50.b53.",
-	"usuario_parceiro_id": "E51*A50=J46,f52.d51.",
 	"nome_da_empresa": "Tortas&Tortas",
 	"nicho": "Alimentação e Doceria",
     "resumo": "Restaurante especializado em doces"

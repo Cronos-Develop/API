@@ -24,8 +24,6 @@ class EmpresaController extends Controller
         return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-
-
     public function userCompanies(Usuario $hash) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
     {
         /**
@@ -91,7 +89,6 @@ class EmpresaController extends Controller
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
-            'usuario_parceiro_id' => 'required',
             'nome_da_empresa' => 'required',
             'nicho' => 'required',
             'resumo' => 'required'
@@ -110,7 +107,6 @@ class EmpresaController extends Controller
         // Cria uma nova empresa com os dados fornecidos
         $created = Empresa::create([
             'usuario_id' => $request->input('usuario_id'),
-            'usuario_parceiro_id' => $request->input('usuario_parceiro_id'),
             'nome_da_empresa' => $request->input('nome_da_empresa'),
             'nicho' => $request->input('nicho'),
             'resumo' => $request->input('resumo')
@@ -137,7 +133,6 @@ class EmpresaController extends Controller
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
-            'usuario_parceiro_id' => 'required',
             'nome_da_empresa' => 'required',
             'nicho' => 'required',
             'resumo' => 'required'
@@ -154,7 +149,6 @@ class EmpresaController extends Controller
         // Atualiza os dados da empresa com o ID fornecido
         $updated = Empresa::find($empresaId)->update([
             'usuario_id' => $validated['usuario_id'],
-            'usuario_parceiro_id' => $validated['usuario_parceiro_id'],
             'nome_da_empresa' => $validated['nome_da_empresa'],
             'nicho' => $validated['nicho'],
             'resumo' => $validated['resumo']
