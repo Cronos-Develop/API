@@ -20,17 +20,17 @@ use App\Http\Controllers\GutController;
 
 Route::controller(UsuarioController::class)->prefix('users/')->group( function () {
     // Define um grupo de rotas para o recurso 'Usuario'
-    // Todas as rotas aqui tem o prefixo 'users/' adicionado a URI antes de serem processadas
+    // Todas as rotas aqui têm o prefixo 'users/' adicionado a URI antes de serem processadas
     // As rotas autocamticamente chamam metodos na UsuarioController
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
     Route::get('{hash}', 'index');
 
-    // Define uma rota GET para exibir um usuário específico
-    Route::get('{user}/{hash}', 'show');
-
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
     Route::get('recuperar/{cpf}', 'recover');
+
+    // Define uma rota GET para exibir um usuário específico
+    Route::get('{user}/{hash}', 'show');
 
     // Define uma rota POST para criar um novo usuário
     Route::post('{hash}', 'store');

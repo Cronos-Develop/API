@@ -54,7 +54,7 @@ A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuá
 ##### Exemplo Requisição GET:
 
 ```
-GET /api/empresas/7/G5*h2%L9@
+GET /api/empresas/7/J5219a54100C4698h5114A530
 ```
 
 ##### Resposta Esperada:
@@ -73,7 +73,7 @@ Para receber dados via requisição GET, use a rota `/api/users/{hash}`, sendo `
 ##### Exemplo Requisição GET:
 
 ```
-GET /api/users/e53@a51$C46.g48.I53.
+GET /api/users/I4949A5348H4674F5182i570
 ```
 
 ##### Resposta Esperada:
@@ -81,7 +81,7 @@ GET /api/users/e53@a51$C46.g48.I53.
 ```
 [
 	{
-		"id": "e53@a51$C46.g48.I53.",
+		"id": "I4949A5348H4674F5182i570",
 		"name": "Noa de Oliveira Cervantes Neto",
 		"email": "salas.isabella@example.org",
 		"telefone": "(64) 95142-9754",
@@ -110,7 +110,7 @@ GET /api/users/456.352.060-85:password/userHash
 
 ```
 {
-	"id": "e53@a51$C46.g48.I53."
+	"id": "b5368a5480B4660b4996a500"
 }
 ```
 
@@ -154,7 +154,7 @@ Para deletar um usuário, use a rota `/api/users/{user}/{hash}`, sendo `{user}` 
 ##### Exemplo Requisição DELETE:
 
 ```
-DELETE /api/users/A50*J55%G56*a57@/<hash>
+DELETE /api/users/b5368a5480B4660b4996a500/<hash>
 ```
 
 ##### Resposta Esperada:
@@ -172,7 +172,7 @@ Para atualizar os registros de um usuário, use a rota `/users/{user}/{hash}`, s
 ##### Exemplos Requisição PUT:
 
 ```
-PUT /api/users/A50*J55%G56*a57@/<hash>
+PUT /api/users/f4945H4870A5220j4776A4880a5619/<hash>
 
 JSON:
 {
@@ -181,7 +181,7 @@ JSON:
 }
 ```
 ```
-PUT /api/users/h53!a56&G46*B51.F56./<hash>
+PUT /api/users/f4945H4870A5220j4776A4880a5619/<hash>
 
 JSON:
 {
@@ -210,7 +210,7 @@ O `hash` recebido no fim da URL é a identificação do usuário que está logad
 #### Exemplo de corpo da solicitação POST para Usuários:
 
 ```
-POST /api/users/H50$du*e2
+POST /api/users/f4945H4870A5220j4776A4880a5619
 
 {
 	"name": "João Caramelo Bittencourt Sucessada",
@@ -238,11 +238,10 @@ A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erro
 #### Exemplo de corpo da solicitação POST para Empresas:
 
 ```
-POST /api/empresas/H50$du*e2
+POST /api/empresas/H5738I4953A5337c4774a4840A4886
 
 {
-	"usuario_id": "a49,a54=a46%f50.b53.",
-	"usuario_parceiro_id": "E51*A50=J46,f52.d51.",
+	"usuario_id": "H5738I4953A5337c4774a4840A4886",
 	"nome_da_empresa": "Tortas&Tortas",
 	"nicho": "Alimentação e Doceria",
     "resumo": "Restaurante especializado em doces"
@@ -265,13 +264,13 @@ Para receber a lista de empresas a partir do id do usuario faça uma requisiçã
 Exemplo:
 
 ```
-GET /api/empresas/user/h57.a55.d46.J51.f49.
+GET /api/empresas/user/H5738I4953A5337c4774a4840A4886
 
 
 [
   {
     "id": 3,
-    "usuario_id": "h57.a55.d46.J51.f49.",
+    "usuario_id": "H5738I4953A5337c4774a4840A4886",
     "nome_da_empresa": "Vasques e Correia",
     "nicho": "fugit",
     "resumo": "Está entendido: no primeiro ou no segundo mez do anno que vem, irás para o outro, até que exclamei: --Prompto! --Estará bom? --Veja no espelho. Em vez de ir ao espelho, que pensaes que fez Capitú?.",
@@ -280,7 +279,7 @@ GET /api/empresas/user/h57.a55.d46.J51.f49.
   },
   {
     "id": 4,
-    "usuario_id": "h57.a55.d46.J51.f49.",
+    "usuario_id": "H5738I4953A5337c4774a4840A4886",
     "nome_da_empresa": "Domingues Comercial Ltda.",
     "nicho": "perspiciatis",
     "resumo": "São assim de cigana obliqua e dissimulada. Pois, apesar delles, poderia passar, se não fosse a vaidade sobrevivente; mas o momento da saida. Peguei da minha amiga; pensei nisso, cheguei a tental-o.",
@@ -301,7 +300,7 @@ GET api/empresas/partner/{hash}
 [
   {
     "id": 1,
-    "usuario_id": "G53.A51=A53@e47.A48,A54+",
+    "usuario_id": "I4949A5348H4674F5182i570",
     "nome_da_empresa": "Vieira-da Silva",
     "nicho": "qui",
     "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
@@ -311,7 +310,7 @@ GET api/empresas/partner/{hash}
   },
   {
     "id": 2,
-    "usuario_id": "d55.A53%H46*e53.d52.",
+    "usuario_id": "I4949A5348H4674F5182i570",
     "nome_da_empresa": "Solano Comercial Ltda.",
     "nicho": "eum",
     "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
@@ -328,7 +327,7 @@ Para fazer essa listagem, faça uma requisição GET na rota `api/empresas/{empr
 Exemplo:
 
 ```
-GET /api/empresas/1/tarefas/h57.a55.d46.J51.f49.
+GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
 
 [
   {

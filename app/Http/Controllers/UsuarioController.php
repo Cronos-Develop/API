@@ -48,6 +48,9 @@ class UsuarioController extends Controller
         $userCpf = $userDataArray[0];
         $password = $userDataArray[1];
 
+        // Formata o CPF ou CNPJ para fazer a busca no banco de dados
+        $userCpf = CPFValidator::formatarCpfOuCnpj($userCpf);
+
         // Busca o usuário no banco de dados pelo CPF/CNPJ fornecido
         $user = DB::table('usuarios')->where('cpf_cnpj', $userCpf)->get()->first();
 
@@ -202,12 +205,6 @@ class UsuarioController extends Controller
         $possuiEmpresa = DB::table('empresas')->where('usuario_id', $userId)->exists();
         if ($possuiEmpresa){
             $deletedEmpresa = DB::table('empresas')->where('usuario_id', $userId)->delete();
-        }
-
-        // Verifica se o usuário é parceiro de alguma empresa e remove essa associação
-        $parceiroDeEmpresa = DB::table('empresas')->where('usuario_parceiro_id', $userId)->exists();
-        if ($parceiroDeEmpresa){
-            $removerParceiria = DB::table('empresas')->where('usuario_parceiro_id', $userId)->update(['usuario_parceiro_id' => NULL]);
         }
 
         // Exclui o usuário da tabela 'usuarios'

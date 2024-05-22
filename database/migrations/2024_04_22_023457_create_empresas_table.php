@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('usuario_id');
             $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
-            // $table->string('usuario_parceiro_id')->nullable();
-            // $table->foreign('usuario_parceiro_id')->references('id')->on('usuarios');
             $table->string('nome_da_empresa');
             $table->string('nicho');
             $table->string('resumo');
