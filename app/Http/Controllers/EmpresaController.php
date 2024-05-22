@@ -6,35 +6,69 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
+use App\Models\T5w2h;
+use App\Models\Usuario;
 
 class EmpresaController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         /**
          * Retorna todos os registros da tabela 'empresas' do banco de dados.
          *
          * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
          * @return void
-        */
+         */
 
         // Retorna todos os registros da tabela 'empresas' do banco de dados usando o facade DB do Laravel
-        //return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
+        return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function show(string $empresaId, string $userHash){
+    public function userCompanies(Usuario $hash) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
+    {
+        /**
+         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash.
+         */
+
+        return $hash->empresas;
+    }
+
+    function partnerCompanies(Usuario $hash)
+    { //Laravel automaticamente converte a chave primaria recebida no objeto Usuario correspondente.
+        /**
+         * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
+         * Devolve um erro 404 ao cliente se o usuario não for encontrado.
+         * 
+         * @param  \App\Models\Usuario  $hash parceiro das empresas.
+         */
+        return $hash->empresasParceiras;
+    }
+
+    function companieTasks(Empresa $empresa, string $hash)
+    {
+
+        //retornar tarefas e subtarefas da empresa recebida como parametro.
+
+        return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
+            ->whereBelongsTo($empresa)
+            ->get(['id', 'empresa_id', 'tarefa']);
+    }
+
+    public function show(string $empresaId, string $userHash)
+    {
         /**
          * Retorna os detalhes de uma empresa com base no ID fornecido.
          *
          * @param  string  $empresaId  O ID da empresa a ser buscada.
          * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com os detalhes da empresa ou uma mensagem de erro.
-        */
+         */
 
         // Busca a empresa no banco de dados pelo ID fornecido
         $empresa = DB::table('empresas')->where('id', $empresaId)->get()->first();
 
         // Verifica se a empresa foi encontrada
-        if (!$empresa){
+        if (!$empresa) {
             return response()->json(['error' => 'Empresa não encontrada'], 404);
         }
 
@@ -42,19 +76,19 @@ class EmpresaController extends Controller
         return response()->json(['success' => $empresa->nome_da_empresa], 200);
     }
 
-    public function store(Request $request, string $userHash){
+    public function store(Request $request, string $userHash)
+    {
         /**
          * Armazena uma nova empresa com base nos dados fornecidos.
          *
          * @param  \Illuminate\Http\Request  $request  A requisição HTTP contendo os dados da empresa a ser armazenada.
          * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha ao registrar a empresa.
-        */
+         */
 
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
-            'usuario_parceiro_id' => 'required',
             'nome_da_empresa' => 'required',
             'nicho' => 'required',
             'resumo' => 'required'
@@ -66,27 +100,27 @@ class EmpresaController extends Controller
         }
 
         // Verifica se já existe uma empresa cadastrada com o nome da empresa que será cadastrada
-        if (DB::table('empresas')->where('nome_da_empresa', $request->input('nome_da_empresa'))->get()->first()){
+        if (DB::table('empresas')->where('nome_da_empresa', $request->input('nome_da_empresa'))->get()->first()) {
             return response()->json(['errors' => 'Já existe um registro de empresa com esse nome'], 422);
         }
 
         // Cria uma nova empresa com os dados fornecidos
         $created = Empresa::create([
             'usuario_id' => $request->input('usuario_id'),
-            'usuario_parceiro_id' => $request->input('usuario_parceiro_id'),
             'nome_da_empresa' => $request->input('nome_da_empresa'),
             'nicho' => $request->input('nicho'),
             'resumo' => $request->input('resumo')
         ]);
 
         // Verifica se a empresa foi criada com sucesso e retorna uma resposta JSON adequada
-        if ($created){
+        if ($created) {
             return response()->json(['success' => 'Empresa registrada com sucesso'], 201);
         }
-        return response()->json(['errors' => 'Houve algum erro ao registrar empresa'], 422);  
+        return response()->json(['errors' => 'Houve algum erro ao registrar empresa'], 422);
     }
 
-    public function update(Request $request, string $empresaId,string $userHash){
+    public function update(Request $request, string $empresaId, string $userHash)
+    {
         /**
          * Atualiza os dados de uma empresa existente com base nos dados fornecidos.
          *
@@ -94,19 +128,18 @@ class EmpresaController extends Controller
          * @param  string  $empresaId  O ID da empresa a ser atualizada.
          * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha ao atualizar os dados da empresa.
-        */
+         */
 
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
-            'usuario_parceiro_id' => 'required',
             'nome_da_empresa' => 'required',
             'nicho' => 'required',
             'resumo' => 'required'
         ]);
 
         // Verifica se a validação falhou
-        if ($validator->fails()){
+        if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
@@ -116,33 +149,33 @@ class EmpresaController extends Controller
         // Atualiza os dados da empresa com o ID fornecido
         $updated = Empresa::find($empresaId)->update([
             'usuario_id' => $validated['usuario_id'],
-            'usuario_parceiro_id' => $validated['usuario_parceiro_id'],
             'nome_da_empresa' => $validated['nome_da_empresa'],
             'nicho' => $validated['nicho'],
             'resumo' => $validated['resumo']
         ]);
 
         // Verifica se a empresa foi atualizada com sucesso e retorna uma resposta JSON adequada
-        if ($updated){
+        if ($updated) {
             return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
     }
 
-    public function destroy(string $empresaId, string $userHash){
+    public function destroy(string $empresaId, string $userHash)
+    {
         /**
          * Deleta uma empresa com base no ID fornecido.
          *
          * @param  string  $empresaId  O ID da empresa a ser deletada.
          * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha ao deletar a empresa.
-        */
+         */
 
         // Deleta a empresa do banco de dados com o ID fornecido
         $deleted = DB::table('empresas')->where('id', $empresaId)->delete();
 
         // Verifica se a empresa foi deletada com sucesso e retorna uma resposta JSON adequada
-        if ($deleted){
+        if ($deleted) {
             return response()->json(['success' => 'Empresa deletada com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao deletar empresa'], 400);

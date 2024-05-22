@@ -42,34 +42,22 @@ Esta é a API do aplicativo Cronos-Develop.
 ## Documentação:
 
 ### Recebendo dados via requisição GET
-Para receber dados via requisição GET, use a rota `/api/users/{email:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{email:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `email:password`. Em caso verdadeiro, a resposta será o id do usuário.
 
+#### Empresas
 Para receber dados via requisição GET, use a rota `/api/empresas/{empresa_id}/{hash}` (no caso de manipulação de empresas), caso queira uma empresa específica. Substitua `{empresa_id}` com o id da empresa que deseja encontrar. Em caso verdadeiro, a resposta será o nome da empresa.
 
 O `hash` recebido no final da URL é a identificação do usuário que está logado. Será usado para garantir que o usuário tem a permissão necessária para executar determinada ação. 
 
-#### Exemplo Requisição GET para Usuários:
 
-```
-GET /api/users/johndoe@example.com:password123/G5*h2%L9@
-```
-
-#### Resposta Esperada:
-
-```
-{
-  "id": 1
-}
-```
 A resposta será um objeto JSON contendo o id do usuário encontrado. Se o usuário não for encontrado ou a senha estiver incorreta, a API retornará um erro 404 ou 401 respectivamente, em formato JSON.
 
-#### Exemplo Requisição GET para Empresas:
+##### Exemplo Requisição GET:
 
 ```
-GET /api/empresas/7/G5*h2%L9@
+GET /api/empresas/7/J5219a54100C4698h5114A530
 ```
 
-#### Resposta Esperada:
+##### Resposta Esperada:
 
 ```
 {
@@ -78,6 +66,138 @@ GET /api/empresas/7/G5*h2%L9@
 ```
 
 A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empresa não for encontrada, a API retornará um erro 404 em formato JSON.
+
+#### Usuários
+Para receber dados via requisição GET, use a rota `/api/users/{hash}`, sendo `{hash}` o id do usuário, definido no momento de criação como um hash. Caso essa requisição seja enviada com o hash de um usuário existente, todos os seus dados serão retornados em formato JSON.
+
+##### Exemplo Requisição GET:
+
+```
+GET /api/users/I4949A5348H4674F5182i570
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"id": "I4949A5348H4674F5182i570",
+		"name": "Noa de Oliveira Cervantes Neto",
+		"email": "salas.isabella@example.org",
+		"telefone": "(64) 95142-9754",
+		"senha": "$2y$12$CIwlHerbeHE86KlgGCLN6OWmVU3aA0tOVNzEu.03ZZI1p1r498Igi",
+		"endereco": "65897-238, Largo Ítalo Rodrigues, 17\nDiogo do Norte - RO",
+		"cep": "453024-307",
+		"nascimento": "2020-08-17",
+		"empresario": 0,
+		"cpf_cnpj": "456.352.060-85",
+		"nome_da_empresa": null,
+		"created_at": "2024-05-10 16:21:34",
+		"updated_at": "2024-05-10 16:21:34"
+	}
+]
+```
+
+Para receber dados via requisição GET, use a rota `/api/users/{cpf:password}/{hash}` (no caso de manipulação de usuários), caso queira um usuário específico. Substitua `{cpf:password}` com os dados do usuário que deseja encontrar. Use os dados no formato `cpf:password`. Em caso verdadeiro, a resposta será o id do usuário.
+
+##### Exemplo Requisição GET:
+
+```
+GET /api/users/456.352.060-85:password/userHash
+```
+
+##### Resposta Esperada:
+
+```
+{
+	"id": "b5368a5480B4660b4996a500"
+}
+```
+
+Para recuperação de senha, via requisição GET, use a rota `/api/recuperar/{cpf_cnpj}`, sendo `{cpf_cnpj}` o CPF/CNPJ do usuário, para que o email possa ser encontrado no banco de dados a partir da consulta do CPF/CNPJ. Caso esteja registrado, o e-mail do usuário é retornado.
+Vale lembrar que, caso seja utilizado o CNPJ, que por padrão possui `/` (por exemplo: 41.041.903`/`0001-06), é necessário inserí-lo na URL sem a barra (os outros sinais de pontuação podem ser deixados ou tirados, pois será tratado dentro das funções). Quanto aos outros elementos, não há problema em deixá-los.
+
+##### Exemplo Requisição GET com CPF:
+
+```
+GET /api/recuperar/111.223.537-07
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"email": "vasques.sueli@example.org"
+	}
+]
+```
+##### Exemplo Requisição GET com CNPJ:
+
+```
+GET /api/recuperar/41041903000106
+```
+
+##### Resposta Esperada:
+
+```
+[
+	{
+		"email": "rodolfo88@example.com"
+	}
+]
+```
+
+### Deletando dados via requisição DELETE
+Para deletar um usuário, use a rota `/api/users/{user}/{hash}`, sendo `{user}` o CPF, CNPJ (valendo a mesma regra citada acima sobre `/`) ou id do usuário.
+
+##### Exemplo Requisição DELETE:
+
+```
+DELETE /api/users/b5368a5480B4660b4996a500/<hash>
+```
+
+##### Resposta Esperada:
+
+```
+{
+	"success": "Usuário deletado com sucesso"
+}
+```
+
+### Atualizando dados via requisição PUT
+
+Para atualizar os registros de um usuário, use a rota `/users/{user}/{hash}`, sendo `{user}` o id do usuário que terá seus registros atualizados. Os dados a serem atualizados deverão ser enviados em formato JSON, sendo permitido enviar somente os dados que serão alterados.
+
+##### Exemplos Requisição PUT:
+
+```
+PUT /api/users/f4945H4870A5220j4776A4880a5619/<hash>
+
+JSON:
+{
+	"email": "joaocarlos@uft.com",
+  "telefone": "(11) 2121-1131"
+}
+```
+```
+PUT /api/users/f4945H4870A5220j4776A4880a5619/<hash>
+
+JSON:
+{
+	"name": "Cláudio Arraio Júnior",
+      "endereco": "504 sul, alameda 22, lote 44. Palmas-TO",
+	"cep": "124596-715"
+}
+```
+
+#### Resposta esperada:
+
+```
+{
+	"success": "Dados atualizados com sucesso"
+}
+```
 
 ### Enviando dados via requisição POST
 
@@ -90,7 +210,7 @@ O `hash` recebido no fim da URL é a identificação do usuário que está logad
 #### Exemplo de corpo da solicitação POST para Usuários:
 
 ```
-http://127.0.0.1:8000/api/users/H50$du*e2
+POST /api/users/f4945H4870A5220j4776A4880a5619
 
 {
 	"name": "João Caramelo Bittencourt Sucessada",
@@ -118,11 +238,10 @@ A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erro
 #### Exemplo de corpo da solicitação POST para Empresas:
 
 ```
-http://127.0.0.1:8000/api/empresas/H50$du*e2
+POST /api/empresas/H5738I4953A5337c4774a4840A4886
 
 {
-	"usuario_id": "a49,a54=a46%f50.b53.",
-	"usuario_parceiro_id": "E51*A50=J46,f52.d51.",
+	"usuario_id": "H5738I4953A5337c4774a4840A4886",
 	"nome_da_empresa": "Tortas&Tortas",
 	"nicho": "Alimentação e Doceria",
     "resumo": "Restaurante especializado em doces"
@@ -138,6 +257,201 @@ http://127.0.0.1:8000/api/empresas/H50$du*e2
 ```
 
 A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
+
+### Retornando lista de empresas a partir da id do usuário
+Para receber a lista de empresas a partir do id do usuario faça uma requisição GET na rota `api/empresas/user/{hash}`, onde `{hash}` é o id do usuario. Um erro 404 é retornado se o usuario não for encontrado ou um corpo vazio se o usuario não tiver empresas.
+
+Exemplo:
+
+```
+GET /api/empresas/user/H5738I4953A5337c4774a4840A4886
+
+
+[
+  {
+    "id": 3,
+    "usuario_id": "H5738I4953A5337c4774a4840A4886",
+    "nome_da_empresa": "Vasques e Correia",
+    "nicho": "fugit",
+    "resumo": "Está entendido: no primeiro ou no segundo mez do anno que vem, irás para o outro, até que exclamei: --Prompto! --Estará bom? --Veja no espelho. Em vez de ir ao espelho, que pensaes que fez Capitú?.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z"
+  },
+  {
+    "id": 4,
+    "usuario_id": "H5738I4953A5337c4774a4840A4886",
+    "nome_da_empresa": "Domingues Comercial Ltda.",
+    "nicho": "perspiciatis",
+    "resumo": "São assim de cigana obliqua e dissimulada. Pois, apesar delles, poderia passar, se não fosse a vaidade sobrevivente; mas o momento da saida. Peguei da minha amiga; pensei nisso, cheguei a tental-o.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z"
+  }
+]
+```
+
+### Retornando lista de empresas a partir do id do usuário parceiro
+Para retornar todas as empresas que tem parceiria com um usuario, faça um requisição GET na rota `api/empresas/partner/{hash}`, onde `hash` é o id do usuario parceiro. Retorna um erro 404 se o usuario não for encontrado.
+
+Exemplo:
+
+```
+GET api/empresas/partner/{hash}
+
+[
+  {
+    "id": 1,
+    "usuario_id": "I4949A5348H4674F5182i570",
+    "nome_da_empresa": "Vieira-da Silva",
+    "nicho": "qui",
+    "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z",
+    "pivot": {...}
+  },
+  {
+    "id": 2,
+    "usuario_id": "I4949A5348H4674F5182i570",
+    "nome_da_empresa": "Solano Comercial Ltda.",
+    "nicho": "eum",
+    "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
+    "created_at": "2024-05-13T13:36:10.000000Z",
+    "updated_at": "2024-05-13T13:36:10.000000Z",
+    "pivot": {...}
+  }
+]
+```
+
+### Retornando lista de tarefas e subtarefas a partir do id da empresa
+Para fazer essa listagem, faça uma requisição GET na rota `api/empresas/{empresa}/tarefas/{hash}`, onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario. Um erro 404 será retornado se a empresa ou usuario não forem encontrados.
+
+Exemplo:
+
+```
+GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
+
+[
+  {
+    "id": 1,
+    "empresa_id": 1,
+    "tarefa": "Omnis autem laudantium quis maxime repudiandae tempore consequatur.",
+    "subtarefas": []
+  },
+  {
+    "id": 2,
+    "empresa_id": 1,
+    "tarefa": "Dignissimos quia nam ut et fuga voluptas enim.",
+    "subtarefas": []
+  },
+  {
+    "id": 3,
+    "empresa_id": 1,
+    "tarefa": "Nihil aliquid nisi alias quia quod quo.",
+    "subtarefas": []
+  },
+  {
+    "id": 4,
+    "empresa_id": 1,
+    "tarefa": "Illo sed minus placeat consequatur sequi sunt dolorum.",
+    "subtarefas": []
+  },
+  {
+    "id": 5,
+    "empresa_id": 1,
+    "tarefa": "Qui recusandae amet laborum impedit consequatur.",
+    "subtarefas": []
+  },
+  {
+    "id": 6,
+    "empresa_id": 1,
+    "tarefa": "Nemo aut et cupiditate commodi alias.",
+    "subtarefas": []
+  },
+  {
+    "id": 7,
+    "empresa_id": 1,
+    "tarefa": "Veritatis dicta animi numquam quia reiciendis beatae.",
+    "subtarefas": [
+      {
+        "id": 2,
+        "5w2h_id": 7,
+        "subtarefa": "Veniam fugiat ipsam nihil fugiat."
+      }
+    ]
+  }
+]
+```
+
+Nem toda tarefa tem subtarefas.
+
+### Registrando tabela GUT
+Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{empresa}/{hash}`, onde os parametros são id da empresa e do usuario respectivamente.
+
+O corpo da requisição deve conter um array de até 7 dicionarios onde `pergunta_id` representa o id da pergunta que gerou a tarefa que está sendo analisada, e `gut` um vetor que representa os valores para gravidade, urgencia e tendencia.
+
+
+
+
+Exemplo de corpo:
+
+```
+POST
+
+[
+  {
+    "pergunta_id": 1,
+    "gut" : [4, 5, 1]
+  },
+  {
+    "pergunta_id": 2,
+    "gut" : [1, 2, 3]
+  },
+    {
+    "pergunta_id": 3,
+    "gut" : [3, 3, 3]
+  },
+    {
+    "pergunta_id": 4,
+    "gut" : [2, 2, 2]
+  },
+    {
+    "pergunta_id": 5,
+    "gut" : [4, 3, 1]
+  },
+    {
+    "pergunta_id": 6,
+    "gut" : [1, 1, 1]
+  },
+    {
+    "pergunta_id": 7,
+    "gut" : [1, 1, 2]
+  }
+]
+```
+
+Pergunta que cada id representa:
+
+```
+[
+  1 => 'O quê',
+  2 => 'Por que',
+  3 => 'Quem',
+  4 => 'Quanto',
+  5 => 'Como',
+  6 => 'Quando',
+  7 => 'Onde'
+]
+```
+
+Resultado esperado:
+
+```
+HTTP/1.1 200 OK
+
+{
+  "sucesso": "Gut cadastrado com sucesso"
+}
+```
+
 
 ### Como criar banco de dados e popular:
 

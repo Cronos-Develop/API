@@ -16,8 +16,9 @@ class PerguntaFactory extends Factory
      */
     public function definition(): array
     {
+
         return [
-            //
+            'pergunta' => 'pergunta'
         ];
     }
 }

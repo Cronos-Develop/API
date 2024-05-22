@@ -16,8 +16,6 @@ class CustomHasher
          * @return string $hash Retorna o hash gerado pela função
          **/
 
-        $caracteresEspeciais = array('.', ',', '*', '&', '%', '$', '@', '!', '=', '+');
-
         // Dividir o CPF em partes
         $partes = str_split($key, 3);
 
@@ -33,12 +31,11 @@ class CustomHasher
             // Pegar o segundo dígito e converter para seu valor ASCII
             $numero = isset($parte[1]) ? ord($parte[1]) : ''; // Verifica se o segundo dígito está definido
 
-            // Pegar o terceiro dígito e transformar em um caractere especial
-            $indice = isset($parte[2]) ? intval($parte[2]) % count($caracteresEspeciais) : 0; // Verifica se o terceiro dígito está definido
-            $caractereEspecial = $caracteresEspeciais[$indice];
+            // Pegar o terceiro dígito e transformar em um número
+            $numeroEspecial = isset($parte[2]) ? intval($parte[2]) + rand(0, 100) : 0;
 
             // Concatenar os resultados no hash
-            $hash .= $letra . $numero . $caractereEspecial;
+            $hash .= $letra . $numero . $numeroEspecial;
         }
 
         return $hash;

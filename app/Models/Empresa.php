@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Empresa extends Model
 {
@@ -12,13 +14,20 @@ class Empresa extends Model
 
     protected $fillable = [
         'usuario_id',
-        'usuario_parceiro_id',
         'nome_da_empresa',
         'nicho',
         'resumo'
     ];
 
-    public function usuarios() : BelongsTo {
-        return $this->belongsTo(Usuario::class);
+    public function usuario() : BelongsTo {
+        return $this->belongsTo(Usuario::class)->withDefault();
+    }
+
+    function usuariosParceiros() : BelongsToMany {
+        return $this->belongsToMany(Usuario::class)->withTimestamps();
+    }
+
+    function t5w2hs() : HasMany {
+        return $this->hasMany(T5w2h::class);
     }
 }

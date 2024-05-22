@@ -82,4 +82,21 @@ class CPFValidator
 
         return $cnpj[13] == ($resto < 2 ? 0 : 11 - $resto);
     }
+
+    public static function formatarCpfOuCnpj($cpfCnpj){
+        // Remove caracteres não numéricos do CPF/CNPJ
+        $cpfCnpj = preg_replace('/[^0-9]/', '', $cpfCnpj);
+
+        // Verifica se é CPF (11 dígitos) ou CNPJ (14 dígitos)
+        if (strlen($cpfCnpj) === 11) {
+            // Formata CPF (###.###.###-##)
+            return substr($cpfCnpj, 0, 3) . '.' . substr($cpfCnpj, 3, 3) . '.' . substr($cpfCnpj, 6, 3) . '-' . substr($cpfCnpj, 9, 2);
+        } elseif (strlen($cpfCnpj) === 14) {
+            // Formata CNPJ (##.###.###/####-##)
+            return substr($cpfCnpj, 0, 2) . '.' . substr($cpfCnpj, 2, 3) . '.' . substr($cpfCnpj, 5, 3) . '/' . substr($cpfCnpj, 8, 4) . '-' . substr($cpfCnpj, 12, 2);
+        } else {
+            // Retorna o valor original se não for CPF nem CNPJ
+            return $cpfCnpj;
+        }
+    }
 }
