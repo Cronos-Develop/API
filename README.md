@@ -68,6 +68,22 @@ GET /api/empresas/7/J5219a54100C4698h5114A530
 A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empresa não for encontrada, a API retornará um erro 404 em formato JSON.
 
 #### Usuários
+
+##### Recuperação de Senha
+Para recuperar a senha de um usuário, é necessário pedir dados via requisição GET à rota `/api/users/recuperar/{cpf_cnpj}`, passando o CPF ou CNPJ do usuário como parâmetro na URL (`{cpf_cnpj}`). Um e-mail de recuperação será enviado ao e-mail que o usuário definiu quando se cadastrou - pegamos o e-mail do usuário a partir de seu CPF/CNPJ, que consta no banco de dados.
+No e-mail haverá um botão para recuperar a senha, que, quando apertado, redirecionará o usuário a uma tela de recuperação. 
+Na tela de recuperação, um formulário com a nova senha deverá ser preenchido.
+Após preenchido, os seguintes dados, em formato JSON, deverão ser enviados via requisição POST para a rota `/api/users/trocarsenha/`:
+```
+	{
+		"usuario_id": "f4945H4870A5220j4776A4880a5619",
+	  "nova_senha": "nova_senha"
+	}
+```
+Então a senha do usuário será atualizada no banco de dados.
+
+
+##### Requisições GET
 Para receber dados via requisição GET, use a rota `/api/users/{hash}`, sendo `{hash}` o id do usuário, definido no momento de criação como um hash. Caso essa requisição seja enviada com o hash de um usuário existente, todos os seus dados serão retornados em formato JSON.
 
 ##### Exemplo Requisição GET:

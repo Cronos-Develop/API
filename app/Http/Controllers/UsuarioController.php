@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
@@ -24,7 +24,6 @@ class UsuarioController extends Controller
      * dados JSON.
      *
      * @param  \Illuminate\Http\Request  $request  A requisição HTTP recebida.
-     * @param  string  $userHash  O ID do usuário como uma string codificada.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com informações do usuário.
      */
     public function index(Request $request)
@@ -43,8 +42,8 @@ class UsuarioController extends Controller
     /**
      * Retorna o ID do usuário se as credenciais estiverem corretas.
      *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP recebida.
      * @param  string  $userData  Os dados do usuário no formato "cpf_cnpj:senha".
-     * @param  string  $userHash  O hash usado para verificar as permissões do usuário.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com o ID do usuário ou uma mensagem de erro.
      */
     public function show(Request $request, string $userData)
@@ -228,7 +227,7 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Recupera o email do usuário com base no CPF ou CNPJ fornecido.
+     * Recupera o email do usuário com base no CPF ou CNPJ fornecido e envia um email de recuperação de senha.
      *
      * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
      * @param  string  $cpfCnpj  O CPF ou CNPJ do usuário a ser recuperado.
@@ -236,36 +235,51 @@ class UsuarioController extends Controller
      */
     public function sendRecoverEmail(Request $request, string $cpfCnpj)
     {
+        // Email do remetente (sistema)
         $emailCronos = 'cronos@hotmail.com';
 
         // Formata o CPF ou CNPJ
         $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
 
         // Busca o email do usuário com base no CPF ou CNPJ
-        $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->get('email');
-        $user = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->first('name');
+        $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->value('email');
+        $user = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->first(['name']);
 
-        $userName = $user->name;
+        // Verifica se o usuário foi encontrado
+        if ($user) {
+            $userName = $user->name;
 
-        // Verifica se o email foi encontrado
-        if ($userEmail->isNotEmpty()) {
-            // Se o email foi encontrado, envia email para recuperação
-            $sent = Mail::to($userEmail)->send(new PasswordRecover([  // Pessoa que recebe o email
-                'fromName' => 'Cronos',
-                'fromEmail' => $emailCronos,  //Pessoa que envia o email
-                'subject' => 'Recuperação de Senha',
-                'userName' => $userName,
-            ]));
-            if ($sent){
-                return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
+            // Verifica se o email foi encontrado
+            if ($userEmail) {
+                // Se o email foi encontrado, envia email para recuperação
+                try {
+                    Mail::to($userEmail)->send(new PasswordRecover([
+                        'fromName' => 'Cronos',
+                        'fromEmail' => $emailCronos,
+                        'subject' => 'Recuperação de Senha',
+                        'userName' => $userName,
+                    ]));
+
+                    return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
+                } catch (\Exception $e) {
+                    // Se ocorrer um erro ao enviar o email
+                    return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
+                }
             }
         }
 
-        // Se o email não foi encontrado, retorna uma mensagem de erro em formato JSON
+        // Se o email não foi encontrado ou o usuário não existe, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
     }
 
-    public function recoverPassword(Request $request){
+    /**
+     * Atualiza a senha do usuário com base no ID do usuário e a nova senha fornecida.
+     *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha na atualização da senha.
+     */
+    public function recoverPassword(Request $request)
+    {
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
@@ -289,15 +303,18 @@ class UsuarioController extends Controller
             return response()->json(['errors' => 'Erro ao decodificar o JSON'], 400);
         }
 
+        // Obtém os dados do usuário a partir do JSON
         $userId = $dados['usuario_id'];
         $novaSenha = $dados['nova_senha'];
 
-        $novaSenha = Hash::make($novaSenha);  // A nova senha é criptografada
-        // Atualiza os dados do usuário na tabela 'usuarios'
-        $updated = DB::table('usuarios')->where('id', $userId)->update(["senha" => $novaSenha]);
+        // Criptografa a nova senha
+        $novaSenha = Hash::make($novaSenha);
+
+        // Atualiza a senha do usuário na tabela 'usuarios'
+        $updated = DB::table('usuarios')->where('id', $userId)->update(['senha' => $novaSenha]);
 
         // Verifica se a atualização foi bem-sucedida
-        if (!$updated){
+        if (!$updated) {
             return response()->json(['errors' => 'Erro ao trocar senha'], 400);
         }
 
