@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Extensions\CPFValidator;
 use App\Extensions\CustomHasher;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordRecover;
 
 class UsuarioController extends Controller
 {
@@ -232,21 +234,74 @@ class UsuarioController extends Controller
      * @param  string  $cpfCnpj  O CPF ou CNPJ do usuário a ser recuperado.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON contendo o email do usuário ou uma mensagem de erro.
      */
-    public function recover(Request $request, string $cpfCnpj)
+    public function sendRecoverEmail(Request $request, string $cpfCnpj)
     {
+        $emailCronos = 'cronos@hotmail.com';
+
         // Formata o CPF ou CNPJ
         $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
 
         // Busca o email do usuário com base no CPF ou CNPJ
         $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->get('email');
+        $user = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->first('name');
+
+        $userName = $user->name;
 
         // Verifica se o email foi encontrado
         if ($userEmail->isNotEmpty()) {
-            // Se o email foi encontrado, retorna o email em formato JSON
-            return response()->json($userEmail);
+            // Se o email foi encontrado, envia email para recuperação
+            $sent = Mail::to($userEmail)->send(new PasswordRecover([  // Pessoa que recebe o email
+                'fromName' => 'Cronos',
+                'fromEmail' => $emailCronos,  //Pessoa que envia o email
+                'subject' => 'Recuperação de Senha',
+                'userName' => $userName,
+            ]));
+            if ($sent){
+                return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
+            }
         }
 
         // Se o email não foi encontrado, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
+    }
+
+    public function recoverPassword(Request $request){
+        // Valida os dados da requisição
+        $validator = Validator::make($request->all(), [
+            'usuario_id' => 'required',
+            'nova_senha' => 'required'
+        ]);
+
+        // Verifica se a validação falhou e retorna os erros
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Obtém o JSON da requisição
+        $json = $request->getContent();
+
+        // Decodifica o JSON em um array associativo
+        $dados = json_decode($json, true);
+
+        // Verifica se o JSON foi decodificado com sucesso
+        if ($dados === null) {
+            // Se houver algum erro na decodificação do JSON
+            return response()->json(['errors' => 'Erro ao decodificar o JSON'], 400);
+        }
+
+        $userId = $dados['usuario_id'];
+        $novaSenha = $dados['nova_senha'];
+
+        $novaSenha = Hash::make($novaSenha);  // A nova senha é criptografada
+        // Atualiza os dados do usuário na tabela 'usuarios'
+        $updated = DB::table('usuarios')->where('id', $userId)->update(["senha" => $novaSenha]);
+
+        // Verifica se a atualização foi bem-sucedida
+        if (!$updated){
+            return response()->json(['errors' => 'Erro ao trocar senha'], 400);
+        }
+
+        // Retorna uma resposta JSON indicando sucesso na atualização dos dados
+        return response()->json(['success' => 'Senha trocada com sucesso'], 200);
     }
 }

@@ -27,7 +27,10 @@ Route::controller(UsuarioController::class)->prefix('users/')->group( function (
     Route::get('', 'index');
 
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
-    Route::get('recuperar/{cpf}', 'recover');
+    Route::get('recuperar/{cpf}', 'sendRecoverEmail');
+
+    // Define uma rota POST para troca de senha, redirecionada a partir do email de recuperação
+    Route::post('trocarsenha/', 'recoverPassword');
 
     // Define uma rota GET para exibir um usuário específico
     Route::get('{user}/', 'show');
