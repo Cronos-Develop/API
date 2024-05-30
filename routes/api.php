@@ -24,13 +24,13 @@ Route::controller(UsuarioController::class)->prefix('users/')->group( function (
     // As rotas autocamticamente chamam metodos na UsuarioController
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
-    Route::get('{hash}', 'index');
+    Route::get('', 'index');
 
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
     Route::get('recuperar/{cpf}', 'recover');
 
     // Define uma rota GET para exibir um usuário específico
-    Route::get('{user}/{hash}', 'show');
+    Route::get('{user}/', 'show');
 
     // Define uma rota POST para criar um novo usuário
     Route::post('{hash}', 'store');
@@ -48,19 +48,19 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     // As rotas autocamticamente chamam metodos na EmpresaController
 
     // Define uma rota GET para listar todas as empresas
-    Route::get('{hash}', 'index');
+    Route::get('', 'index');
 
     // Define uma rota GET para listar todas as empresas de um usuario
-    Route::get('user/{hash}', 'userCompanies');
-
-    // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
-    Route::get('{empresa}/tarefas/{hash}', 'companieTasks');
+    Route::get('user/', 'userCompanies');
 
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
-    Route::get('partner/{hash}', 'partnerCompanies');
+    Route::get('partner/', 'partnerCompanies');
 
     // Define uma rota GET para exibir uma empresa específica
-    Route::get('{empresa}/{hash}', 'show');
+    Route::get('{empresa}/', 'show');
+
+    // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
+    Route::get('{empresa}/tarefas/', 'companieTasks');
 
     // Define uma rota POST para criar uma nova empresa
     Route::post('{hash}', 'store');

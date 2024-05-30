@@ -25,8 +25,12 @@ class UsuarioController extends Controller
      * @param  string  $userHash  O ID do usuário como uma string codificada.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com informações do usuário.
      */
-    public function index(Request $request, string $userHash)
+    public function index(Request $request)
     {
+        //Obtém a query string completa
+        $queryString = $request->getQueryString();
+        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
+
         // Realiza uma consulta na tabela 'usuarios' para obter informações do usuário com base no ID fornecido
         $userInfo = DB::table('usuarios')->where('id', $userHash)->get();
 
@@ -41,8 +45,12 @@ class UsuarioController extends Controller
      * @param  string  $userHash  O hash usado para verificar as permissões do usuário.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com o ID do usuário ou uma mensagem de erro.
      */
-    public function show(string $userData, string $userHash)
+    public function show(Request $request, string $userData)
     {
+        //Obtém a query string completa
+        $queryString = $request->getQueryString();
+        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
+
         // Divide os dados do usuário em CPF/CNPJ e senha
         $userDataArray = explode(':', $userData);
         $userCpf = $userDataArray[0];
