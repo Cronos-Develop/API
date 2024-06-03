@@ -177,9 +177,9 @@ class UsuarioController extends Controller
             }
 
             // Verifica se a atualização foi bem-sucedida
-            if (!$updated){
-                return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
-            }
+            // if (!$updated){
+            //     return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+            // }
         }
 
         // Retorna uma resposta JSON indicando sucesso na atualização dos dados

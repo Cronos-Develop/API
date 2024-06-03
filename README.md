@@ -258,6 +258,50 @@ POST /api/empresas/H5738I4953A5337c4774a4840A4886
 
 A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
 
+### Fazendo registros na 5W2H
+Para fazer registros na 5w2h, faça uma requisição POST na rota `api/empresas/t5w2h/{empresa}/{hash}` onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario.
+
+Exemplo de requisição:
+
+```
+POST /api/empresas/t5w2h/1/C5244i4950A5414f4792A486a5694
+
+
+[
+  {
+    "pergunta_id": 1,
+    "resposta": "Abrir uma cafeteria",
+    "tarefa": "Pesquisar cafeterias"
+  },
+    {
+    "pergunta_id": 2,
+    "resposta": "Ganhar dinheiro",
+  },
+    {
+    "pergunta_id": 3,
+    "resposta": "Eu e dois funcionarios",
+    "tarefa": "Contratar funcionarios"
+  },
+    {
+    "pergunta_id": 4,
+    "resposta": "5 mil pilas",
+    "tarefa": "Economizar dinheiro"
+  }
+]
+```
+Observe que a tarefa pode ser omitida.
+
+O que o id de cada pergunta representa:
+
+```
+  1 => 'O quê'
+  2 => 'Por que'
+  3 => 'Quem'
+  4 => 'Quanto'
+  5 => 'Como'
+  6 => 'Quando'
+  7 => 'Onde'
+```
 ### Retornando lista de empresas a partir da id do usuário
 Para receber a lista de empresas a partir do id do usuario faça uma requisição GET na rota `api/empresas/user/{hash}`, onde `{hash}` é o id do usuario. Um erro 404 é retornado se o usuario não for encontrado ou um corpo vazio se o usuario não tiver empresas.
 
@@ -451,7 +495,43 @@ HTTP/1.1 200 OK
   "sucesso": "Gut cadastrado com sucesso"
 }
 ```
+### Requerir tarefas da IA
+#### Atenção!
+É necessario informar uma chave valida para a api do Gemini.
 
+No arquivo .env:
+
+```
+GEMINI_API_KEY="sua_chave"
+```
+Você pode enviar uma tarefa para a nossa IA e ela dividira a tarefa em varias subtarefas.
+
+Para receber as subtarefas, basta fazer uma requisição POST na rota `api/IA/{hash}` onde `{hash}`é o id do usuario.
+
+Exemplo:
+
+```
+POST /api/IA/C5244i4950A5414f4792A486a5694
+
+{
+  "tarefa": "Abrir uma empresa"
+}
+```
+Resposta:
+
+```
+[
+  "Defina o seu negócio e modelo",
+  "Escolha uma estrutura empresarial",
+  "Obtenha licenças e alvarás necessários",
+  "Abra uma conta bancária comercial",
+  "Registre seu nome comercial e marca registrada",
+  "Estabeleça um sistema de contabilidade",
+  "Obtenha seguro comercial",
+  "Contrate funcionários (se necessário)",
+  "Comercialize seu negócio"
+]
+```
 
 ### Como criar banco de dados e popular:
 
