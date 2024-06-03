@@ -24,7 +24,7 @@ class EmpresaController extends Controller
         return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function userCompanies(Usuario $hash) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
+    public function userCompanies(Usuario $hash) //Laravel converte a chave primaria recebida no Usuario correspondente automacimente.
     {
         /**
          * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash.
@@ -42,6 +42,28 @@ class EmpresaController extends Controller
          * @param  \App\Models\Usuario  $hash parceiro das empresas.
          */
         return $hash->empresasParceiras;
+    }
+
+    function storeT5w2h(Request $request,Empresa $empresa, Usuario $hash) {
+
+        $t5w2h = $empresa->t5w2hs;
+        $contents = $request->all();
+
+        $validator = Validator::make($contents, [
+            "*.pergunta_id" => "required",
+            "*.resposta" => "required",
+            "*.tarefa" => "nullable"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        foreach ($contents as $content) {
+            T5w2h::updateOrCreate(["empresa_id" => $empresa->id,"pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa" => $content["tarefa"]]);
+        }
+        return response()->json(['success' => 'Registros feitos com sucesso'], 201);
+        
     }
 
     function companieTasks(Empresa $empresa, string $hash)
