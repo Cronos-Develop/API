@@ -496,6 +496,14 @@ HTTP/1.1 200 OK
 }
 ```
 ### Requerir tarefas da IA
+#### Atenção!
+É necessario informar uma chave valida para a api do Gemini.
+
+No arquivo .env:
+
+```
+GEMINI_API_KEY="sua_chave"
+```
 Você pode enviar uma tarefa para a nossa IA e ela dividira a tarefa em varias subtarefas.
 
 Para receber as subtarefas, basta fazer uma requisição POST na rota `api/IA/{hash}` onde `{hash}`é o id do usuario.
