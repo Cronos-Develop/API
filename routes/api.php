@@ -57,6 +57,9 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
     Route::get('{empresa}/tarefas/{hash}', 'companieTasks');
 
+    // Define um rota POST para fazer registros nas tabela 5w2h da empresa
+    Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
+
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
     Route::get('partner/{hash}', 'partnerCompanies');
 
@@ -83,7 +86,7 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
 
 });
 
-// ia test
+// IA
 
-Route::get('/gemini', [GeminiController::class, 'index']);
-Route::post('/gemini', [GeminiController::class, 'ask']);
+// Route::get('/gemini', [GeminiController::class, 'index']);
+Route::post('/IA/{hash}', [GeminiController::class, 'tasks']);
