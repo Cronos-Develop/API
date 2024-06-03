@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GeminiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
@@ -81,3 +82,8 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
     Route::post('{empresa}/{hash}', 'store');
 
 });
+
+// ia test
+
+Route::get('/gemini', [GeminiController::class, 'index']);
+Route::post('/gemini', [GeminiController::class, 'ask']);
