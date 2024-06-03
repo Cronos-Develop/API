@@ -52,7 +52,7 @@ class EmpresaController extends Controller
         $validator = Validator::make($contents, [
             "*.pergunta_id" => "required",
             "*.resposta" => "required",
-            "*.tarefa" => "required"
+            "*.tarefa" => "nullable"
         ]);
 
         if ($validator->fails()) {
