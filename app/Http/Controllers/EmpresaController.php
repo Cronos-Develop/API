@@ -21,72 +21,70 @@ class EmpresaController extends Controller
          */
 
         // Retorna todos os registros da tabela 'empresas' do banco de dados usando o facade DB do Laravel
-
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
-
         return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function userCompanies(Request $request) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
+    public function userCompanies(Usuario $hash) //Laravel converte a chave primaria recebida no Usuario correspondente automacimente.
     {
         /**
-         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual ao hash passado por parâmetro na URL.
+         * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash.
          */
-        
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
-        
-        // Encontrar o objeto Usuario correspondente ao hash
-        $usuario = Usuario::findOrFail($userHash);
 
-        return $usuario->empresas;
+        return $hash->empresas;
     }
 
-    function partnerCompanies(Request $request)
+    function partnerCompanies(Usuario $hash)
     { //Laravel automaticamente converte a chave primaria recebida no objeto Usuario correspondente.
         /**
          * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
          * Devolve um erro 404 ao cliente se o usuario não for encontrado.
          * 
+         * @param  \App\Models\Usuario  $hash parceiro das empresas.
          */
-
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
-
-        // Encontrar o objeto Usuario correspondente ao hash
-        $usuario = Usuario::findOrFail($userHash);
-
-        return $usuario->empresasParceiras;
+        return $hash->empresasParceiras;
     }
 
-    function companieTasks(Request $request, Empresa $empresa)
+    function storeT5w2h(Request $request,Empresa $empresa, Usuario $hash) {
+
+        $t5w2h = $empresa->t5w2hs;
+        $contents = $request->all();
+
+        $validator = Validator::make($contents, [
+            "*.pergunta_id" => "required",
+            "*.resposta" => "required",
+            "*.tarefa" => "nullable"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        foreach ($contents as $content) {
+            T5w2h::updateOrCreate(["empresa_id" => $empresa->id,"pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa" => $content["tarefa"]]);
+        }
+        return response()->json(['success' => 'Registros feitos com sucesso'], 201);
+        
+    }
+
+    function companieTasks(Empresa $empresa, string $hash)
     {
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
+
         return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
             ->whereBelongsTo($empresa)
             ->get(['id', 'empresa_id', 'tarefa']);
     }
 
-    public function show(Request $request, string $empresaId)
+    public function show(string $empresaId, string $userHash)
     {
         /**
          * Retorna os detalhes de uma empresa com base no ID fornecido.
          *
          * @param  string  $empresaId  O ID da empresa a ser buscada.
+         * @param  string  $userHash  Um hash usado para verificar as permissões do usuário.
          * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com os detalhes da empresa ou uma mensagem de erro.
          */
-
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
 
         // Busca a empresa no banco de dados pelo ID fornecido
         $empresa = DB::table('empresas')->where('id', $empresaId)->get()->first();
