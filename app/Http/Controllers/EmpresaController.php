@@ -38,13 +38,14 @@ class EmpresaController extends Controller
         /**
          * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
          * Devolve um erro 404 ao cliente se o usuario não for encontrado.
-         * 
+         *
          * @param  \App\Models\Usuario  $hash parceiro das empresas.
          */
         return $hash->empresasParceiras;
     }
 
-    function storeT5w2h(Request $request,Empresa $empresa, Usuario $hash) {
+    function storeT5w2h(Request $request, Empresa $empresa, Usuario $hash)
+    {
 
         $t5w2h = $empresa->t5w2hs;
         $contents = $request->all();
@@ -52,7 +53,7 @@ class EmpresaController extends Controller
         $validator = Validator::make($contents, [
             "*.pergunta_id" => "required",
             "*.resposta" => "required",
-            "*.tarefa" => "nullable"
+            "*.tarefa_id" => "required|int"
         ]);
 
         if ($validator->fails()) {
@@ -60,10 +61,9 @@ class EmpresaController extends Controller
         }
 
         foreach ($contents as $content) {
-            T5w2h::updateOrCreate(["empresa_id" => $empresa->id,"pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa" => $content["tarefa"]]);
+            T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa_id" => $content["tarefa_id"]]);
         }
         return response()->json(['success' => 'Registros feitos com sucesso'], 201);
-        
     }
 
     function companieTasks(Empresa $empresa, string $hash)

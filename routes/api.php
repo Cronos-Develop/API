@@ -19,7 +19,7 @@ use App\Http\Controllers\GutController;
 */
 
 
-Route::controller(UsuarioController::class)->prefix('users/')->group( function () {
+Route::controller(UsuarioController::class)->prefix('users/')->group(function () {
     // Define um grupo de rotas para o recurso 'Usuario'
     // Todas as rotas aqui têm o prefixo 'users/' adicionado a URI antes de serem processadas
     // As rotas autocamticamente chamam metodos na UsuarioController
@@ -55,19 +55,21 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::get('', 'index');
 
     // Define uma rota GET para listar todas as empresas de um usuario
-    Route::get('user/', 'userCompanies');
+    Route::get('user/{hash}', 'userCompanies');
 
     // Define um rota POST para fazer registros nas tabela 5w2h da empresa
     Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
 
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
-    Route::get('partner/', 'partnerCompanies');
+    Route::get('partner/{hash}', 'partnerCompanies');
 
     // Define uma rota GET para exibir uma empresa específica
     Route::get('{empresa}/', 'show');
 
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
     Route::get('{empresa}/tarefas/', 'companieTasks');
+    // Define um rota POST para fazer registros de tarefas para 5w2h
+    Route::post('{empresa}/tarefas/{hash}', 'storeTasks');
 
     // Define uma rota POST para criar uma nova empresa
     Route::post('{hash}', 'store');
@@ -88,6 +90,7 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
     Route::post('{empresa}/{hash}', 'store');
 
 });
+
 
 // IA
 

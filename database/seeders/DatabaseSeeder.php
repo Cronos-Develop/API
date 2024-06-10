@@ -7,6 +7,7 @@ use App\Models\Gut;
 use App\Models\Pergunta;
 use App\Models\Subtarefa;
 use App\Models\T5w2h;
+use App\Models\Tarefa;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -44,15 +45,17 @@ class DatabaseSeeder extends Seeder
 
         // Cria 7 registros na tabela 5w2h para cada empressa representando as 7 perguntas
         $empresas->each(function (Empresa $emp) {
-            $emp->t5w2hs()->saveMany(
-                T5w2h::factory(7)->sequence(
-                    fn (Sequence $sequence) => ['pergunta_id' => $sequence->index + 1]
-                )->create()
-            );
+            $gut = Gut::factory()->create();
+            $tarefa = Tarefa::factory()->create();
+            $t5w2hs = T5w2h::factory(7)->sequence(
+                fn (Sequence $sequence) => ['pergunta_id' => $sequence->index + 1]
+            )->for($gut)->for($tarefa)->for($emp)->create();
+            //Tarefa::factory()->has($t5w2hs)->create();
+            //$emp->t5w2hs()->saveMany($t5w2hs);
         });
 
 
         Subtarefa::factory(5)->create();
-        Gut::factory(5)->create();
+        //Gut::factory(5)->create();
     }
 }

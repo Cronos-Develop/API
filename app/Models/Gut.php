@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Gut extends Model
 {
@@ -16,7 +17,8 @@ class Gut extends Model
         'tendencia'
     ];
 
-    function t5w2h() : BelongsTo {
-        return $this->belongsTo(T5w2h::class, '5w2h_id')->withDefault();
+    function t5w2hs(): HasMany
+    {
+        return $this->hasMany(T5w2h::class)->withDefault();
     }
 }

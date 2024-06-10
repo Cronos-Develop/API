@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('empresa_id')->references('id')->on('empresas');
             $table->foreignId('pergunta_id')->references('id')->on('perguntas');
+            $table->foreignId('gut_id')->references('id')->on('guts');
+            $table->foreignId('tarefa_id')->references('id')->on('tarefas');
             $table->string('resposta');
-            $table->string('tarefa')->nullable();
             $table->timestamps();
         });
     }
