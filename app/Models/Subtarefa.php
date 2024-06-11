@@ -14,7 +14,7 @@ class Subtarefa extends Model
         return $this->belongsTo(Usuario::class)->withDefault();
     }
 
-    function t5w2h() : BelongsTo {
-        return $this->belongsTo(T5w2h::class, '5w2h_id')->withDefault();
+    function tarefa() : BelongsTo {
+        return $this->belongsTo(Tarefa::class)->withDefault();
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('usuario_id');
             $table->foreign('usuario_id')->references('id')->on('usuarios');
-            $table->foreignId('5w2h_id')->references('id')->on('t5w2hs');
+            $table->foreignId('tarefa_id')->references('id')->on('tarefas');
             $table->string('subtarefa');
             $table->timestamps();
         });

@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         });
 
 
-        Subtarefa::factory(5)->create();
+        Subtarefa::factory(25)->create();
         //Gut::factory(5)->create();
     }
 }

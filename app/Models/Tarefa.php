@@ -17,4 +17,9 @@ class Tarefa extends Model
     {
         return $this->hasMany(T5w2h::class);
     }
+
+    public function subtarefas(): HasMany
+    {
+        return $this->hasMany(Subtarefa::class);
+    }
 }

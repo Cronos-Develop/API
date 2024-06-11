@@ -80,10 +80,9 @@ class EmpresaController extends Controller
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
+        $tarefas = $empresa->t5w2hs()->distinct()->get(['tarefa_id']);
+        return $tarefas->load('tarefa.subtarefas:tarefa_id,subtarefa');
 
-        return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
-            ->whereBelongsTo($empresa)
-            ->get(['id', 'empresa_id', 'tarefa']);
     }
 
     public function show(string $empresaId, string $userHash)
