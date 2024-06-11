@@ -57,6 +57,9 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     // Define uma rota GET para listar todas as empresas de um usuario
     Route::get('user/{hash}', 'userCompanies');
 
+    // Define uma rota GET para listar registros da 5w2h
+    Route::get('t5w2h/{empresa}/{hash}', 'showT5w2h');
+
     // Define um rota POST para fazer registros nas tabela 5w2h da empresa
     Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
 
@@ -68,8 +71,6 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
 
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
     Route::get('{empresa}/tarefas/', 'companieTasks');
-    // Define um rota POST para fazer registros de tarefas para 5w2h
-    Route::post('{empresa}/tarefas/{hash}', 'storeTasks');
 
     // Define uma rota POST para criar uma nova empresa
     Route::post('{hash}', 'store');

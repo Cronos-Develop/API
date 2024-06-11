@@ -14,7 +14,9 @@ class T5w2h extends Model
 
     protected $fillable = [
         "pergunta_id",
+        "tarefa_id",
         "resposta",
+        "empresa_id"
         //"tarefa"
     ];
 

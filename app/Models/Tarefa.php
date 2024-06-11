@@ -10,7 +10,9 @@ class Tarefa extends Model
 {
     use HasFactory;
 
-
+    protected $fillable = [
+        "descrição",
+    ];
     public function t5w2hs(): HasMany
     {
         return $this->hasMany(T5w2h::class);

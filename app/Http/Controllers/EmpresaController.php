@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -51,17 +52,19 @@ class EmpresaController extends Controller
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "*.pergunta_id" => "required",
-            "*.resposta" => "required",
-            "*.tarefa_id" => "required|int"
+            "tarefa" => "required|string",
+            "respostas.*.pergunta_id" => "required|int",
+            "respostas.*.resposta" => "required|string",
         ]);
 
+        
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+        $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
 
-        foreach ($contents as $content) {
-            T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa_id" => $content["tarefa_id"]]);
+        foreach ($contents["respostas"] as $resposta) {
+            T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
         }
         return response()->json(['success' => 'Registros feitos com sucesso'], 201);
     }
@@ -201,5 +204,19 @@ class EmpresaController extends Controller
             return response()->json(['success' => 'Empresa deletada com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao deletar empresa'], 400);
+    }
+
+    public function showT5w2h(Empresa $empresa, Usuario $usuario)
+    {
+        return $empresa->t5w2hs()->with(
+            'tarefa:id,descrição', 'pergunta:id,pergunta', 'gut:id,gravidade,urgencia,tendencia'
+        )->get([
+            'id',
+            'empresa_id',
+            'tarefa_id',
+            'pergunta_id',
+            'gut_id',
+            'resposta'
+        ]);
     }
 }
