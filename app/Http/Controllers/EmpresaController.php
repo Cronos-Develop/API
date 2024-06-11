@@ -73,7 +73,7 @@ class EmpresaController extends Controller
             $t5w2h->gut()->associate($gut);
             $t5w2h->save();
         }
-        return response()->json(['success' => 'Registros feitos com sucesso'], 201);
+        return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
     function companieTasks(Empresa $empresa, Usuario $hash)
@@ -190,6 +190,12 @@ class EmpresaController extends Controller
             return response()->json(['success' => 'Dados atualizados com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+    }
+
+    public function destroyT5w2h(Tarefa $tarefa, Usuario $usuario)
+    {
+        $tarefa->t5w2hs()->delete();
+        return response()->json(['success' => 'Dados deletados com sucesso'], 200);
     }
 
     public function destroy(string $empresaId, string $userHash)
