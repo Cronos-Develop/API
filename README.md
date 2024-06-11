@@ -497,6 +497,33 @@ retorno
 }
 ```
 
+### Registrando tabela GUT
+Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{tarefa}/{hash}`, onde os parametros são id da tarefa e do usuario respectivamente.
+
+
+Exemplo de corpo:
+
+```
+POST
+
+{
+  "gravidade": 1,
+  "urgencia": 1,
+  "tendencia": 1
+}
+```
+
+
+Resultado esperado:
+
+```
+HTTP/1.1 200 OK
+
+{
+  "sucesso": "Gut cadastrado com sucesso"
+}
+```
+
 ### Requerir tarefas da IA
 #### Atenção!
 É necessario informar uma chave valida para a api do Gemini.

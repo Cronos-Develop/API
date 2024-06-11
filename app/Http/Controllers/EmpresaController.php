@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
 use App\Models\T5w2h;
 use App\Models\Usuario;
+use Illuminate\Support\Fluent;
 
 class EmpresaController extends Controller
 {
@@ -54,24 +55,29 @@ class EmpresaController extends Controller
 
         $validator = Validator::make($contents, [
             "tarefa" => "required|string",
-            "gut.gravidade"=> "required",
-            "gut.urgencia"=> "required",
-            "gut.tendencia"=> "required",
+            "gut" => "nullable",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
         ]);
 
+        $validator = $validator->sometimes(['gut.gravidade', 'gut.urgencia', 'gut.tendencia'], 'required', function (Fluent $input) {
+            return isset($input->gut);
+        });
         
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
-        $gut = Gut::firstOrCreate($request['gut']);
+        if ($request['gut'])
+            $gut = Gut::firstOrCreate($request['gut']);
 
         foreach ($contents["respostas"] as $resposta) {
             $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
-            $t5w2h->gut()->associate($gut);
-            $t5w2h->save();
+            if ($request['gut'])
+            {
+                $t5w2h->gut()->associate($gut);
+                $t5w2h->save();
+            }
         }
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }

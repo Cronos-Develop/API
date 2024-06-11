@@ -64,7 +64,7 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
 
     // // Define uma rota PUT para atualizar registros nas tabela 5w2h da empresa
-    // Route::put('t5w2h/{empresa}/{hash}', 'storeT5w2h');
+     Route::put('t5w2h/{empresa}/{hash}', 'updateT5w2h');
 
     // Define uma rota DELETE para deletar registros associados a uma tarefa na tabela 5w2h
     Route::delete('t5w2h/{tarefa}/{hash}', 'destroyT5w2h');
@@ -94,7 +94,7 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
     // As rotas autocamticamente chamam métodos na GutController
 
     // Define uma rota POST para criar um novo gut
-    Route::post('{empresa}/{hash}', 'store');
+    Route::post('{tarefa}/{hash}', 'store');
 
 });
 
