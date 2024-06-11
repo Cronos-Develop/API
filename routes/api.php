@@ -19,7 +19,7 @@ use App\Http\Controllers\GutController;
 */
 
 
-Route::controller(UsuarioController::class)->prefix('users/')->group( function () {
+Route::controller(UsuarioController::class)->prefix('users/')->group(function () {
     // Define um grupo de rotas para o recurso 'Usuario'
     // Todas as rotas aqui têm o prefixo 'users/' adicionado a URI antes de serem processadas
     // As rotas autocamticamente chamam metodos na UsuarioController
@@ -55,19 +55,28 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::get('', 'index');
 
     // Define uma rota GET para listar todas as empresas de um usuario
-    Route::get('user/', 'userCompanies');
+    Route::get('user/{hash}', 'userCompanies');
 
-    // Define um rota POST para fazer registros nas tabela 5w2h da empresa
+    // Define uma rota GET para listar registros da 5w2h
+    Route::get('t5w2h/{empresa}/{hash}', 'showT5w2h');
+
+    // Define uma rota POST para fazer registros nas tabela 5w2h da empresa
     Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
 
-    // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
-    Route::get('partner/', 'partnerCompanies');
+    // // Define uma rota PUT para atualizar registros nas tabela 5w2h da empresa
+     Route::put('t5w2h/{empresa}/{hash}', 'updateT5w2h');
 
-    // Define uma rota GET para exibir uma empresa específica
-    Route::get('{empresa}/', 'show');
+    // Define uma rota DELETE para deletar registros associados a uma tarefa na tabela 5w2h
+    Route::delete('t5w2h/{tarefa}/{hash}', 'destroyT5w2h');
+    // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
+    Route::get('partner/{hash}', 'partnerCompanies');
+
 
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
-    Route::get('{empresa}/tarefas/', 'companieTasks');
+    Route::get('{empresa}/tarefas/{hash}', 'companieTasks');
+
+    // Define uma rota GET para exibir uma empresa específica
+    Route::get('{empresa}/{hash}', 'show');
 
     // Define uma rota POST para criar uma nova empresa
     Route::post('{hash}', 'store');
@@ -85,11 +94,13 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
     // As rotas autocamticamente chamam métodos na GutController
 
     // Define uma rota POST para criar um novo gut
-    Route::post('{empresa}/{hash}', 'store');
+    Route::post('{tarefa}/{hash}', 'store');
 
 });
+
 
 // IA
 
 // Route::get('/gemini', [GeminiController::class, 'index']);
-Route::post('/IA/{hash}', [GeminiController::class, 'tasks']);
+Route::post('/IA/tarefas/{hash}', [GeminiController::class, 'tasks']);
+Route::post('/IA/gut/{hash}', [GeminiController::class, 'gutSugest']);

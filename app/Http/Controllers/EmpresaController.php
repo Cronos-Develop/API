@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gut;
+use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
 use App\Models\T5w2h;
 use App\Models\Usuario;
+use Illuminate\Support\Fluent;
 
 class EmpresaController extends Controller
 {
@@ -38,42 +41,54 @@ class EmpresaController extends Controller
         /**
          * Retorna todos os registros da tabela 'empresas' que tem Usuario recebido como parceiro.
          * Devolve um erro 404 ao cliente se o usuario não for encontrado.
-         * 
+         *
          * @param  \App\Models\Usuario  $hash parceiro das empresas.
          */
         return $hash->empresasParceiras;
     }
 
-    function storeT5w2h(Request $request,Empresa $empresa, Usuario $hash) {
+    function storeT5w2h(Request $request, Empresa $empresa, Usuario $hash)
+    {
 
-        $t5w2h = $empresa->t5w2hs;
+
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "*.pergunta_id" => "required",
-            "*.resposta" => "required",
-            "*.tarefa" => "nullable"
+            "tarefa" => "required|string",
+            "gut" => "nullable",
+            "respostas.*.pergunta_id" => "required|int",
+            "respostas.*.resposta" => "required|string",
         ]);
 
+        $validator = $validator->sometimes(['gut.gravidade', 'gut.urgencia', 'gut.tendencia'], 'required', function (Fluent $input) {
+            return isset($input->gut);
+        });
+        
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+        $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
+        if ($request['gut'])
+            $gut = Gut::firstOrCreate($request['gut']);
 
-        foreach ($contents as $content) {
-            T5w2h::updateOrCreate(["empresa_id" => $empresa->id,"pergunta_id" => $content["pergunta_id"]], ["resposta" => $content['resposta'], "tarefa" => $content["tarefa"]]);
+        foreach ($contents["respostas"] as $resposta) {
+            $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+            if ($request['gut'])
+            {
+                $t5w2h->gut()->associate($gut);
+                $t5w2h->save();
+            }
         }
-        return response()->json(['success' => 'Registros feitos com sucesso'], 201);
-        
+        return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
-    function companieTasks(Empresa $empresa, string $hash)
+    function companieTasks(Empresa $empresa, Usuario $hash)
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
+        $tarefas = $empresa->t5w2hs()->distinct()->get(['tarefa_id']);
+        return $tarefas->load('tarefa.subtarefas:tarefa_id,subtarefa');
 
-        return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
-            ->whereBelongsTo($empresa)
-            ->get(['id', 'empresa_id', 'tarefa']);
     }
 
     public function show(string $empresaId, string $userHash)
@@ -183,6 +198,12 @@ class EmpresaController extends Controller
         return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
     }
 
+    public function destroyT5w2h(Tarefa $tarefa, Usuario $usuario)
+    {
+        $tarefa->t5w2hs()->delete();
+        return response()->json(['success' => 'Dados deletados com sucesso'], 200);
+    }
+
     public function destroy(string $empresaId, string $userHash)
     {
         /**
@@ -201,5 +222,19 @@ class EmpresaController extends Controller
             return response()->json(['success' => 'Empresa deletada com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao deletar empresa'], 400);
+    }
+
+    public function showT5w2h(Empresa $empresa, Usuario $usuario)
+    {
+        return $empresa->t5w2hs()->with(
+            'tarefa:id,descrição', 'pergunta:id,pergunta', 'gut:id,gravidade,urgencia,tendencia'
+        )->get([
+            'id',
+            'empresa_id',
+            'tarefa_id',
+            'pergunta_id',
+            'gut_id',
+            'resposta'
+        ]);
     }
 }

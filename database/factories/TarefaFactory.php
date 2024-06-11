@@ -2,14 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Empresa;
-use App\Models\Pergunta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\T5w2h>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tarefa>
  */
-class T5w2hFactory extends Factory
+class TarefaFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,8 +17,7 @@ class T5w2hFactory extends Factory
     public function definition(): array
     {
         return [
-            //'empresa_id' => Empresa::all()->random()->id,
-            'resposta' => fake()->sentence(),
+            'descrição' => fake()->sentence()
         ];
     }
 }

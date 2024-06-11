@@ -283,29 +283,33 @@ Exemplo de requisição:
 POST /api/empresas/t5w2h/1/C5244i4950A5414f4792A486a5694
 
 
-[
-  {
-    "pergunta_id": 1,
-    "resposta": "Abrir uma cafeteria",
-    "tarefa": "Pesquisar cafeterias"
-  },
-    {
-    "pergunta_id": 2,
-    "resposta": "Ganhar dinheiro",
-  },
-    {
-    "pergunta_id": 3,
-    "resposta": "Eu e dois funcionarios",
-    "tarefa": "Contratar funcionarios"
-  },
-    {
-    "pergunta_id": 4,
-    "resposta": "5 mil pilas",
-    "tarefa": "Economizar dinheiro"
-  }
-]
+{
+    "tarefa": "Está é a nossa nova tarefa",
+    "gut": {
+        "gravidade": 2,
+        "urgencia": 2,
+        "tendencia": 4
+    },
+    "respostas": [
+        {
+            "pergunta_id": 1,
+            "resposta": "Ser uma pessoa melhor"
+        },
+        {
+            "pergunta_id": 2,
+            "resposta": "Por que a vida é curta"
+        }
+    ]
+}
 ```
-Observe que a tarefa pode ser omitida.
+retorno
+
+```
+{
+  "success": "Registros feitos com sucesso",
+  "tarefa_id": 12
+}
+```
 
 O que o id de cada pergunta representa:
 
@@ -358,26 +362,26 @@ Exemplo:
 GET api/empresas/partner/{hash}
 
 [
-  {
-    "id": 1,
-    "usuario_id": "I4949A5348H4674F5182i570",
-    "nome_da_empresa": "Vieira-da Silva",
-    "nicho": "qui",
-    "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
-    "created_at": "2024-05-13T13:36:10.000000Z",
-    "updated_at": "2024-05-13T13:36:10.000000Z",
-    "pivot": {...}
-  },
-  {
-    "id": 2,
-    "usuario_id": "I4949A5348H4674F5182i570",
-    "nome_da_empresa": "Solano Comercial Ltda.",
-    "nicho": "eum",
-    "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
-    "created_at": "2024-05-13T13:36:10.000000Z",
-    "updated_at": "2024-05-13T13:36:10.000000Z",
-    "pivot": {...}
-  }
+    {
+        "id": 1,
+        "usuario_id": "I4949A5348H4674F5182i570",
+        "nome_da_empresa": "Vieira-da Silva",
+        "nicho": "qui",
+        "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
+        "created_at": "2024-05-13T13:36:10.000000Z",
+        "updated_at": "2024-05-13T13:36:10.000000Z",
+        "pivot": {...}
+    },
+    {
+        "id": 2,
+        "usuario_id": "I4949A5348H4674F5182i570",
+        "nome_da_empresa": "Solano Comercial Ltda.",
+        "nicho": "eum",
+        "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
+        "created_at": "2024-05-13T13:36:10.000000Z",
+        "updated_at": "2024-05-13T13:36:10.000000Z",
+        "pivot": {...}
+    }
 ]
 ```
 
@@ -390,65 +394,111 @@ Exemplo:
 GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
 
 [
-  {
-    "id": 1,
-    "empresa_id": 1,
-    "tarefa": "Omnis autem laudantium quis maxime repudiandae tempore consequatur.",
-    "subtarefas": []
-  },
-  {
-    "id": 2,
-    "empresa_id": 1,
-    "tarefa": "Dignissimos quia nam ut et fuga voluptas enim.",
-    "subtarefas": []
-  },
-  {
-    "id": 3,
-    "empresa_id": 1,
-    "tarefa": "Nihil aliquid nisi alias quia quod quo.",
-    "subtarefas": []
-  },
-  {
-    "id": 4,
-    "empresa_id": 1,
-    "tarefa": "Illo sed minus placeat consequatur sequi sunt dolorum.",
-    "subtarefas": []
-  },
-  {
-    "id": 5,
-    "empresa_id": 1,
-    "tarefa": "Qui recusandae amet laborum impedit consequatur.",
-    "subtarefas": []
-  },
-  {
-    "id": 6,
-    "empresa_id": 1,
-    "tarefa": "Nemo aut et cupiditate commodi alias.",
-    "subtarefas": []
-  },
-  {
-    "id": 7,
-    "empresa_id": 1,
-    "tarefa": "Veritatis dicta animi numquam quia reiciendis beatae.",
-    "subtarefas": [
-      {
-        "id": 2,
-        "5w2h_id": 7,
-        "subtarefa": "Veniam fugiat ipsam nihil fugiat."
-      }
-    ]
-  }
+    {
+        "tarefa_id": 11,
+        "tarefa": {
+            "id": 11,
+            "descrição": "Está é a nossa tarefa",
+            "created_at": "2024-06-11T04:47:57.000000Z",
+            "updated_at": "2024-06-11T04:47:57.000000Z",
+            "subtarefas": []
+        }
+    },
+    {
+        "tarefa_id": 12,
+        "tarefa": {
+            "id": 12,
+            "descrição": "Está é a nossa nova tarefa",
+            "created_at": "2024-06-11T04:48:08.000000Z",
+            "updated_at": "2024-06-11T04:48:08.000000Z",
+            "subtarefas": [
+                {
+                    "tarefa_id": 12,
+                    "subtarefa": "Comprar mais café"
+                },
+                {
+                    "tarefa_id": 12,
+                    "subtarefa": "Comprar mais pessoas"
+                }
+            ]
+        }
+    }
 ]
 ```
 
 Nem toda tarefa tem subtarefas.
 
+### Recuperando dados da 5w2h
+
+Para listar os dados da 5w2h de uma empresa faça uma requisição GET na rota `api/empresas/t5w2h/{empresa}/{hash}`, `{empresa}`é o id da empresa e `{hash}` é o id do usuario.
+
+O exemplo a baixo só tem duas tarefas
+
+```
+GET api/empresas/t5w2h/10/D5218A4981c4653c518A540
+
+
+[
+    {
+        "id": 64,
+        "empresa_id": 10,
+        "tarefa_id": 10,
+        "pergunta_id": 1,
+        "gut_id": 10,
+        "resposta": "Et quibusdam eius ducimus dolores explicabo.",
+        "tarefa": {
+            "id": 10,
+            "descrição": "Eius fugit est similique et minus."
+        },
+        "pergunta": {
+            "id": 1,
+            "pergunta": "O quê"
+        },
+        "gut": {
+            "id": 10,
+            "gravidade": 4,
+            "urgencia": 4,
+            "tendencia": 2
+        }
+    },
+    {
+        "id": 65,
+        "empresa_id": 10,
+        "tarefa_id": 10,
+        "pergunta_id": 2,
+        "gut_id": 10,
+        "resposta": "Beatae voluptates facilis voluptas est maxime.",
+        "tarefa": {
+            "id": 10,
+            "descrição": "Eius fugit est similique et minus."
+        },
+        "pergunta": {
+            "id": 2,
+            "pergunta": "Por que"
+        },
+        "gut": {
+            "id": 10,
+            "gravidade": 4,
+            "urgencia": 4,
+            "tendencia": 2
+        }
+    }
+]
+```
+### Deletar tarefas na 5w2h
+
+Faça uma requisição DELETE na rota `api/empresas/t5w2h/{tarefa}/{hash}` para deletar registros associados a uma tarefa na tabela 5w2h. `{tarefa}` representa o id da tarefa e `{hash}` o id do usuario.
+
+retorno
+
+```
+{
+  "success": "Dados deletados com sucesso"
+}
+```
+
 ### Registrando tabela GUT
-Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{empresa}/{hash}`, onde os parametros são id da empresa e do usuario respectivamente.
-
-O corpo da requisição deve conter um array de até 7 dicionarios onde `pergunta_id` representa o id da pergunta que gerou a tarefa que está sendo analisada, e `gut` um vetor que representa os valores para gravidade, urgencia e tendencia.
-
-
+Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{tarefa}/{hash}`, onde os parametros são id da tarefa e do usuario respectivamente.
 
 
 Exemplo de corpo:
@@ -456,51 +506,13 @@ Exemplo de corpo:
 ```
 POST
 
-[
-  {
-    "pergunta_id": 1,
-    "gut" : [4, 5, 1]
-  },
-  {
-    "pergunta_id": 2,
-    "gut" : [1, 2, 3]
-  },
-    {
-    "pergunta_id": 3,
-    "gut" : [3, 3, 3]
-  },
-    {
-    "pergunta_id": 4,
-    "gut" : [2, 2, 2]
-  },
-    {
-    "pergunta_id": 5,
-    "gut" : [4, 3, 1]
-  },
-    {
-    "pergunta_id": 6,
-    "gut" : [1, 1, 1]
-  },
-    {
-    "pergunta_id": 7,
-    "gut" : [1, 1, 2]
-  }
-]
+{
+  "gravidade": 1,
+  "urgencia": 1,
+  "tendencia": 1
+}
 ```
 
-Pergunta que cada id representa:
-
-```
-[
-  1 => 'O quê',
-  2 => 'Por que',
-  3 => 'Quem',
-  4 => 'Quanto',
-  5 => 'Como',
-  6 => 'Quando',
-  7 => 'Onde'
-]
-```
 
 Resultado esperado:
 
@@ -511,6 +523,7 @@ HTTP/1.1 200 OK
   "sucesso": "Gut cadastrado com sucesso"
 }
 ```
+
 ### Requerir tarefas da IA
 #### Atenção!
 É necessario informar uma chave valida para a api do Gemini.
@@ -547,6 +560,26 @@ Resposta:
   "Contrate funcionários (se necessário)",
   "Comercialize seu negócio"
 ]
+```
+
+### Requerir sugestões de GUT com IA
+Para receber uma sugestão de gut para determinada tarefa, faça uma requisição POST na rota `api/IA/gut/{hash}` onde `{hash}` é o id do usuario.
+
+exemplo
+```
+POST /api/IA/gut/d4924A4965A4683H5339a510
+{
+	"tarefa": "Comprar café para consumo pessoal"
+}
+```
+retorno
+
+```
+{
+  "gravidade": 2,
+  "urgencia": 1,
+  "tendencia": 1
+}
 ```
 
 ### Como criar banco de dados e popular:

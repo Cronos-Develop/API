@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('subtarefas', function (Blueprint $table) {
             $table->id();
             $table->string('usuario_id');
-            $table->foreign('usuario_id')->references('id')->on('usuarios');
-            $table->foreignId('5w2h_id')->references('id')->on('t5w2hs');
+            $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreignId('tarefa_id')->references('id')->on('tarefas')->onDelete('cascade');
             $table->string('subtarefa');
             $table->timestamps();
         });
