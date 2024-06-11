@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gut;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,11 +49,14 @@ class EmpresaController extends Controller
     function storeT5w2h(Request $request, Empresa $empresa, Usuario $hash)
     {
 
-        $t5w2h = $empresa->t5w2hs;
+
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
             "tarefa" => "required|string",
+            "gut.gravidade"=> "required",
+            "gut.urgencia"=> "required",
+            "gut.tendencia"=> "required",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
         ]);
@@ -62,14 +66,17 @@ class EmpresaController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
+        $gut = Gut::firstOrCreate($request['gut']);
 
         foreach ($contents["respostas"] as $resposta) {
-            T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+            $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+            $t5w2h->gut()->associate($gut);
+            $t5w2h->save();
         }
         return response()->json(['success' => 'Registros feitos com sucesso'], 201);
     }
 
-    function companieTasks(Empresa $empresa, string $hash)
+    function companieTasks(Empresa $empresa, Usuario $hash)
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
