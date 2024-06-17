@@ -15,7 +15,7 @@ class GutController extends Controller
     * Retorna um erro 404 automaticamente se a empresa ou o usuario não forem encontrados.
     * @param Illuminate\Http\Request $request
     * @param App\Models\Empresa $empresa
-    * @param App\Models\Usuario $hash
+    * @param App\Models\Usuario $usuario
     */
     function store(Request $request, Empresa $empresa, Usuario $hash)
     {

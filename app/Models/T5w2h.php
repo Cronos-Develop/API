@@ -12,12 +12,6 @@ class T5w2h extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        "pergunta_id",
-        "resposta",
-        "tarefa"
-    ];
-
     function pergunta() : BelongsTo {
         return $this->belongsTo(Pergunta::class)->withDefault();
     }
