@@ -30,6 +30,8 @@ Route::controller(UsuarioController::class)->prefix('users/')->group(function ()
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
     Route::get('recuperar/{cpf}', 'sendRecoverEmail');
 
+    //Define uma rota GET para retornar usuarios parceiro a partir do id da empresa
+    Route::get('partners/{empresa}/{hash}', 'partnerCompanies');
     // Define uma rota POST para troca de senha, redirecionada a partir do email de recuperação
     Route::post('trocarsenha/', 'recoverPassword');
 
@@ -70,6 +72,7 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::delete('t5w2h/{tarefa}/{hash}', 'destroyT5w2h');
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
     Route::get('partner/{hash}', 'partnerCompanies');
+
     //Define uma rota POST para adicionar usuarios parceiros a uma empresa
     Route::post('/partner/{empresa}/{usuario}/{hash}', 'addPartnerCompanie');
     //Define uma rota DElETE para remover usuarios parceiros de uma empresa
@@ -114,4 +117,3 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
 // Route::get('/gemini', [GeminiController::class, 'index']);
 Route::post('/IA/tarefas/{hash}', [GeminiController::class, 'tasks']);
 Route::post('/IA/gut/{hash}', [GeminiController::class, 'gutSugest']);
-

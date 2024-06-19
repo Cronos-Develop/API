@@ -11,6 +11,7 @@ use App\Extensions\CPFValidator;
 use App\Extensions\CustomHasher;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordRecover;
+use App\Models\Empresa;
 
 class UsuarioController extends Controller
 {
@@ -64,7 +65,7 @@ class UsuarioController extends Controller
         $user = DB::table('usuarios')->where('cpf_cnpj', $userCpf)->get()->first();
 
         // Verifica se o usuário foi encontrado
-        if (!$user){
+        if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
@@ -75,10 +76,9 @@ class UsuarioController extends Controller
         $correctPassword = Hash::check($password, $hashedPassword);
 
         // Verifica se o usuário e a senha estão corretos e retorna o ID do usuário
-        if ($user && $correctPassword){
+        if ($user && $correctPassword) {
             return response()->json(['id' => $user->id]);
-        }
-        else {
+        } else {
             return response()->json(['error' => 'Senha incorreta'], 401);
         }
     }
@@ -113,9 +113,9 @@ class UsuarioController extends Controller
 
         // Valida e formata o CPF/CNPJ
         $cpf = CPFValidator::validarCpfOuCnpj($request->input('cpf_cnpj'));
-        if (!$cpf) {  
+        if (!$cpf) {
             // Se o CPF ou CNPJ for inválido, retorna uma mensagem de erro
-            return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);  
+            return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);
         }
 
         // Gera um ID único para o usuário com base no CPF/CNPJ
@@ -127,7 +127,7 @@ class UsuarioController extends Controller
             'id' => $userId,
             'name' => $request->input('name'),
             'cpf_cnpj' => $request->input('cpf_cnpj'),
-            'senha' => Hash::make($request->input('senha')),  
+            'senha' => Hash::make($request->input('senha')),
             'email' => $request->input('email'),
             'telefone' => $request->input('telefone'),
             'endereco' => $request->input('endereco'),
@@ -141,7 +141,7 @@ class UsuarioController extends Controller
         if ($created) {
             return response()->json(['success' => 'Usuário registrado com sucesso'], 201);
         }
-        return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
+        return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422);
     }
 
     /**
@@ -173,14 +173,13 @@ class UsuarioController extends Controller
         // Itera sobre as chaves e valores do array associativo
         foreach ($dados as $chave => $valor) {
             // Se o valor a ser alterado for a senha, uma operação de criptografia deve ser feita
-            if ($chave == "senha"){
+            if ($chave == "senha") {
                 $novaSenha = Hash::make($valor);  // A nova senha é criptografada
                 // Atualiza os dados do usuário na tabela 'usuarios'
                 $updated = DB::table('usuarios')->where('id', $userId)->update(["senha" => $novaSenha]);
                 $valor = "";
                 $novaSenha = "";
-            }
-            else{
+            } else {
                 // Atualiza os dados do usuário na tabela 'usuarios'
                 $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
             }
@@ -212,7 +211,7 @@ class UsuarioController extends Controller
 
         // Verifica se o usuário possui empresas associadas e exclui essas empresas
         $possuiEmpresa = DB::table('empresas')->where('usuario_id', $userId)->exists();
-        if ($possuiEmpresa){
+        if ($possuiEmpresa) {
             $deletedEmpresa = DB::table('empresas')->where('usuario_id', $userId)->delete();
         }
 
@@ -220,7 +219,7 @@ class UsuarioController extends Controller
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();
 
         // Retorna uma resposta JSON indicando o resultado da operação
-        if ($deleted){
+        if ($deleted) {
             return response()->json(['success' => 'Usuário deletado com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
@@ -321,4 +320,10 @@ class UsuarioController extends Controller
         // Retorna uma resposta JSON indicando sucesso na atualização dos dados
         return response()->json(['success' => 'Senha trocada com sucesso'], 200);
     }
+
+    public function partnerCompanies(Empresa $empresa, Usuario $hash)
+    {
+        return $empresa->usuariosParceiros;
+    }
 }
+

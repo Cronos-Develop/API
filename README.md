@@ -384,6 +384,78 @@ GET api/empresas/partner/{hash}
     }
 ]
 ```
+### Retornando lista de usuarios parceiros a partir da empresa
+Faça uma requisição GET na rota `api/users/partners/{empresa}/{hash}`, `{empresa}` representa o id da empresa e `{hash}` representa o iddo usuario.
+
+Exemplo de resposta
+
+```
+[
+  {
+    "id": "a5747a5370e4650a5465j560",
+    "name": "Dr. Mel Sophie Brito",
+    "email": "flovato@example.org",
+    "telefone": "(22) 96977-8434",
+    "senha": "$2y$12$sbjjFUHEs3vHs4lYvc.QmO2gUr2utg4iJEwc5RUG4F7.pIVuil0va",
+    "endereco": "58653-414, Avenida Medina, 34811. Bloco C\nIngrid d'Oeste - RO",
+    "cep": "752685-258",
+    "nascimento": "2002-07-24",
+    "empresario": 0,
+    "cpf_cnpj": "099.524.306-98",
+    "nome_da_empresa": null,
+    "created_at": "2024-06-19T02:40:36.000000Z",
+    "updated_at": "2024-06-19T02:40:36.000000Z",
+    "pivot": {
+      "empresa_id": 2,
+      "usuario_id": "a5747a5370e4650a5465j560",
+      "created_at": "2024-06-19T02:40:37.000000Z",
+      "updated_at": "2024-06-19T02:40:37.000000Z"
+    }
+  },
+  {
+    "id": "F5388E5128A5587D4739A482a5070",
+    "name": "Dr. Fabrício Ávila Sobrinho",
+    "email": "xduarte@example.org",
+    "telefone": "(38) 91486-0020",
+    "senha": "$2y$12$sbjjFUHEs3vHs4lYvc.QmO2gUr2utg4iJEwc5RUG4F7.pIVuil0va",
+    "endereco": "67957-549, Avenida Joaquim, 83. Apto 9\nZaragoça do Norte - MT",
+    "cep": "663479-780",
+    "nascimento": "1996-09-20",
+    "empresario": 1,
+    "cpf_cnpj": "55.433.793/0001-24",
+    "nome_da_empresa": "Reis Comercial Ltda.",
+    "created_at": "2024-06-19T02:40:36.000000Z",
+    "updated_at": "2024-06-19T02:40:36.000000Z",
+    "pivot": {
+      "empresa_id": 2,
+      "usuario_id": "F5388E5128A5587D4739A482a5070",
+      "created_at": "2024-06-19T02:40:37.000000Z",
+      "updated_at": "2024-06-19T02:40:37.000000Z"
+    }
+  }
+]
+```
+### Adicionando ou deletando usuarios parceiros de uma empresa
+
+Faça um requisição POST para adicionar um usuario ou DELETE para deletar na rota `api/empresas/partner/{empresa}/{usuario}/{hash}`, `{empresa}` é o id da empresa, `{usuario}` é o id do usuario que esta sendo inserido ou deletado e `{hash}` é um id de usuario válido.
+
+Não é necessario corpo.
+
+Retorno esperado
+
+```
+POST /api/empresas/partner/1/G499A5017c4674h4872b540/G499A5017c4674h4872b540
+
+{
+  "success": "Parceiro adicionado com sucesso"
+}
+
+DELETE /api/empresas/partner/1/G499A5017c4674h4872b540/G499A5017c4674h4872b540
+
+{
+  "success": "Parceiro deletado com sucesso"
+}
+```
 
 ### Retornando lista de tarefas e subtarefas a partir do id da empresa
 Para fazer essa listagem, faça uma requisição GET na rota `api/empresas/{empresa}/tarefas/{hash}`, onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario. Um erro 404 será retornado se a empresa ou usuario não forem encontrados.
@@ -413,10 +485,12 @@ GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
             "updated_at": "2024-06-11T04:48:08.000000Z",
             "subtarefas": [
                 {
+                    "id": 3,
                     "tarefa_id": 12,
                     "subtarefa": "Comprar mais café"
                 },
                 {
+                    "id": 5,
                     "tarefa_id": 12,
                     "subtarefa": "Comprar mais pessoas"
                 }
@@ -428,6 +502,61 @@ GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
 
 Nem toda tarefa tem subtarefas.
 
+### Atualizando dados da 5w2h
+
+Faça um requisição PUT na rota `api/empresas/t5w2h/{empresa}/{hash}` onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario;
+
+Exemplo de corpo
+```
+PUT /api/empresas/t5w2h/10/G499A5017c4674h4872b540
+    {
+      "tarefa_id": 10,
+      "tarefa": "Está é a nossa nova descrição da tarefa",
+      "gut": {
+          "gravidade": 1,
+        "urgencia": 2,
+        "tendencia": 1
+      },
+      "respostas": [
+        {
+          "pergunta_id": 1,
+          "resposta": "Ser uma pessoa muito melhor"
+        },
+        {
+          "pergunta_id": 2,
+          "resposta": "Por que a vida não é longa"
+        }
+      ]
+    }
+```
+Todos os campos são opcionais com exceção de `tarefa_id`. Se `"gut"` for informado todos os seus campos são obrigatorios.
+
+### Adicionando subtarefas
+
+Faça uma requisição POST na rota `api/empresas/subtarefas/{tarefa}/{hash}`, `{tarefa}` é o id da tarefa cujo as subtarefas pertencem e `{hash}` é o id do usuario.
+
+Exemplo
+
+```
+POST /api/empresas/subtarefas/1/G499A5017c4674h4872b540
+[
+  "Tarefa 1",
+  "Tarefa 2",
+  "Tarefa 3"
+]
+```
+### Deletando subtarefas
+Faça uma requisição DELETE na rota `api/empresas/subtarefas/{subtarefa}/{hash}`, `{subtarefa}` é o id da subtarefa que vai ser deletada e `{hash}` é o id do usuario.
+
+Nenhum corpo é necessario.
+
+Resultado esperado
+
+```
+{
+  "success": "Subtarefa deletada com sucesso"
+}
+```
 ### Recuperando dados da 5w2h
 
 Para listar os dados da 5w2h de uma empresa faça uma requisição GET na rota `api/empresas/t5w2h/{empresa}/{hash}`, `{empresa}`é o id da empresa e `{hash}` é o id do usuario.
