@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->foreignId('tarefa_id')->references('id')->on('tarefas')->onDelete('cascade');
             $table->string('subtarefa');
+            $table->boolean('feito')->default(false);
             $table->timestamps();
         });
     }

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
+use App\Models\Subtarefa;
 use App\Models\T5w2h;
 use App\Models\Usuario;
 use Illuminate\Support\Fluent;
@@ -47,6 +48,25 @@ class EmpresaController extends Controller
         return $hash->empresasParceiras;
     }
 
+    function addPartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
+    {
+        /**
+         * Adiciona o usuario recebido como parametro a lista de usuario parceiros de uma empresa.
+         */
+
+        $empresa->usuariosParceiros()->attach($usuario->id);
+        return response()->json(['success' => 'Parceiro adicionado com sucesso']);
+    }
+    function removePartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
+    {
+        /**
+         * Remove o usuario recebido como parametro a lista de usuario parceiros de uma empresa.
+         */
+
+        $empresa->usuariosParceiros()->detach($usuario->id);
+        return response()->json(['success' => 'Parceiro deletado com sucesso']);
+    }
+
     function storeT5w2h(Request $request, Empresa $empresa, Usuario $hash)
     {
 
@@ -67,7 +87,7 @@ class EmpresaController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $tarefa = Tarefa::firstOrCreate(["descrição" => $contents["tarefa"]]);
+        $tarefa = Tarefa::create(["descrição" => $contents["tarefa"]]);
         if ($request['gut'])
             $gut = Gut::firstOrCreate($request['gut']);
 
@@ -213,6 +233,46 @@ class EmpresaController extends Controller
             return response()->json(['success' => 'Empresa registrada com sucesso'], 201);
         }
         return response()->json(['errors' => 'Houve algum erro ao registrar empresa'], 422);
+    }
+
+    public function addSubtasks(Request $request, Tarefa $tarefa, Usuario $hash)
+    {
+        $validator = Validator::make($request->all(), [
+            '*' => 'string'
+        ]);
+
+        // Verifica se a validação falhou
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $data = $validator->validated();
+
+        foreach ($data as $task) {
+            $tarefa->subtarefas()->create(['usuario_id' => $hash->id, 'subtarefa' => $task]);
+        }
+        return response()->json(['success' => 'Subtarefas registradas com sucesso'], 201);
+    }
+
+    public function removeSubtask(Subtarefa $subtarefa, Usuario $hash)
+    {
+        Subtarefa::where('id', $subtarefa->id)->delete();
+        return response()->json(['success' => 'Subtarefa deletada com sucesso'], 201);
+    }
+
+    public function patchTasks(Tarefa $tarefa, Usuario $hash)
+    {
+        $tarefa->feito = !$tarefa->feito;
+        $tarefa->save();
+        $message = $tarefa->feito ? "feita" : "não feita";
+        return response()->json(['success' => "Tarefa marcada como $message"], 201);
+    }
+
+    public function patchSubtask(Subtarefa $subtarefa, Usuario $hash)
+    {
+        $subtarefa->feito = !$subtarefa->feito;
+        $subtarefa->save();
+        $message = $subtarefa->feito ? "feita" : "não feita";
+        return response()->json(['success' => "Subtarefa marcada como $message"], 201);
     }
 
     public function update(Request $request, string $empresaId, string $userHash)
