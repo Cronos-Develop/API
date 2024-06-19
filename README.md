@@ -557,6 +557,11 @@ Resultado esperado
   "success": "Subtarefa deletada com sucesso"
 }
 ```
+
+### Alterando estados das tarefas e subtarefas
+
+Para alternar o estado das tarefas entre feito e não feito basta fazer requisições PATCH nas rotas `api/empresas/tarefas/{tarefa}/{hash}` e `api/empresas/subtarefas/{subtarefa}/{hash}`. Nenhum body é necessario e sera enviado um feeedback do estado atual da tarefa.
+
 ### Recuperando dados da 5w2h
 
 Para listar os dados da 5w2h de uma empresa faça uma requisição GET na rota `api/empresas/t5w2h/{empresa}/{hash}`, `{empresa}`é o id da empresa e `{hash}` é o id do usuario.
