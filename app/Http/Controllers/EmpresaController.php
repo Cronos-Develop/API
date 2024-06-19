@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Empresa;
+use App\Models\Subtarefa;
 use App\Models\T5w2h;
 use App\Models\Usuario;
 use Illuminate\Support\Fluent;
@@ -47,6 +48,25 @@ class EmpresaController extends Controller
         return $hash->empresasParceiras;
     }
 
+    function addPartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
+    {
+        /**
+         * Adiciona o usuario recebido como parametro a lista de usuario parceiros de uma empresa.
+         */
+
+        $empresa->usuariosParceiros()->attach($usuario->id);
+        return response()->json(['success' => 'Parceiro adicionado com sucesso']);
+    }
+    function removePartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
+    {
+        /**
+         * Remove o usuario recebido como parametro a lista de usuario parceiros de uma empresa.
+         */
+
+        $empresa->usuariosParceiros()->detach($usuario->id);
+        return response()->json(['success' => 'Parceiro deletado com sucesso']);
+    }
+
     function storeT5w2h(Request $request, Empresa $empresa, Usuario $hash)
     {
 
@@ -63,18 +83,17 @@ class EmpresaController extends Controller
         $validator = $validator->sometimes(['gut.gravidade', 'gut.urgencia', 'gut.tendencia'], 'required', function (Fluent $input) {
             return isset($input->gut);
         });
-        
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
+        $tarefa = Tarefa::create(["descrição" => $contents["tarefa"]]);
         if ($request['gut'])
             $gut = Gut::firstOrCreate($request['gut']);
 
         foreach ($contents["respostas"] as $resposta) {
             $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
-            if ($request['gut'])
-            {
+            if ($request['gut']) {
                 $t5w2h->gut()->associate($gut);
                 $t5w2h->save();
             }
@@ -82,13 +101,73 @@ class EmpresaController extends Controller
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
+    function updateT5w2h(Request $request, Empresa $empresa, Usuario $hash)
+    {
+
+
+        $contents = $request->all();
+
+        $validator = Validator::make($contents, [
+            "tarefa_id" => "required|int",
+            "tarefa" => "nullable",
+            "gut" => "nullable",
+            "respostas.*.pergunta_id" => "required|int",
+            "respostas.*.resposta" => "required|string",
+        ]);
+
+        $validator = $validator->sometimes(['gut.gravidade', 'gut.urgencia', 'gut.tendencia'], 'required', function (Fluent $input) {
+            return isset($input->gut);
+        });
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $contents = $validator->validated();
+        $tarefa = Tarefa::find($contents['tarefa_id']);
+        if (isset($contents['tarefa'])) {
+            $tarefa->descrição = $contents['tarefa'];
+            $tarefa->save();
+        }
+        $t5w2hs = $tarefa->t5w2hs;
+        if (isset($contents['gut'])) {
+            $gut = Gut::firstOrCreate($contents['gut']);
+            $t5w2hs->each(function (T5w2h $t5w2h) use ($gut) {
+                $t5w2h->gut()->associate($gut);
+            });
+        }
+
+        $gutId = $t5w2hs->first()->gut->id;
+        if (isset($contents['respostas'])) {
+            foreach ($contents['respostas'] as $resposta) {
+                // $t5w2hs->where('pergunta_id', $resposta['pergunta_id'])->first()->update(['resposta' => $resposta['resposta']]);
+                T5w2h::updateOrCreate(['empresa_id' => $empresa->id, 'gut_id' => $gutId, 'pergunta_id' => $resposta['pergunta_id'], 'tarefa_id' => $contents['tarefa_id']], ['resposta' => $resposta['resposta']]);
+            }
+        }
+
+
+        // $tarefa = Tarefa::firstOrCreate(["descrição"=> $contents["tarefa"]]);
+        // if ($request['gut'])
+        //     $gut = Gut::firstOrCreate($request['gut']);
+        //
+        // foreach ($contents["respostas"] as $resposta) {
+        //     $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+        //     if ($request['gut'])
+        //     {
+        //         $t5w2h->gut()->associate($gut);
+        //         $t5w2h->save();
+        //     }
+        // }
+        return response()->json(['success' => 'Registros feitos com sucesso' . $gutId], 201);
+    }
+
+
+
     function companieTasks(Empresa $empresa, Usuario $hash)
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
         $tarefas = $empresa->t5w2hs()->distinct()->get(['tarefa_id']);
-        return $tarefas->load('tarefa.subtarefas:tarefa_id,subtarefa');
-
+        return $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
     }
 
     public function show(string $empresaId, string $userHash)
@@ -154,6 +233,46 @@ class EmpresaController extends Controller
             return response()->json(['success' => 'Empresa registrada com sucesso'], 201);
         }
         return response()->json(['errors' => 'Houve algum erro ao registrar empresa'], 422);
+    }
+
+    public function addSubtasks(Request $request, Tarefa $tarefa, Usuario $hash)
+    {
+        $validator = Validator::make($request->all(), [
+            '*' => 'string'
+        ]);
+
+        // Verifica se a validação falhou
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $data = $validator->validated();
+
+        foreach ($data as $task) {
+            $tarefa->subtarefas()->create(['usuario_id' => $hash->id, 'subtarefa' => $task]);
+        }
+        return response()->json(['success' => 'Subtarefas registradas com sucesso'], 201);
+    }
+
+    public function removeSubtask(Subtarefa $subtarefa, Usuario $hash)
+    {
+        Subtarefa::where('id', $subtarefa->id)->delete();
+        return response()->json(['success' => 'Subtarefa deletada com sucesso'], 201);
+    }
+
+    public function patchTasks(Tarefa $tarefa, Usuario $hash)
+    {
+        $tarefa->feito = !$tarefa->feito;
+        $tarefa->save();
+        $message = $tarefa->feito ? "feita" : "não feita";
+        return response()->json(['success' => "Tarefa marcada como $message"], 201);
+    }
+
+    public function patchSubtask(Subtarefa $subtarefa, Usuario $hash)
+    {
+        $subtarefa->feito = !$subtarefa->feito;
+        $subtarefa->save();
+        $message = $subtarefa->feito ? "feita" : "não feita";
+        return response()->json(['success' => "Subtarefa marcada como $message"], 201);
     }
 
     public function update(Request $request, string $empresaId, string $userHash)
@@ -227,7 +346,9 @@ class EmpresaController extends Controller
     public function showT5w2h(Empresa $empresa, Usuario $usuario)
     {
         return $empresa->t5w2hs()->with(
-            'tarefa:id,descrição', 'pergunta:id,pergunta', 'gut:id,gravidade,urgencia,tendencia'
+            'tarefa:id,descrição',
+            'pergunta:id,pergunta',
+            'gut:id,gravidade,urgencia,tendencia'
         )->get([
             'id',
             'empresa_id',

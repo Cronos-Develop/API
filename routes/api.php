@@ -30,6 +30,8 @@ Route::controller(UsuarioController::class)->prefix('users/')->group(function ()
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
     Route::get('recuperar/{cpf}', 'sendRecoverEmail');
 
+    //Define uma rota GET para retornar usuarios parceiro a partir do id da empresa
+    Route::get('partners/{empresa}/{hash}', 'partnerCompanies');
     // Define uma rota POST para troca de senha, redirecionada a partir do email de recuperação
     Route::post('trocarsenha/', 'recoverPassword');
 
@@ -64,17 +66,29 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::post('t5w2h/{empresa}/{hash}', 'storeT5w2h');
 
     // // Define uma rota PUT para atualizar registros nas tabela 5w2h da empresa
-     Route::put('t5w2h/{empresa}/{hash}', 'updateT5w2h');
+    Route::put('t5w2h/{empresa}/{hash}', 'updateT5w2h');
 
     // Define uma rota DELETE para deletar registros associados a uma tarefa na tabela 5w2h
     Route::delete('t5w2h/{tarefa}/{hash}', 'destroyT5w2h');
     // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
     Route::get('partner/{hash}', 'partnerCompanies');
 
+    //Define uma rota POST para adicionar usuarios parceiros a uma empresa
+    Route::post('/partner/{empresa}/{usuario}/{hash}', 'addPartnerCompanie');
+    //Define uma rota DElETE para remover usuarios parceiros de uma empresa
+    Route::delete('/partner/{empresa}/{usuario}/{hash}', 'removePartnerCompanie');
 
     // Define uma rota GET para listar todas as tarefas e subtarefas a partir de uma empresa
     Route::get('{empresa}/tarefas/{hash}', 'companieTasks');
 
+    // Define uma rota POST para adicionar subtarefas a uma tarefa
+    Route::post('subtarefas/{tarefa}/{hash}', 'addSubtasks');
+    // Define uma rota DELETE para deletar subtarefas de uma tarefa
+    Route::delete('subtarefas/{subtarefa}/{hash}', 'removeSubtask');
+    //Define uma rota PATCH para alterar estado de uma tarefa
+    Route::patch('tarefas/{tarefa}/{hash}', 'patchTasks');
+    //Define uma rota PATCH para alterar estado de uma Subtarefa
+    Route::patch('subtarefas/{subtarefa}/{hash}', 'patchSubtask');
     // Define uma rota GET para exibir uma empresa específica
     Route::get('{empresa}/{hash}', 'show');
 
@@ -95,7 +109,6 @@ Route::controller(GutController::class)->prefix('gut/')->group(function () {
 
     // Define uma rota POST para criar um novo gut
     Route::post('{tarefa}/{hash}', 'store');
-
 });
 
 

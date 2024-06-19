@@ -16,8 +16,8 @@ class T5w2h extends Model
         "pergunta_id",
         "tarefa_id",
         "resposta",
-        "empresa_id"
-        //"tarefa"
+        "empresa_id",
+        "gut_id"
     ];
 
     function pergunta(): BelongsTo
