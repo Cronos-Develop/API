@@ -25,7 +25,8 @@ class Usuario extends Model
         'cep',
         'nascimento',
         'empresario',
-        'nome_da_empresa'
+        'nome_da_empresa',
+        'codigo_confirmacao'
     ];
 
     public function empresas(): HasMany

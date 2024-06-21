@@ -34,7 +34,8 @@ class UsuarioFactory extends Factory
             'nascimento' => $faker->date(),
             'cpf_cnpj' => $cpf_cnpj,
             'empresario' => $empresario,
-            'nome_da_empresa' => $empresario ? $faker->company() : NULL
+            'nome_da_empresa' => $empresario ? $faker->company() : NULL,
+            'codigo_confirmacao' => NULL
         ];
     }
 }
