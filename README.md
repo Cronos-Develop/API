@@ -32,7 +32,7 @@
 Esta é a API do aplicativo Cronos-Develop.
 
 ## Desenvolvedores:
-- [Luis Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
+- [Luís Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
 - [João Victor Ribeiro Santos](https://github.com/Carecovisk)
 - [Luiz Filipe de Souza Alves](https://github.com/LuFi-1227)
 
@@ -71,16 +71,17 @@ A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empr
 
 ##### Recuperação de Senha
 Para recuperar a senha de um usuário, é necessário pedir dados via requisição GET à rota `/api/users/recuperar/{cpf_cnpj}`, passando o CPF ou CNPJ do usuário como parâmetro na URL (`{cpf_cnpj}`). Um e-mail de recuperação será enviado ao e-mail que o usuário definiu quando se cadastrou - pegamos o e-mail do usuário a partir de seu CPF/CNPJ, que consta no banco de dados.
-No e-mail haverá um botão para recuperar a senha, que, quando apertado, redirecionará o usuário a uma tela de recuperação. 
-Na tela de recuperação, um formulário com a nova senha deverá ser preenchido.
+No e-mail haverá um código com seis dígitos e um botão para recuperar a senha, que, quando apertado, redirecionará o usuário a uma tela de recuperação. O código é de suma importância, pois será necessário para confirmação de identidade; isto é, somente quem possuir o código (usuário titular) poderá alterar a senha.
+Na tela de recuperação, um formulário com a nova senha e o código enviado por e-mail deverá ser preenchido.
 Após preenchido, os seguintes dados, em formato JSON, deverão ser enviados via requisição POST para a rota `/api/users/trocarsenha/`:
 ```
 	{
 		"usuario_id": "f4945H4870A5220j4776A4880a5619",
-	  "nova_senha": "nova_senha"
+	      "nova_senha": "nova_senha",
+          "codigo_confirmacao": "2pEJQM"
 	}
 ```
-Então a senha do usuário será atualizada no banco de dados.
+Então, caso o código digitado pelo usuário seja o mesmo do e-email, a senha do usuário será atualizada no banco de dados.
 
 
 ##### Requisições GET
@@ -437,14 +438,16 @@ Exemplo de resposta
 ```
 ### Adicionando ou deletando usuarios parceiros de uma empresa
 
-Faça um requisição POST para adicionar um usuario ou DELETE para deletar na rota `api/empresas/partner/{empresa}/{usuario}/{hash}`, `{empresa}` é o id da empresa, `{usuario}` é o id do usuario que esta sendo inserido ou deletado e `{hash}` é um id de usuario válido.
+Faça um requisição POST para adicionar um usuário ou DELETE para deletar na rota `api/empresas/partner/{empresa}/{usuario}/{hash}`; `{empresa}` é o id da empresa e `{hash}` é um id de usuario válido.
+Caso a requisição seja POST, `{usuario}` é o CPF/CNPJ do usuario que será adicionado.
+Caso a requisição seja DELETE, `{usuario}` é o id do usuario que esta será deletado.
 
 Não é necessario corpo.
 
 Retorno esperado
 
 ```
-POST /api/empresas/partner/1/G499A5017c4674h4872b540/G499A5017c4674h4872b540
+POST /api/empresas/partner/1/039.584.171-24/G499A5017c4674h4872b540
 
 {
   "success": "Parceiro adicionado com sucesso"
