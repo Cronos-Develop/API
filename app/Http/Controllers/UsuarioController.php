@@ -243,29 +243,25 @@ class UsuarioController extends Controller
         // Verifica se o usuário foi encontrado
         if ($user) {
             $userName = $user->name;
+            // Se o email foi encontrado, envia email para recuperação
+            try {
+                // Gera o código que será enviado no email para confirmação
+                $codigoConfirmacao = Str::random(6);
+                $updated = DB::table('usuarios')->where('id', $user->id)->update(["codigo_confirmacao" => $codigoConfirmacao]);
 
-            // Verifica se o email foi encontrado
-            if ($userEmail) {
-                // Se o email foi encontrado, envia email para recuperação
-                try {
-                    // Gera o código que será enviado no email para confirmação
-                    $codigoConfirmacao = Str::random(6);
-                    $updated = DB::table('usuarios')->where('id', $user->id)->update(["codigo_confirmacao" => $codigoConfirmacao]);
-
-                    Mail::to($userEmail)->send(new PasswordRecover([
-                        'fromName' => 'Cronos',
-                        'fromEmail' => 'cronos@gmail.com',
-                        'codigoConfirmacao' => $codigoConfirmacao,
-                        'subject' => 'Recuperação de Senha',
-                        'userName' => $userName,
-                    ]));
-                    return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
-                } catch (\Exception $e) {
-                    // Se ocorrer um erro ao enviar o email
-                    return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
-                }
-            }
+                Mail::to($userEmail)->send(new PasswordRecover([
+                    'fromName' => 'Cronos',
+                    'fromEmail' => 'cronos@gmail.com',
+                    'codigoConfirmacao' => $codigoConfirmacao,
+                    'subject' => 'Recuperação de Senha',
+                    'userName' => $userName,
+                ]));
+                return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
+            } catch (\Exception $e) {
+            // Se ocorrer um erro ao enviar o email
+            return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
         }
+    }
 
         // Se o email não foi encontrado ou o usuário não existe, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
@@ -282,7 +278,8 @@ class UsuarioController extends Controller
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
             'usuario_id' => 'required',
-            'nova_senha' => 'required'
+            'nova_senha' => 'required',
+            'codigo_confirmacao' => 'required',
         ]);
 
         // Verifica se a validação falhou e retorna os erros
@@ -305,12 +302,19 @@ class UsuarioController extends Controller
         // Obtém os dados do usuário a partir do JSON
         $userId = $dados['usuario_id'];
         $novaSenha = $dados['nova_senha'];
+        $codigoUsuario = $dados['codigo_confirmacao'];
+        $codigoConfirmacao = DB::table('usuarios')->where('id', $userId)->get('codigo_confirmacao')->first();
 
-        // Criptografa a nova senha
-        $novaSenha = Hash::make($novaSenha);
+        if ($codigoConfirmacao->codigo_confirmacao == $codigoUsuario){
+            // Criptografa a nova senha
+            $novaSenha = Hash::make($novaSenha);
 
-        // Atualiza a senha do usuário na tabela 'usuarios'
-        $updated = DB::table('usuarios')->where('id', $userId)->update(['senha' => $novaSenha]);
+            // Atualiza a senha do usuário na tabela 'usuarios'
+            $updated = DB::table('usuarios')->where('id', $userId)->update(['senha' => $novaSenha]);
+        }
+        else {
+            return response()->json(['errors' => 'Código de confirmação inválido'], 400);
+        }
 
         // Verifica se a atualização foi bem-sucedida
         if (!$updated) {
