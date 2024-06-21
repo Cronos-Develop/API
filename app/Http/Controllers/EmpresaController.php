@@ -12,6 +12,7 @@ use App\Models\Subtarefa;
 use App\Models\T5w2h;
 use App\Models\Usuario;
 use Illuminate\Support\Fluent;
+use App\Extensions\CPFValidator;
 
 class EmpresaController extends Controller
 {
@@ -48,15 +49,23 @@ class EmpresaController extends Controller
         return $hash->empresasParceiras;
     }
 
-    function addPartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
+    function addPartnerCompanie(Empresa $empresa, string $usuario_cpf_cnpj, Usuario $hash)
     {
         /**
-         * Adiciona o usuario recebido como parametro a lista de usuario parceiros de uma empresa.
+         * Adiciona o usuario recebido como parametro à lista de usuario parceiros de uma empresa.
          */
 
-        $empresa->usuariosParceiros()->attach($usuario->id);
-        return response()->json(['success' => 'Parceiro adicionado com sucesso']);
+        $cpf_cnpj = CPFValidator::formatarCpfOuCnpj($usuario_cpf_cnpj);
+
+        $usuario = DB::table('usuarios')->where('cpf_cnpj', $cpf_cnpj)->get()->first();
+
+        if ($usuario){
+            $empresa->usuariosParceiros()->attach($usuario->id);
+            return response()->json(['success' => 'Parceiro adicionado com sucesso']);
+        }
+        return response()->json(['error' => 'Houve algum erro']);
     }
+
     function removePartnerCompanie(Empresa $empresa, Usuario $usuario, Usuario $hash)
     {
         /**
