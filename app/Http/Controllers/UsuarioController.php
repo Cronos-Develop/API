@@ -277,7 +277,6 @@ class UsuarioController extends Controller
     {
         // Valida os dados da requisição
         $validator = Validator::make($request->all(), [
-            'usuario_id' => 'required',
             'nova_senha' => 'required',
             'codigo_confirmacao' => 'required',
         ]);
@@ -300,17 +299,18 @@ class UsuarioController extends Controller
         }
 
         // Obtém os dados do usuário a partir do JSON
-        $userId = $dados['usuario_id'];
         $novaSenha = $dados['nova_senha'];
         $codigoUsuario = $dados['codigo_confirmacao'];
-        $codigoConfirmacao = DB::table('usuarios')->where('id', $userId)->get('codigo_confirmacao')->first();
+        $userId = DB::table('usuarios')->where('codigo_confirmacao', $codigoUsuario)->get('id')->first();
+        var_dump($userId);
+        $codigoConfirmacao = DB::table('usuarios')->where('id', $userId->id)->get('codigo_confirmacao')->first();
 
         if ($codigoConfirmacao->codigo_confirmacao == $codigoUsuario){
             // Criptografa a nova senha
             $novaSenha = Hash::make($novaSenha);
 
             // Atualiza a senha do usuário na tabela 'usuarios'
-            $updated = DB::table('usuarios')->where('id', $userId)->update(['senha' => $novaSenha]);
+            $updated = DB::table('usuarios')->where('id', $userId->id)->update(['senha' => $novaSenha]);
         }
         else {
             return response()->json(['errors' => 'Código de confirmação inválido'], 400);
