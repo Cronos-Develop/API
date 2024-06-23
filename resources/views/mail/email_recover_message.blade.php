@@ -53,6 +53,8 @@
         </div>
         <div class="content">
             <p>Olá, {{ $data['userName'] }}</p>
+            <p>O código abaixo será utilizado para redefinir sua senha:</p>
+            <p><strong>{{$data['codigoConfirmacao']}}</strong></p>
             <p>Você solicitou a recuperação de sua senha. Clique no botão abaixo para redefinir sua senha:</p>
             <a href="#" class="button">Redefinir Senha</a>
             <p>Se você não solicitou a recuperação de senha, por favor ignore este e-mail.</p>

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('empresario');
             $table->string('cpf_cnpj');
             $table->string('nome_da_empresa')->nullable();
+            $table->string('codigo_confirmacao')->nullable();
             $table->timestamps();
         });
     }
