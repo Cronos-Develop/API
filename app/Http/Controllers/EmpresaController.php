@@ -170,6 +170,21 @@ class EmpresaController extends Controller
         return $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
     }
 
+    function updateSubtasks(Request $request, Subtarefa $subtarefa)
+    {
+        $validator = Validator::make($request->all(), [
+            'subtarefa' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $value = $validator->validate()['subtarefa'];
+        $subtarefa->subtarefa = $value;
+        $subtarefa->save();
+        return response()->json(['success' => "Subtarefa atualizada com sucesso"], 201);
+    }
+
     public function show(string $empresaId, string $userHash)
     {
         /**

@@ -83,6 +83,8 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
 
     // Define uma rota POST para adicionar subtarefas a uma tarefa
     Route::post('subtarefas/{tarefa}/{hash}', 'addSubtasks');
+    // Define uma rota PUT para atualizar tarefa
+    Route::put('subtarefas/{subtarefa}/{hash}', 'updateSubtasks');
     // Define uma rota DELETE para deletar subtarefas de uma tarefa
     Route::delete('subtarefas/{subtarefa}/{hash}', 'removeSubtask');
     //Define uma rota PATCH para alterar estado de uma tarefa

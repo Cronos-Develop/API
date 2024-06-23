@@ -557,7 +557,17 @@ Resultado esperado
   "success": "Subtarefa deletada com sucesso"
 }
 ```
+### Atualizando subtarefas
+Faça uma requisição PUT na rota `api/empresas/subtarefas/{subtarefa}/{hash}`, `{subtarefa}` é o id da subtarefa que vai ser alterada e `{hash}` é o id do usuario.
 
+Exemplo de corpo:
+
+```
+PUT /api/empresas/subtarefas/2/G499A5017c4674h4872b540
+{
+  "subtarefa": "Essa é a subtarefa atualizada"
+}
+```
 ### Alterando estados das tarefas e subtarefas
 
 Para alternar o estado das tarefas entre feito e não feito basta fazer requisições PATCH nas rotas `api/empresas/tarefas/{tarefa}/{hash}` e `api/empresas/subtarefas/{subtarefa}/{hash}`. Nenhum body é necessario e sera enviado um feeedback do estado atual da tarefa.
