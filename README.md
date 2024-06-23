@@ -76,7 +76,6 @@ Na tela de recuperação, um formulário com a nova senha e o código enviado po
 Após preenchido, os seguintes dados, em formato JSON, deverão ser enviados via requisição POST para a rota `/api/users/trocarsenha/`:
 ```
 	{
-		"usuario_id": "f4945H4870A5220j4776A4880a5619",
 	      "nova_senha": "nova_senha",
           "codigo_confirmacao": "2pEJQM"
 	}
