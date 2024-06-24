@@ -100,13 +100,16 @@ class EmpresaController extends Controller
         if ($request['gut'])
             $gut = Gut::firstOrCreate($request['gut']);
 
-        foreach ($contents["respostas"] as $resposta) {
-            $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
-            if ($request['gut']) {
-                $t5w2h->gut()->associate($gut);
-                $t5w2h->save();
+        if (isset($request['respostas'])) {
+            foreach ($contents["respostas"] as $resposta) {
+                $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+                if ($request['gut']) {
+                    $t5w2h->gut()->associate($gut);
+                    $t5w2h->save();
+                }
             }
         }
+     
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
