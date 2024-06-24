@@ -28,7 +28,7 @@ Route::controller(UsuarioController::class)->prefix('users/')->group(function ()
     Route::get('', 'index');
 
     // Define uma rota rota para mostrar os dados de um usuario
-    Route::get('{hash}', 'showUserData');
+    Route::get('hash/{hash}', 'showUserData');
 
     // Define uma rota GET para recuperação de senha a partir do CPF/CNPJ do usuário - Operação feita no método recover()
     Route::get('recuperar/{cpf}', 'sendRecoverEmail');
