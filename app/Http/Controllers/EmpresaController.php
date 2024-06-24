@@ -83,7 +83,7 @@ class EmpresaController extends Controller
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "tarefa" => "required|string",
+            "tarefa" => "nullable|string",
             "gut" => "nullable",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
