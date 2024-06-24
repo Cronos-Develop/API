@@ -84,6 +84,11 @@ class UsuarioController extends Controller
         }
     }
 
+    public function showUserData(Usuario $hash)
+    {
+        return response()->json(['success' => $hash], 200);
+    }
+
     /**
      * Registra um novo usuário.
      *
@@ -258,10 +263,10 @@ class UsuarioController extends Controller
                 ]));
                 return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
             } catch (\Exception $e) {
-            // Se ocorrer um erro ao enviar o email
-            return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
+                // Se ocorrer um erro ao enviar o email
+                return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
+            }
         }
-    }
 
         // Se o email não foi encontrado ou o usuário não existe, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
@@ -305,14 +310,13 @@ class UsuarioController extends Controller
         var_dump($userId);
         $codigoConfirmacao = DB::table('usuarios')->where('id', $userId->id)->get('codigo_confirmacao')->first();
 
-        if ($codigoConfirmacao->codigo_confirmacao == $codigoUsuario){
+        if ($codigoConfirmacao->codigo_confirmacao == $codigoUsuario) {
             // Criptografa a nova senha
             $novaSenha = Hash::make($novaSenha);
 
             // Atualiza a senha do usuário na tabela 'usuarios'
             $updated = DB::table('usuarios')->where('id', $userId->id)->update(['senha' => $novaSenha]);
-        }
-        else {
+        } else {
             return response()->json(['errors' => 'Código de confirmação inválido'], 400);
         }
 
@@ -330,4 +334,3 @@ class UsuarioController extends Controller
         return $empresa->usuariosParceiros;
     }
 }
-
