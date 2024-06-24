@@ -59,7 +59,7 @@ class EmpresaController extends Controller
 
         $usuario = DB::table('usuarios')->where('cpf_cnpj', $cpf_cnpj)->get()->first();
 
-        if ($usuario){
+        if ($usuario) {
             $empresa->usuariosParceiros()->attach($usuario->id);
             return response()->json(['success' => 'Parceiro adicionado com sucesso']);
         }
@@ -213,7 +213,7 @@ class EmpresaController extends Controller
         }
 
         // Retorna os detalhes da empresa em formato JSON
-        return response()->json(['success' => $empresa->nome_da_empresa], 200);
+        return response()->json(['success' => $empresa], 200);
     }
 
     public function store(Request $request, string $userHash)
