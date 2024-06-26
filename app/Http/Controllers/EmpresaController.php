@@ -83,7 +83,7 @@ class EmpresaController extends Controller
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "tarefa" => "nullable|string",
+            "tarefa" => "required|string",
             "gut" => "nullable",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
@@ -108,8 +108,15 @@ class EmpresaController extends Controller
                     $t5w2h->save();
                 }
             }
+        } else {
+            $t5w2h = T5w2h::create(["tarefa_id" => $tarefa->id, "empresa_id" => $empresa->id]);
+
+            if ($request['gut']) {
+                $t5w2h->gut()->associate($gut);
+                $t5w2h->save();
+            }
         }
-     
+
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
@@ -178,8 +185,9 @@ class EmpresaController extends Controller
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
-        $tarefas = $empresa->t5w2hs()->distinct()->get(['tarefa_id']);
-        return $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
+        $tarefas = $empresa->t5w2hs()->distinct()->select('tarefa_id')->get();
+        $tarefas = $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
+        return $tarefas->pluck('tarefa');
     }
 
     function updateSubtasks(Request $request, Subtarefa $subtarefa)
@@ -347,6 +355,7 @@ class EmpresaController extends Controller
     public function destroyT5w2h(Tarefa $tarefa, Usuario $usuario)
     {
         $tarefa->t5w2hs()->delete();
+        $tarefa->delete();
         return response()->json(['success' => 'Dados deletados com sucesso'], 200);
     }
 
