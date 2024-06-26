@@ -83,7 +83,7 @@ class EmpresaController extends Controller
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "tarefa" => "required|string",
+            "tarefa" => "nullable|string",
             "gut" => "nullable",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
@@ -100,13 +100,16 @@ class EmpresaController extends Controller
         if ($request['gut'])
             $gut = Gut::firstOrCreate($request['gut']);
 
-        foreach ($contents["respostas"] as $resposta) {
-            $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
-            if ($request['gut']) {
-                $t5w2h->gut()->associate($gut);
-                $t5w2h->save();
+        if (isset($request['respostas'])) {
+            foreach ($contents["respostas"] as $resposta) {
+                $t5w2h = T5w2h::updateOrCreate(["empresa_id" => $empresa->id, "pergunta_id" => $resposta["pergunta_id"], "tarefa_id" => $tarefa->id], ["resposta" => $resposta['resposta']]);
+                if ($request['gut']) {
+                    $t5w2h->gut()->associate($gut);
+                    $t5w2h->save();
+                }
             }
         }
+     
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
@@ -214,7 +217,7 @@ class EmpresaController extends Controller
         }
 
         // Retorna os detalhes da empresa em formato JSON
-        return response()->json(['success' => $empresa->nome_da_empresa], 200);
+        return response()->json(['success' => $empresa], 200);
     }
 
     public function store(Request $request, string $userHash)
