@@ -187,7 +187,7 @@ class EmpresaController extends Controller
         //retornar tarefas e subtarefas da empresa recebida como parametro.
         $tarefas = $empresa->t5w2hs()->distinct()->select('tarefa_id')->get();
         $tarefas = $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
-        return $tarefas->select('tarefa');
+        return $tarefas->pluck('tarefa');
     }
 
     function updateSubtasks(Request $request, Subtarefa $subtarefa)
@@ -355,6 +355,7 @@ class EmpresaController extends Controller
     public function destroyT5w2h(Tarefa $tarefa, Usuario $usuario)
     {
         $tarefa->t5w2hs()->delete();
+        $tarefa->delete();
         return response()->json(['success' => 'Dados deletados com sucesso'], 200);
     }
 
