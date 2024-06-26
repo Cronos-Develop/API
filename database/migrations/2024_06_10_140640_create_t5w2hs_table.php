@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('t5w2hs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empresa_id')->references('id')->on('empresas');
-            $table->foreignId('tarefa_id')->nullable()->references('id')->on('tarefas');
-            $table->foreignId('pergunta_id')->references('id')->on('perguntas');
+            $table->foreignId('tarefa_id')->references('id')->on('tarefas');
+            $table->foreignId('pergunta_id')->nullable()->references('id')->on('perguntas');
             $table->foreignId('gut_id')->nullable()->references('id')->on('guts');
-            $table->string('resposta');
+            $table->string('resposta')->nullable();
             $table->timestamps();
         });
     }

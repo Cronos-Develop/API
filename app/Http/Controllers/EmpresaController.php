@@ -83,7 +83,7 @@ class EmpresaController extends Controller
         $contents = $request->all();
 
         $validator = Validator::make($contents, [
-            "tarefa" => "nullable|string",
+            "tarefa" => "required|string",
             "gut" => "nullable",
             "respostas.*.pergunta_id" => "required|int",
             "respostas.*.resposta" => "required|string",
@@ -108,8 +108,15 @@ class EmpresaController extends Controller
                     $t5w2h->save();
                 }
             }
+        } else {
+            $t5w2h = T5w2h::create(["tarefa_id" => $tarefa->id, "empresa_id" => $empresa->id]);
+
+            if ($request['gut']) {
+                $t5w2h->gut()->associate($gut);
+                $t5w2h->save();
+            }
         }
-     
+
         return response()->json(['success' => 'Registros feitos com sucesso', "tarefa_id" => $tarefa->id], 201);
     }
 
