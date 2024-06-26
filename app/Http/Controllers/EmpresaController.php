@@ -59,7 +59,7 @@ class EmpresaController extends Controller
 
         $usuario = DB::table('usuarios')->where('cpf_cnpj', $cpf_cnpj)->get()->first();
 
-        if ($usuario){
+        if ($usuario) {
             $empresa->usuariosParceiros()->attach($usuario->id);
             return response()->json(['success' => 'Parceiro adicionado com sucesso']);
         }
@@ -175,8 +175,9 @@ class EmpresaController extends Controller
     {
 
         //retornar tarefas e subtarefas da empresa recebida como parametro.
-        $tarefas = $empresa->t5w2hs()->distinct()->get(['tarefa_id']);
-        return $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
+        $tarefas = $empresa->t5w2hs()->distinct()->select('tarefa_id')->get();
+        $tarefas = $tarefas->load('tarefa.subtarefas:id,tarefa_id,subtarefa');
+        return $tarefas->select('tarefa');
     }
 
     function updateSubtasks(Request $request, Subtarefa $subtarefa)
