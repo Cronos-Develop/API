@@ -1,3 +1,14 @@
+# Projeto de Sistemas-2024.1 _ Universidade Federal do Tocantins - Palmas, 2024 _ Desenvolvimento do aplicativo Cronos
+#### Curso: Bacharelado em Ciência da Computação
+#### Professor: Edeilson Milhomem da Silva.
+#### Alunos:
+- #### Luiz Filipe de Souza Alves
+- #### Patryck Henryck Moreira Silva
+- #### Antônio Cássio de Oliveira Neto
+- #### Luis Felipe Krause de Castro
+- #### João Victor Ribeiro Santos
+---
+
 # Índice:
 - [API](#api)
     - [Apresentação](#apresentação)
@@ -749,6 +760,7 @@ Nota:
 Utilize `php artisan migrate --seed` para fazer os dois comandos ao mesmo tempo
 
 ## Deploy:
+`https://plum-tiger-983990.hostingersite.com/`
 
 # Instruções de Execução em Máquina Local:
 ## Introdução:
