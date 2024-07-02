@@ -1,3 +1,14 @@
+# Projeto de Sistemas-2024.1 _ Universidade Federal do Tocantins - Palmas, 2024 _ Desenvolvimento do aplicativo Cronos
+#### Curso: Bacharelado em Ciência da Computação
+#### Professor: Edeilson Milhomem da Silva.
+#### Alunos:
+- #### Luiz Filipe de Souza Alves
+- #### Patryck Henryck Moreira Silva
+- #### Antônio Cássio de Oliveira Neto
+- #### Luis Felipe Krause de Castro
+- #### João Victor Ribeiro Santos
+---
+
 # Índice:
 - [API](#api)
     - [Apresentação](#apresentação)
@@ -32,7 +43,7 @@
 Esta é a API do aplicativo Cronos-Develop.
 
 ## Desenvolvedores:
-- [Luis Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
+- [Luís Felipe Krause de Castro](https://github.com/LuisFelipeKrause)
 - [João Victor Ribeiro Santos](https://github.com/Carecovisk)
 - [Luiz Filipe de Souza Alves](https://github.com/LuFi-1227)
 
@@ -68,6 +79,22 @@ GET /api/empresas/7/J5219a54100C4698h5114A530
 A resposta será um objeto JSON contendo o nome da empresa encontrada. Se a empresa não for encontrada, a API retornará um erro 404 em formato JSON.
 
 #### Usuários
+
+##### Recuperação de Senha
+Para recuperar a senha de um usuário, é necessário pedir dados via requisição GET à rota `/api/users/recuperar/{cpf_cnpj}`, passando o CPF ou CNPJ do usuário como parâmetro na URL (`{cpf_cnpj}`). Um e-mail de recuperação será enviado ao e-mail que o usuário definiu quando se cadastrou - pegamos o e-mail do usuário a partir de seu CPF/CNPJ, que consta no banco de dados.
+No e-mail haverá um código com seis dígitos e um botão para recuperar a senha, que, quando apertado, redirecionará o usuário a uma tela de recuperação. O código é de suma importância, pois será necessário para confirmação de identidade; isto é, somente quem possuir o código (usuário titular) poderá alterar a senha.
+Na tela de recuperação, um formulário com a nova senha e o código enviado por e-mail deverá ser preenchido.
+Após preenchido, os seguintes dados, em formato JSON, deverão ser enviados via requisição POST para a rota `/api/users/trocarsenha/`:
+```
+	{
+	      "nova_senha": "nova_senha",
+          "codigo_confirmacao": "2pEJQM"
+	}
+```
+Então, caso o código digitado pelo usuário seja o mesmo do e-email, a senha do usuário será atualizada no banco de dados.
+
+
+##### Requisições GET
 Para receber dados via requisição GET, use a rota `/api/users/{hash}`, sendo `{hash}` o id do usuário, definido no momento de criação como um hash. Caso essa requisição seja enviada com o hash de um usuário existente, todos os seus dados serão retornados em formato JSON.
 
 ##### Exemplo Requisição GET:
@@ -258,6 +285,54 @@ POST /api/empresas/H5738I4953A5337c4774a4840A4886
 
 A resposta será um objeto JSON contendo uma mensagem de sucesso. Se houver erros de validação nos dados enviados, a API retornará uma resposta com os erros específicos e um código de status 422, no formato JSON.
 
+### Fazendo registros na 5W2H
+Para fazer registros na 5w2h, faça uma requisição POST na rota `api/empresas/t5w2h/{empresa}/{hash}` onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario.
+
+Exemplo de requisição:
+
+```
+POST /api/empresas/t5w2h/1/C5244i4950A5414f4792A486a5694
+
+
+{
+    "tarefa": "Está é a nossa nova tarefa",
+    "gut": {
+        "gravidade": 2,
+        "urgencia": 2,
+        "tendencia": 4
+    },
+    "respostas": [
+        {
+            "pergunta_id": 1,
+            "resposta": "Ser uma pessoa melhor"
+        },
+        {
+            "pergunta_id": 2,
+            "resposta": "Por que a vida é curta"
+        }
+    ]
+}
+```
+retorno
+
+```
+{
+  "success": "Registros feitos com sucesso",
+  "tarefa_id": 12
+}
+```
+
+O que o id de cada pergunta representa:
+
+```
+  1 => 'O quê'
+  2 => 'Por que'
+  3 => 'Quem'
+  4 => 'Quanto'
+  5 => 'Como'
+  6 => 'Quando'
+  7 => 'Onde'
+```
 ### Retornando lista de empresas a partir da id do usuário
 Para receber a lista de empresas a partir do id do usuario faça uma requisição GET na rota `api/empresas/user/{hash}`, onde `{hash}` é o id do usuario. Um erro 404 é retornado se o usuario não for encontrado ou um corpo vazio se o usuario não tiver empresas.
 
@@ -298,27 +373,101 @@ Exemplo:
 GET api/empresas/partner/{hash}
 
 [
+    {
+        "id": 1,
+        "usuario_id": "I4949A5348H4674F5182i570",
+        "nome_da_empresa": "Vieira-da Silva",
+        "nicho": "qui",
+        "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
+        "created_at": "2024-05-13T13:36:10.000000Z",
+        "updated_at": "2024-05-13T13:36:10.000000Z",
+        "pivot": {...}
+    },
+    {
+        "id": 2,
+        "usuario_id": "I4949A5348H4674F5182i570",
+        "nome_da_empresa": "Solano Comercial Ltda.",
+        "nicho": "eum",
+        "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
+        "created_at": "2024-05-13T13:36:10.000000Z",
+        "updated_at": "2024-05-13T13:36:10.000000Z",
+        "pivot": {...}
+    }
+]
+```
+### Retornando lista de usuarios parceiros a partir da empresa
+Faça uma requisição GET na rota `api/users/partners/{empresa}/{hash}`, `{empresa}` representa o id da empresa e `{hash}` representa o iddo usuario.
+
+Exemplo de resposta
+
+```
+[
   {
-    "id": 1,
-    "usuario_id": "I4949A5348H4674F5182i570",
-    "nome_da_empresa": "Vieira-da Silva",
-    "nicho": "qui",
-    "resumo": "Cabral falara da minha consciencia moral sem _deficit._ Mandar dizer cem missas, ou subir do joelhos a ladeira da Gloria para ouvir uma, ir á Terra-Santa, tudo o que tanto póde ser que não se.",
-    "created_at": "2024-05-13T13:36:10.000000Z",
-    "updated_at": "2024-05-13T13:36:10.000000Z",
-    "pivot": {...}
+    "id": "a5747a5370e4650a5465j560",
+    "name": "Dr. Mel Sophie Brito",
+    "email": "flovato@example.org",
+    "telefone": "(22) 96977-8434",
+    "senha": "$2y$12$sbjjFUHEs3vHs4lYvc.QmO2gUr2utg4iJEwc5RUG4F7.pIVuil0va",
+    "endereco": "58653-414, Avenida Medina, 34811. Bloco C\nIngrid d'Oeste - RO",
+    "cep": "752685-258",
+    "nascimento": "2002-07-24",
+    "empresario": 0,
+    "cpf_cnpj": "099.524.306-98",
+    "nome_da_empresa": null,
+    "created_at": "2024-06-19T02:40:36.000000Z",
+    "updated_at": "2024-06-19T02:40:36.000000Z",
+    "pivot": {
+      "empresa_id": 2,
+      "usuario_id": "a5747a5370e4650a5465j560",
+      "created_at": "2024-06-19T02:40:37.000000Z",
+      "updated_at": "2024-06-19T02:40:37.000000Z"
+    }
   },
   {
-    "id": 2,
-    "usuario_id": "I4949A5348H4674F5182i570",
-    "nome_da_empresa": "Solano Comercial Ltda.",
-    "nicho": "eum",
-    "resumo": "As mãos, a despeito de alguns instantes de concentrarão, veiu ver se eram adequadas e se ajoelhavam á nossa passagem, tudo me enchia a alma de lepidez nova. Padua, ao contrario, os olhos para elles.",
-    "created_at": "2024-05-13T13:36:10.000000Z",
-    "updated_at": "2024-05-13T13:36:10.000000Z",
-    "pivot": {...}
+    "id": "F5388E5128A5587D4739A482a5070",
+    "name": "Dr. Fabrício Ávila Sobrinho",
+    "email": "xduarte@example.org",
+    "telefone": "(38) 91486-0020",
+    "senha": "$2y$12$sbjjFUHEs3vHs4lYvc.QmO2gUr2utg4iJEwc5RUG4F7.pIVuil0va",
+    "endereco": "67957-549, Avenida Joaquim, 83. Apto 9\nZaragoça do Norte - MT",
+    "cep": "663479-780",
+    "nascimento": "1996-09-20",
+    "empresario": 1,
+    "cpf_cnpj": "55.433.793/0001-24",
+    "nome_da_empresa": "Reis Comercial Ltda.",
+    "created_at": "2024-06-19T02:40:36.000000Z",
+    "updated_at": "2024-06-19T02:40:36.000000Z",
+    "pivot": {
+      "empresa_id": 2,
+      "usuario_id": "F5388E5128A5587D4739A482a5070",
+      "created_at": "2024-06-19T02:40:37.000000Z",
+      "updated_at": "2024-06-19T02:40:37.000000Z"
+    }
   }
 ]
+```
+### Adicionando ou deletando usuarios parceiros de uma empresa
+
+Faça um requisição POST para adicionar um usuário ou DELETE para deletar na rota `api/empresas/partner/{empresa}/{usuario}/{hash}`; `{empresa}` é o id da empresa e `{hash}` é um id de usuario válido.
+Caso a requisição seja POST, `{usuario}` é o CPF/CNPJ do usuario que será adicionado.
+Caso a requisição seja DELETE, `{usuario}` é o id do usuario que esta será deletado.
+
+Não é necessario corpo.
+
+Retorno esperado
+
+```
+POST /api/empresas/partner/1/039.584.171-24/G499A5017c4674h4872b540
+
+{
+  "success": "Parceiro adicionado com sucesso"
+}
+
+DELETE /api/empresas/partner/1/G499A5017c4674h4872b540/G499A5017c4674h4872b540
+
+{
+  "success": "Parceiro deletado com sucesso"
+}
 ```
 
 ### Retornando lista de tarefas e subtarefas a partir do id da empresa
@@ -330,65 +479,183 @@ Exemplo:
 GET /api/empresas/1/tarefas/I4949A5348H4674F5182i570
 
 [
-  {
-    "id": 1,
-    "empresa_id": 1,
-    "tarefa": "Omnis autem laudantium quis maxime repudiandae tempore consequatur.",
-    "subtarefas": []
-  },
-  {
-    "id": 2,
-    "empresa_id": 1,
-    "tarefa": "Dignissimos quia nam ut et fuga voluptas enim.",
-    "subtarefas": []
-  },
-  {
-    "id": 3,
-    "empresa_id": 1,
-    "tarefa": "Nihil aliquid nisi alias quia quod quo.",
-    "subtarefas": []
-  },
-  {
-    "id": 4,
-    "empresa_id": 1,
-    "tarefa": "Illo sed minus placeat consequatur sequi sunt dolorum.",
-    "subtarefas": []
-  },
-  {
-    "id": 5,
-    "empresa_id": 1,
-    "tarefa": "Qui recusandae amet laborum impedit consequatur.",
-    "subtarefas": []
-  },
-  {
-    "id": 6,
-    "empresa_id": 1,
-    "tarefa": "Nemo aut et cupiditate commodi alias.",
-    "subtarefas": []
-  },
-  {
-    "id": 7,
-    "empresa_id": 1,
-    "tarefa": "Veritatis dicta animi numquam quia reiciendis beatae.",
-    "subtarefas": [
-      {
-        "id": 2,
-        "5w2h_id": 7,
-        "subtarefa": "Veniam fugiat ipsam nihil fugiat."
-      }
-    ]
-  }
+    {
+        "tarefa_id": 11,
+        "tarefa": {
+            "id": 11,
+            "descrição": "Está é a nossa tarefa",
+            "created_at": "2024-06-11T04:47:57.000000Z",
+            "updated_at": "2024-06-11T04:47:57.000000Z",
+            "subtarefas": []
+        }
+    },
+    {
+        "tarefa_id": 12,
+        "tarefa": {
+            "id": 12,
+            "descrição": "Está é a nossa nova tarefa",
+            "created_at": "2024-06-11T04:48:08.000000Z",
+            "updated_at": "2024-06-11T04:48:08.000000Z",
+            "subtarefas": [
+                {
+                    "id": 3,
+                    "tarefa_id": 12,
+                    "subtarefa": "Comprar mais café"
+                },
+                {
+                    "id": 5,
+                    "tarefa_id": 12,
+                    "subtarefa": "Comprar mais pessoas"
+                }
+            ]
+        }
+    }
 ]
 ```
 
 Nem toda tarefa tem subtarefas.
 
+### Atualizando dados da 5w2h
+
+Faça um requisição PUT na rota `api/empresas/t5w2h/{empresa}/{hash}` onde `{empresa}` é o id da empresa e `{hash}` é o id do usuario;
+
+Exemplo de corpo
+```
+PUT /api/empresas/t5w2h/10/G499A5017c4674h4872b540
+    {
+      "tarefa_id": 10,
+      "tarefa": "Está é a nossa nova descrição da tarefa",
+      "gut": {
+          "gravidade": 1,
+        "urgencia": 2,
+        "tendencia": 1
+      },
+      "respostas": [
+        {
+          "pergunta_id": 1,
+          "resposta": "Ser uma pessoa muito melhor"
+        },
+        {
+          "pergunta_id": 2,
+          "resposta": "Por que a vida não é longa"
+        }
+      ]
+    }
+```
+Todos os campos são opcionais com exceção de `tarefa_id`. Se `"gut"` for informado todos os seus campos são obrigatorios.
+
+### Adicionando subtarefas
+
+Faça uma requisição POST na rota `api/empresas/subtarefas/{tarefa}/{hash}`, `{tarefa}` é o id da tarefa cujo as subtarefas pertencem e `{hash}` é o id do usuario.
+
+Exemplo
+
+```
+POST /api/empresas/subtarefas/1/G499A5017c4674h4872b540
+[
+  "Tarefa 1",
+  "Tarefa 2",
+  "Tarefa 3"
+]
+```
+### Deletando subtarefas
+Faça uma requisição DELETE na rota `api/empresas/subtarefas/{subtarefa}/{hash}`, `{subtarefa}` é o id da subtarefa que vai ser deletada e `{hash}` é o id do usuario.
+
+Nenhum corpo é necessario.
+
+Resultado esperado
+
+```
+{
+  "success": "Subtarefa deletada com sucesso"
+}
+```
+### Atualizando subtarefas
+Faça uma requisição PUT na rota `api/empresas/subtarefas/{subtarefa}/{hash}`, `{subtarefa}` é o id da subtarefa que vai ser alterada e `{hash}` é o id do usuario.
+
+Exemplo de corpo:
+
+```
+PUT /api/empresas/subtarefas/2/G499A5017c4674h4872b540
+{
+  "subtarefa": "Essa é a subtarefa atualizada"
+}
+```
+### Alterando estados das tarefas e subtarefas
+
+Para alternar o estado das tarefas entre feito e não feito basta fazer requisições PATCH nas rotas `api/empresas/tarefas/{tarefa}/{hash}` e `api/empresas/subtarefas/{subtarefa}/{hash}`. Nenhum body é necessario e sera enviado um feeedback do estado atual da tarefa.
+
+### Recuperando dados da 5w2h
+
+Para listar os dados da 5w2h de uma empresa faça uma requisição GET na rota `api/empresas/t5w2h/{empresa}/{hash}`, `{empresa}`é o id da empresa e `{hash}` é o id do usuario.
+
+O exemplo a baixo só tem duas tarefas
+
+```
+GET api/empresas/t5w2h/10/D5218A4981c4653c518A540
+
+
+[
+    {
+        "id": 64,
+        "empresa_id": 10,
+        "tarefa_id": 10,
+        "pergunta_id": 1,
+        "gut_id": 10,
+        "resposta": "Et quibusdam eius ducimus dolores explicabo.",
+        "tarefa": {
+            "id": 10,
+            "descrição": "Eius fugit est similique et minus."
+        },
+        "pergunta": {
+            "id": 1,
+            "pergunta": "O quê"
+        },
+        "gut": {
+            "id": 10,
+            "gravidade": 4,
+            "urgencia": 4,
+            "tendencia": 2
+        }
+    },
+    {
+        "id": 65,
+        "empresa_id": 10,
+        "tarefa_id": 10,
+        "pergunta_id": 2,
+        "gut_id": 10,
+        "resposta": "Beatae voluptates facilis voluptas est maxime.",
+        "tarefa": {
+            "id": 10,
+            "descrição": "Eius fugit est similique et minus."
+        },
+        "pergunta": {
+            "id": 2,
+            "pergunta": "Por que"
+        },
+        "gut": {
+            "id": 10,
+            "gravidade": 4,
+            "urgencia": 4,
+            "tendencia": 2
+        }
+    }
+]
+```
+### Deletar tarefas na 5w2h
+
+Faça uma requisição DELETE na rota `api/empresas/t5w2h/{tarefa}/{hash}` para deletar registros associados a uma tarefa na tabela 5w2h. `{tarefa}` representa o id da tarefa e `{hash}` o id do usuario.
+
+retorno
+
+```
+{
+  "success": "Dados deletados com sucesso"
+}
+```
+
 ### Registrando tabela GUT
-Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{empresa}/{hash}`, onde os parametros são id da empresa e do usuario respectivamente.
-
-O corpo da requisição deve conter um array de até 7 dicionarios onde `pergunta_id` representa o id da pergunta que gerou a tarefa que está sendo analisada, e `gut` um vetor que representa os valores para gravidade, urgencia e tendencia.
-
-
+Para registrar a tabela GUT é necesssario fazer uma requisição POST na rota `api/gut/{tarefa}/{hash}`, onde os parametros são id da tarefa e do usuario respectivamente.
 
 
 Exemplo de corpo:
@@ -396,51 +663,13 @@ Exemplo de corpo:
 ```
 POST
 
-[
-  {
-    "pergunta_id": 1,
-    "gut" : [4, 5, 1]
-  },
-  {
-    "pergunta_id": 2,
-    "gut" : [1, 2, 3]
-  },
-    {
-    "pergunta_id": 3,
-    "gut" : [3, 3, 3]
-  },
-    {
-    "pergunta_id": 4,
-    "gut" : [2, 2, 2]
-  },
-    {
-    "pergunta_id": 5,
-    "gut" : [4, 3, 1]
-  },
-    {
-    "pergunta_id": 6,
-    "gut" : [1, 1, 1]
-  },
-    {
-    "pergunta_id": 7,
-    "gut" : [1, 1, 2]
-  }
-]
+{
+  "gravidade": 1,
+  "urgencia": 1,
+  "tendencia": 1
+}
 ```
 
-Pergunta que cada id representa:
-
-```
-[
-  1 => 'O quê',
-  2 => 'Por que',
-  3 => 'Quem',
-  4 => 'Quanto',
-  5 => 'Como',
-  6 => 'Quando',
-  7 => 'Onde'
-]
-```
 
 Resultado esperado:
 
@@ -452,6 +681,30 @@ HTTP/1.1 200 OK
 }
 ```
 
+### Requerir tarefas da IA
+#### Atenção!
+É necessario informar uma chave valida para a api do Gemini.
+
+
+### Requerir sugestões de GUT com IA
+Para receber uma sugestão de gut para determinada tarefa, faça uma requisição POST na rota `api/IA/gut/{hash}` onde `{hash}` é o id do usuario.
+
+exemplo
+```
+POST /api/IA/gut/d4924A4965A4683H5339a510
+{
+	"tarefa": "Comprar café para consumo pessoal"
+}
+```
+retorno
+
+```
+{
+  "gravidade": 2,
+  "urgencia": 1,
+  "tendencia": 1
+}
+```
 
 ### Como criar banco de dados e popular:
 
@@ -474,6 +727,7 @@ Nota:
 Utilize `php artisan migrate --seed` para fazer os dois comandos ao mesmo tempo
 
 ## Deploy:
+`https://plum-tiger-983990.hostingersite.com/`
 
 # Instruções de Execução em Máquina Local:
 ## Introdução:

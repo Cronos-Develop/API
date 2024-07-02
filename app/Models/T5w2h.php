@@ -12,19 +12,37 @@ class T5w2h extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "pergunta_id",
+        "tarefa_id",
+        "resposta",
+        "empresa_id",
+        "gut_id"
+    ];
+
+    function pergunta(): BelongsTo
+    {
     function pergunta() : BelongsTo {
         return $this->belongsTo(Pergunta::class)->withDefault();
     }
 
-    function empresa() : BelongsTo {
+    function empresa(): BelongsTo
+    {
         return $this->belongsTo(Empresa::class)->withDefault();
     }
 
-    function subtarefas() : HasMany {
+    function subtarefas(): HasMany
+    {
         return $this->hasMany(Subtarefa::class, '5w2h_id');
     }
 
-    function gut() : HasOne {
-        return $this->hasOne(T5w2h::class, '5w2h_id');
+    function gut(): BelongsTo
+    {
+        return $this->belongsTo(Gut::class);
+    }
+
+    function tarefa(): BelongsTo
+    {
+        return $this->belongsTo(Tarefa::class);
     }
 }

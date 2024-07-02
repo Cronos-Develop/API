@@ -19,9 +19,8 @@ class T5w2hFactory extends Factory
     public function definition(): array
     {
         return [
-            'empresa_id' => Empresa::all()->random()->id,
+            //'empresa_id' => Empresa::all()->random()->id,
             'resposta' => fake()->sentence(),
-            'tarefa' => fake()->sentence()
         ];
     }
 }

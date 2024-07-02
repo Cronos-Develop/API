@@ -10,11 +10,18 @@ class Subtarefa extends Model
 {
     use HasFactory;
 
-    function usuario() : BelongsTo {
+    protected $fillable = [
+        'subtarefa',
+        'usuario_id',
+        'tarefa_id'
+    ];
+    function usuario(): BelongsTo
+    {
         return $this->belongsTo(Usuario::class)->withDefault();
     }
 
-    function t5w2h() : BelongsTo {
-        return $this->belongsTo(T5w2h::class, '5w2h_id')->withDefault();
+    function tarefa(): BelongsTo
+    {
+        return $this->belongsTo(Tarefa::class)->withDefault();
     }
 }

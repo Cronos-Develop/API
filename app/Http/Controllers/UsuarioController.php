@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Extensions\CPFValidator;
 use App\Extensions\CustomHasher;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordRecover;
+use App\Models\Empresa;
+use Illuminate\Support\Str;
 
 class UsuarioController extends Controller
 {
@@ -55,7 +59,7 @@ class UsuarioController extends Controller
         $user = DB::table('usuarios')->where('cpf_cnpj', $userCpf)->get()->first();
 
         // Verifica se o usuário foi encontrado
-        if (!$user){
+        if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
@@ -66,12 +70,16 @@ class UsuarioController extends Controller
         $correctPassword = Hash::check($password, $hashedPassword);
 
         // Verifica se o usuário e a senha estão corretos e retorna o ID do usuário
-        if ($user && $correctPassword){
+        if ($user && $correctPassword) {
             return response()->json(['id' => $user->id]);
-        }
-        else {
+        } else {
             return response()->json(['error' => 'Senha incorreta'], 401);
         }
+    }
+
+    public function showUserData(Usuario $hash)
+    {
+        return response()->json(['success' => $hash], 200);
     }
 
     /**
@@ -104,9 +112,9 @@ class UsuarioController extends Controller
 
         // Valida e formata o CPF/CNPJ
         $cpf = CPFValidator::validarCpfOuCnpj($request->input('cpf_cnpj'));
-        if (!$cpf) {  
+        if (!$cpf) {
             // Se o CPF ou CNPJ for inválido, retorna uma mensagem de erro
-            return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);  
+            return response()->json(['errors' => 'CPF ou CNPJ inválido'], 422);
         }
 
         // Gera um ID único para o usuário com base no CPF/CNPJ
@@ -118,7 +126,7 @@ class UsuarioController extends Controller
             'id' => $userId,
             'name' => $request->input('name'),
             'cpf_cnpj' => $request->input('cpf_cnpj'),
-            'senha' => Hash::make($request->input('senha')),  
+            'senha' => Hash::make($request->input('senha')),
             'email' => $request->input('email'),
             'telefone' => $request->input('telefone'),
             'endereco' => $request->input('endereco'),
@@ -132,7 +140,7 @@ class UsuarioController extends Controller
         if ($created) {
             return response()->json(['success' => 'Usuário registrado com sucesso'], 201);
         }
-        return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422); 
+        return response()->json(['errors' => 'Houve algum erro ao registrar usuário'], 422);
     }
 
     /**
@@ -164,14 +172,13 @@ class UsuarioController extends Controller
         // Itera sobre as chaves e valores do array associativo
         foreach ($dados as $chave => $valor) {
             // Se o valor a ser alterado for a senha, uma operação de criptografia deve ser feita
-            if ($chave == "senha"){
+            if ($chave == "senha") {
                 $novaSenha = Hash::make($valor);  // A nova senha é criptografada
                 // Atualiza os dados do usuário na tabela 'usuarios'
                 $updated = DB::table('usuarios')->where('id', $userId)->update(["senha" => $novaSenha]);
                 $valor = "";
                 $novaSenha = "";
-            }
-            else{
+            } else {
                 // Atualiza os dados do usuário na tabela 'usuarios'
                 $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
             }
@@ -203,7 +210,7 @@ class UsuarioController extends Controller
 
         // Verifica se o usuário possui empresas associadas e exclui essas empresas
         $possuiEmpresa = DB::table('empresas')->where('usuario_id', $userId)->exists();
-        if ($possuiEmpresa){
+        if ($possuiEmpresa) {
             $deletedEmpresa = DB::table('empresas')->where('usuario_id', $userId)->delete();
         }
 
@@ -211,7 +218,7 @@ class UsuarioController extends Controller
         $deleted = DB::table('usuarios')->where('id', $userId)->delete();
 
         // Retorna uma resposta JSON indicando o resultado da operação
-        if ($deleted){
+        if ($deleted) {
             return response()->json(['success' => 'Usuário deletado com sucesso'], 200);
         }
         return response()->json(['errors' => 'Erro ao deletar usuário'], 400);
@@ -230,15 +237,95 @@ class UsuarioController extends Controller
         $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
 
         // Busca o email do usuário com base no CPF ou CNPJ
-        $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->get('email');
+        $userEmail = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->value('email');
+        $user = DB::table('usuarios')->where('cpf_cnpj', $cpfCnpj)->first();
 
-        // Verifica se o email foi encontrado
-        if ($userEmail->isNotEmpty()) {
-            // Se o email foi encontrado, retorna o email em formato JSON
-            return response()->json($userEmail);
+        // Verifica se o usuário foi encontrado
+        if ($user) {
+            $userName = $user->name;
+            // Se o email foi encontrado, envia email para recuperação
+            try {
+                // Gera o código que será enviado no email para confirmação
+                $codigoConfirmacao = Str::random(6);
+                $updated = DB::table('usuarios')->where('id', $user->id)->update(["codigo_confirmacao" => $codigoConfirmacao]);
+
+                Mail::to($userEmail)->send(new PasswordRecover([
+                    'fromName' => 'Cronos',
+                    'fromEmail' => 'cronos@gmail.com',
+                    'codigoConfirmacao' => $codigoConfirmacao,
+                    'subject' => 'Recuperação de Senha',
+                    'userName' => $userName,
+                ]));
+                return response()->json(['success' => 'E-mail de recuperação enviado com sucesso']);
+            } catch (\Exception $e) {
+                // Se ocorrer um erro ao enviar o email
+                return response()->json(['error' => 'Erro ao enviar e-mail de recuperação'], 500);
+            }
         }
 
         // Se o email não foi encontrado, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
+    }
+
+    /**
+     * Atualiza a senha do usuário com base no ID do usuário e a nova senha fornecida.
+     *
+     * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse  Uma resposta JSON indicando sucesso ou falha na atualização da senha.
+     */
+    public function recoverPassword(Request $request)
+    {
+        // Valida os dados da requisição
+        $validator = Validator::make($request->all(), [
+            'nova_senha' => 'required',
+            'codigo_confirmacao' => 'required',
+        ]);
+
+        // Verifica se a validação falhou e retorna os erros
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Obtém o JSON da requisição
+        $json = $request->getContent();
+
+        // Decodifica o JSON em um array associativo
+        $dados = json_decode($json, true);
+
+        // Verifica se o JSON foi decodificado com sucesso
+        if ($dados === null) {
+            // Se houver algum erro na decodificação do JSON
+            return response()->json(['errors' => 'Erro ao decodificar o JSON'], 400);
+        }
+
+        // Obtém os dados do usuário a partir do JSON
+        $novaSenha = $dados['nova_senha'];
+        $codigoUsuario = $dados['codigo_confirmacao'];
+        $userId = DB::table('usuarios')->where('codigo_confirmacao', $codigoUsuario)->get('id')->first();
+        var_dump($userId);
+        $codigoConfirmacao = DB::table('usuarios')->where('id', $userId->id)->get('codigo_confirmacao')->first();
+
+        if ($codigoConfirmacao->codigo_confirmacao == $codigoUsuario) {
+            // Criptografa a nova senha
+            $novaSenha = Hash::make($novaSenha);
+
+            // Atualiza a senha do usuário na tabela 'usuarios'
+            $updated = DB::table('usuarios')->where('id', $userId->id)->update(['senha' => $novaSenha]);
+        } else {
+            return response()->json(['errors' => 'Código de confirmação inválido'], 400);
+        }
+
+        // Verifica se a atualização foi bem-sucedida
+        if (!$updated) {
+            return response()->json(['errors' => 'Erro ao trocar senha'], 400);
+        }
+
+        // Retorna uma resposta JSON indicando sucesso na atualização dos dados
+        return response()->json(['success' => 'Senha trocada com sucesso'], 200);
+    }
+
+    public function partnerCompanies(Empresa $empresa, Usuario $hash)
+    {
+        return $empresa->usuariosParceiros;
     }
 }
