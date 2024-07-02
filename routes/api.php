@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\GeminiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
@@ -25,7 +24,7 @@ Route::controller(UsuarioController::class)->prefix('users/')->group(function ()
     // As rotas autocamticamente chamam metodos na UsuarioController
 
     // Define uma rota GET para retornar dados do usuário a partir do id (hash)
-    Route::get('', 'index');
+    Route::get('{hash}', 'index');
 
     // Define uma rota rota para mostrar os dados de um usuario
     Route::get('hash/{hash}', 'showUserData');
@@ -37,9 +36,10 @@ Route::controller(UsuarioController::class)->prefix('users/')->group(function ()
     Route::get('partners/{empresa}/{hash}', 'partnerCompanies');
     // Define uma rota POST para troca de senha, redirecionada a partir do email de recuperação
     Route::post('trocarsenha/', 'recoverPassword');
+    Route::get('recuperar/{cpf}', 'recover');
 
     // Define uma rota GET para exibir um usuário específico
-    Route::get('{user}/', 'show');
+    Route::get('{user}/{hash}', 'show');
 
     // Define uma rota POST para criar um novo usuário
     Route::post('{hash}', 'store');
@@ -57,7 +57,7 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     // As rotas autocamticamente chamam metodos na EmpresaController
 
     // Define uma rota GET para listar todas as empresas
-    Route::get('', 'index');
+    Route::get('{hash}', 'index');
 
     // Define uma rota GET para listar todas as empresas de um usuario
     Route::get('user/{hash}', 'userCompanies');
@@ -94,6 +94,9 @@ Route::controller(EmpresaController::class)->prefix('empresas/')->group(function
     Route::patch('tarefas/{tarefa}/{hash}', 'patchTasks');
     //Define uma rota PATCH para alterar estado de uma Subtarefa
     Route::patch('subtarefas/{subtarefa}/{hash}', 'patchSubtask');
+    // Define uma rota GET para retornar lista de empresas a partir da id do usuário parceiro
+    Route::get('partner/{hash}', 'partnerCompanies');
+
     // Define uma rota GET para exibir uma empresa específica
     Route::get('{empresa}/{hash}', 'show');
 

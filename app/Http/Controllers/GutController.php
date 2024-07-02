@@ -18,6 +18,7 @@ class GutController extends Controller
     * @param Illuminate\Http\Request $request
     * @param App\Models\\Tarefa $tarefa
     * @param App\Models\Usuario $hash
+    * @param App\Models\Empresa $empresa
     */
     function store(Request $request, Tarefa $tarefa, Usuario $hash)
     {

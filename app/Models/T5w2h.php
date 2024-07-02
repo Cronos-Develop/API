@@ -22,6 +22,7 @@ class T5w2h extends Model
 
     function pergunta(): BelongsTo
     {
+    function pergunta() : BelongsTo {
         return $this->belongsTo(Pergunta::class)->withDefault();
     }
 

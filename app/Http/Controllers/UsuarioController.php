@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash; // Importa a classe Hash para trabalhar com hash de senhas
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
@@ -26,14 +26,11 @@ class UsuarioController extends Controller
      * dados JSON.
      *
      * @param  \Illuminate\Http\Request  $request  A requisição HTTP recebida.
+     * @param  string  $userHash  O ID do usuário como uma string codificada.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com informações do usuário.
      */
-    public function index(Request $request)
+    public function index(Request $request, string $userHash)
     {
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
-
         // Realiza uma consulta na tabela 'usuarios' para obter informações do usuário com base no ID fornecido
         $userInfo = DB::table('usuarios')->where('id', $userHash)->get();
 
@@ -44,16 +41,12 @@ class UsuarioController extends Controller
     /**
      * Retorna o ID do usuário se as credenciais estiverem corretas.
      *
-     * @param  \Illuminate\Http\Request  $request  A requisição HTTP recebida.
      * @param  string  $userData  Os dados do usuário no formato "cpf_cnpj:senha".
+     * @param  string  $userHash  O hash usado para verificar as permissões do usuário.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON com o ID do usuário ou uma mensagem de erro.
      */
-    public function show(Request $request, string $userData)
+    public function show(string $userData, string $userHash)
     {
-        //Obtém a query string completa
-        $queryString = $request->getQueryString();
-        $userHash = rtrim($queryString, '=');  // retira um = que fica automaticamente ao final da querystring
-
         // Divide os dados do usuário em CPF/CNPJ e senha
         $userDataArray = explode(':', $userData);
         $userCpf = $userDataArray[0];
@@ -189,6 +182,11 @@ class UsuarioController extends Controller
                 // Atualiza os dados do usuário na tabela 'usuarios'
                 $updated = DB::table('usuarios')->where('id', $userId)->update([$chave => $valor]);
             }
+
+            // Verifica se a atualização foi bem-sucedida
+            if (!$updated){
+                return response()->json(['errors' => 'Erro ao atualizar registro'], 400);
+            }
         }
 
         // Retorna uma resposta JSON indicando sucesso na atualização dos dados
@@ -227,17 +225,14 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Recupera o email do usuário com base no CPF ou CNPJ fornecido e envia um email de recuperação de senha.
+     * Recupera o email do usuário com base no CPF ou CNPJ fornecido.
      *
      * @param  \Illuminate\Http\Request  $request  A requisição HTTP.
      * @param  string  $cpfCnpj  O CPF ou CNPJ do usuário a ser recuperado.
      * @return \Illuminate\Http\JsonResponse  Uma resposta JSON contendo o email do usuário ou uma mensagem de erro.
      */
-    public function sendRecoverEmail(Request $request, string $cpfCnpj)
+    public function recover(Request $request, string $cpfCnpj)
     {
-        // Email do remetente (sistema)
-        $emailCronos = 'cronos@hotmail.com';
-
         // Formata o CPF ou CNPJ
         $cpfCnpj = CPFValidator::formatarCpfOuCnpj($cpfCnpj);
 
@@ -268,7 +263,7 @@ class UsuarioController extends Controller
             }
         }
 
-        // Se o email não foi encontrado ou o usuário não existe, retorna uma mensagem de erro em formato JSON
+        // Se o email não foi encontrado, retorna uma mensagem de erro em formato JSON
         return response()->json(['error' => 'O CPF/CNPJ informado não existe no banco de dados']);
     }
 

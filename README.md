@@ -685,39 +685,6 @@ HTTP/1.1 200 OK
 #### Atenção!
 É necessario informar uma chave valida para a api do Gemini.
 
-No arquivo .env:
-
-```
-GEMINI_API_KEY="sua_chave"
-```
-Você pode enviar uma tarefa para a nossa IA e ela dividira a tarefa em varias subtarefas.
-
-Para receber as subtarefas, basta fazer uma requisição POST na rota `api/IA/{hash}` onde `{hash}`é o id do usuario.
-
-Exemplo:
-
-```
-POST /api/IA/C5244i4950A5414f4792A486a5694
-
-{
-  "tarefa": "Abrir uma empresa"
-}
-```
-Resposta:
-
-```
-[
-  "Defina o seu negócio e modelo",
-  "Escolha uma estrutura empresarial",
-  "Obtenha licenças e alvarás necessários",
-  "Abra uma conta bancária comercial",
-  "Registre seu nome comercial e marca registrada",
-  "Estabeleça um sistema de contabilidade",
-  "Obtenha seguro comercial",
-  "Contrate funcionários (se necessário)",
-  "Comercialize seu negócio"
-]
-```
 
 ### Requerir sugestões de GUT com IA
 Para receber uma sugestão de gut para determinada tarefa, faça uma requisição POST na rota `api/IA/gut/{hash}` onde `{hash}` é o id do usuario.

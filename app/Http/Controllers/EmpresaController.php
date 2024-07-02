@@ -29,7 +29,7 @@ class EmpresaController extends Controller
         return DB::table('empresas')->get();  // Caso a função venha a ser usada novamente, basta descomentar
     }
 
-    public function userCompanies(Usuario $hash) //Laravel converte a chave primaria recebida no Usuario correspondente automacimente.
+    public function userCompanies(Usuario $hash) //Laravel conver a chave primaria recebida no Usuario correspondente automacimente.
     {
         /**
          * Retorna todos os registros da tabela 'empresas' que tem 'usuario_id' igual a $hash.
@@ -203,6 +203,14 @@ class EmpresaController extends Controller
         $subtarefa->subtarefa = $value;
         $subtarefa->save();
         return response()->json(['success' => "Subtarefa atualizada com sucesso"], 201);
+    function companieTasks(Empresa $empresa, string $hash)
+    {
+
+        //retornar tarefas e subtarefas da empresa recebida como parametro.
+
+        return T5w2h::with('subtarefas:id,5w2h_id,subtarefa')
+            ->whereBelongsTo($empresa)
+            ->get(['id', 'empresa_id', 'tarefa']);
     }
 
     public function show(string $empresaId, string $userHash)
